@@ -156,15 +156,36 @@ body.portada-visible .logo { opacity: 0; pointer-events: none; }
   padding-bottom: 96px;
 }
 
-.tarjeta { text-decoration: none; }
-.tarjeta-imagen { aspect-ratio: 4 / 5; overflow: hidden; background: var(--fondo-suave); }
+.tarjeta { display: block; text-decoration: none; }
+.tarjeta-imagen { position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: var(--fondo-suave); }
 .tarjeta-imagen img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s ease; }
-.tarjeta:hover img { transform: scale(1.03); }
-.tarjeta h2 { font-size: 28px; margin-top: 12px; }
-.tarjeta p { margin: 2px 0 0; font-size: 13px; color: var(--texto-suave); }
 
-.franja { display: flex; height: 8px; }
-.franja span { flex: 1; }
+/* Al pasar el cursor: velo blanco semitransparente y el nombre del proyecto */
+.tarjeta-imagen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, .55);
+  opacity: 0;
+  transition: opacity .5s ease;
+}
+.tarjeta-nombre {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  text-align: center;
+  font-size: clamp(28px, 2.6vw, 40px);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .5s ease, transform .5s ease;
+}
+.tarjeta:hover img, .tarjeta:focus-visible img { transform: scale(1.03); }
+.tarjeta:hover .tarjeta-imagen::after, .tarjeta:focus-visible .tarjeta-imagen::after,
+.tarjeta:hover .tarjeta-nombre, .tarjeta:focus-visible .tarjeta-nombre { opacity: 1; transform: none; }
+
 
 
 /* ---------- Ficha de proyecto ---------- */

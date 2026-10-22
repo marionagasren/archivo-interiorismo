@@ -137,11 +137,6 @@ function enlacesProyectos(lista) {
   return lista.map(p => `<a href="#/proyecto/${p.id}">${texto(p.nombre)}</a>`).join(", ");
 }
 
-function franjaColores(colores) {
-  return `<div class="franja">${colores.map(c => `<span style="background:${c.hex}" title="${texto(c.nombre)}"></span>`).join("")}</div>`;
-}
-
-
 // ---------------------------------------------------------------------
 //  VISTA: INICIO
 //  Primero una portada a pantalla completa con el nombre del estudio;
@@ -199,10 +194,8 @@ function htmlProyectos(filtro) {
         <a class="tarjeta" href="#/proyecto/${p.id}">
           <div class="tarjeta-imagen">
             ${p.fotos[0] ? `<img src="${p.fotos[0]}" alt="${texto(p.nombre)}" loading="lazy">` : ""}
+            <h2 class="tarjeta-nombre">${texto(p.nombre)}</h2>
           </div>
-          ${franjaColores(p.colores)}
-          <h2>${texto(p.nombre)}</h2>
-          <p>${[p.autores, p.ubicacion, p.año].filter(Boolean).map(texto).join(" · ")}</p>
         </a>`).join("")}
     </section>`;
 }
