@@ -9,6 +9,14 @@
 //    - Materiales: una TEXTURA del material (no un recorte del proyecto)
 //    - Mobiliario: foto de la pieza sobre fondo liso
 //  Si todavía no hay imagen, deja imagen: "" y se mostrará solo el nombre.
+//
+//  Subcategorías (escribe exactamente uno de estos nombres):
+//    materiales → categoria: Maderas · Piedras naturales · Revestimientos continuos ·
+//                 Hormigón y cemento · Metales · Textiles · Vidrio · Cerámica
+//    mobiliario → categoria: Sillas · Taburetes · Butacas y sofás · Mesas ·
+//                 Almacenaje · Camas · Iluminación
+//                 y solo en Iluminación, subcategoria: Suspensión · Sobremesa · Pie · Pared
+//  Los colores se clasifican solos por familia de tono.
 // =====================================================================
 
 window.BIBLIOTECA = {
