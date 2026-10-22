@@ -45,6 +45,47 @@ function mezclar(lista) {
   return copia;
 }
 
+// Convierte un nombre en un trozo de dirección: "Hormigón y cemento" → "hormigon-y-cemento"
+function slug(nombre) {
+  return nombre.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
+function hexALab(hex) {
+  const lineal = v => (v /= 255) > 0.04045 ? ((v + 0.055) / 1.055) ** 2.4 : v / 12.92;
+  const [r, g, b] = [1, 3, 5].map(i => lineal(parseInt(hex.slice(i, i + 2), 16)));
+  const x = (0.4124 * r + 0.3576 * g + 0.1805 * b) / 0.95047;
+  const y = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  const z = (0.0193 * r + 0.1192 * g + 0.9505 * b) / 1.08883;
+  const f = t => t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116;
+  return [116 * f(y) - 16, 500 * (f(x) - f(y)), 200 * (f(y) - f(z))];
+}
+
+// Clasifica un color en su familia de tono a partir de su luminosidad (L),
+// su intensidad (croma) y su tono (ángulo en el círculo cromático)
+const FAMILIAS_COLOR = ["Blancos y crudos", "Beiges y arenas", "Tierras y terracotas", "Marrones",
+                        "Grises", "Verdes", "Azules", "Negros y oscuros"];
+
+function familiaColor(hex) {
+  const [L, a, b] = hexALab(hex);
+  const croma = Math.hypot(a, b);
+  const tono = (Math.atan2(b, a) * 180 / Math.PI + 360) % 360;
+  if (croma >= 3.5 && tono >= 200 && tono < 300) return "Azules";
+  if (croma >= 8 && tono >= 100 && tono < 200) return "Verdes";
+  if (L < 25 && croma < 15) return "Negros y oscuros";
+  if (L >= 82 && croma < 14) return "Blancos y crudos";
+  if (croma < 6) return L >= 82 ? "Blancos y crudos" : "Grises";
+  if (croma >= 22 && L >= 40) return "Tierras y terracotas";
+  if (L >= 58) return "Beiges y arenas";
+  return "Marrones";
+}
+
+const CATEGORIAS = {
+  materiales: ["Maderas", "Piedras naturales", "Revestimientos continuos", "Hormigón y cemento",
+               "Metales", "Textiles", "Vidrio", "Cerámica"],
+  mobiliario: ["Sillas", "Taburetes", "Butacas y sofás", "Mesas", "Almacenaje", "Camas", "Iluminación"],
+};
+const TIPOS_ILUMINACION = ["Suspensión", "Sobremesa", "Pie", "Pared"];
+
 function buscarEnBiblioteca(tipo, id) {
   return BIBLIOTECA[tipo].find(item => item.id === id);
 }
@@ -86,7 +127,7 @@ function bibliotecaColores() {
   for (const p of proyectos) {
     for (const c of p.colores) {
       const clave = c.codigo || c.hex;
-      if (!mapa.has(clave)) mapa.set(clave, { ...c, proyectos: [] });
+      if (!mapa.has(clave)) mapa.set(clave, { ...c, categoria: familiaColor(c.hex), proyectos: [] });
       mapa.get(clave).proyectos.push(p);
     }
   }
@@ -116,7 +157,7 @@ function fichaColor(c, grande = false) {
 
 function fichaPieza(item, tipo) {
   const detalle = tipo === "materiales"
-    ? [item.tipo, item.acabado].filter(Boolean).join(" · ")
+    ? [item.categoria, item.acabado].filter(Boolean).join(" · ")
     : [item.autor, item.marca, item.año].filter(Boolean).join(" · ");
   // Sin imagen todavía: se muestra el nombre en una ficha lisa
   const imagen = item.imagen
@@ -343,28 +384,57 @@ function listaPiezas(p) {
 //  VISTA: BIBLIOTECA
 // ---------------------------------------------------------------------
 
-function vistaBiblioteca(tipo) {
+// #/biblioteca/<tipo>/<subcategoría>/<tipo de iluminación>
+// p. ej. #/biblioteca/materiales/maderas   o   #/biblioteca/mobiliario/iluminacion/suspension
+function vistaBiblioteca(tipo, filtro, subfiltro) {
   const pestañas = [["colores", "Colores"], ["materiales", "Materiales"], ["mobiliario", "Mobiliario"]];
   if (!pestañas.some(([clave]) => clave === tipo)) tipo = "colores";
 
+  const todos = tipo === "colores" ? bibliotecaColores() : bibliotecaPiezas(tipo);
+  const orden = tipo === "colores" ? FAMILIAS_COLOR : CATEGORIAS[tipo];
+
+  // Solo se muestran las subcategorías que tienen algún elemento
+  const presentes = orden.filter(cat => todos.some(item => item.categoria === cat));
+  const activa = presentes.find(cat => slug(cat) === filtro);
+  let items = activa ? todos.filter(item => item.categoria === activa) : todos;
+
+  // Segundo nivel, solo para Iluminación
+  let segundoNivel = "";
+  if (activa === "Iluminación") {
+    const tiposPresentes = TIPOS_ILUMINACION.filter(t => items.some(item => item.subcategoria === t));
+    const tipoActivo = tiposPresentes.find(t => slug(t) === subfiltro);
+    if (tipoActivo) items = items.filter(item => item.subcategoria === tipoActivo);
+    const base = `#/biblioteca/${tipo}/${slug(activa)}`;
+    segundoNivel = `
+      <nav class="filtros filtros-segundo">
+        <a href="${base}" class="${tipoActivo ? "" : "activa"}">Toda la iluminación</a>
+        ${tiposPresentes.map(t => `<a href="${base}/${slug(t)}" class="${t === tipoActivo ? "activa" : ""}">${t}</a>`).join("")}
+      </nav>`;
+  }
+
+  const filtros = presentes.length > 1 ? `
+    <nav class="filtros">
+      <a href="#/biblioteca/${tipo}" class="${activa ? "" : "activa"}">Todos</a>
+      ${presentes.map(cat => `<a href="#/biblioteca/${tipo}/${slug(cat)}" class="${cat === activa ? "activa" : ""}">${cat}</a>`).join("")}
+    </nav>${segundoNivel}` : "";
+
   let contenido;
-  if (tipo === "colores") {
+  if (!todos.length) {
+    contenido = `<p class="vacio">Todavía no hay ${tipo} en la biblioteca. Se añaden en <code>data/biblioteca.js</code>.</p>`;
+  } else if (tipo === "colores") {
     contenido = `<div class="rejilla-colores">
-      ${bibliotecaColores().map(c => `
+      ${items.map(c => `
         <div class="item-biblioteca">
           ${fichaColor(c)}
           <p class="aparece">${enlacesProyectos(c.proyectos)}</p>
         </div>`).join("")}
     </div>`;
   } else {
-    const items = bibliotecaPiezas(tipo);
-    contenido = items.length
-      ? `<div class="rejilla-piezas">${items.map(item => `
-          <div class="item-biblioteca">
-            ${fichaPieza(item, tipo)}
-            <p class="aparece">${enlacesProyectos(item.proyectos)}</p>
-          </div>`).join("")}</div>`
-      : `<p class="vacio">Todavía no hay ${tipo} en la biblioteca. Se añaden en <code>data/biblioteca.js</code>.</p>`;
+    contenido = `<div class="rejilla-piezas">${items.map(item => `
+      <div class="item-biblioteca">
+        ${fichaPieza(item, tipo)}
+        <p class="aparece">${enlacesProyectos(item.proyectos)}</p>
+      </div>`).join("")}</div>`;
   }
 
   app.innerHTML = `
@@ -373,6 +443,7 @@ function vistaBiblioteca(tipo) {
       <nav class="pestañas">
         ${pestañas.map(([clave, nombre]) => `<a href="#/biblioteca/${clave}" class="${clave === tipo ? "activa" : ""}">${nombre}</a>`).join("")}
       </nav>
+      ${filtros}
     </section>
     ${contenido}`;
 }
@@ -388,10 +459,10 @@ const generador = { tipos: ["colores"], cantidad: 5, fijados: [], resultado: [] 
 function elementosDisponibles() {
   const lista = [];
   if (generador.tipos.includes("colores"))
-    bibliotecaColores().forEach(c => lista.push({ ...c, categoria: "colores", clave: c.codigo || c.hex }));
+    bibliotecaColores().forEach(c => lista.push({ ...c, grupo: "colores", clave: c.codigo || c.hex }));
   for (const tipo of ["materiales", "mobiliario"])
     if (generador.tipos.includes(tipo))
-      bibliotecaPiezas(tipo).forEach(item => lista.push({ ...item, categoria: tipo, clave: item.id }));
+      bibliotecaPiezas(tipo).forEach(item => lista.push({ ...item, grupo: tipo, clave: item.id }));
   return lista;
 }
 
@@ -412,7 +483,7 @@ function pintarPaleta() {
   }
   zona.innerHTML = generador.resultado.map(e => `
     <div class="paleta-item ${generador.fijados.includes(e.clave) ? "fijado" : ""}" data-clave="${texto(e.clave)}">
-      ${e.categoria === "colores" ? fichaColor(e, true) : fichaPieza(e, e.categoria)}
+      ${e.grupo === "colores" ? fichaColor(e, true) : fichaPieza(e, e.grupo)}
       <button class="fijar" title="Fijar este elemento">${generador.fijados.includes(e.clave) ? "Fijado" : "Fijar"}</button>
     </div>`).join("");
 
@@ -498,12 +569,12 @@ function vistaNoEncontrada() {
 }
 
 function navegar() {
-  const [seccion, parametro] = location.hash.replace(/^#\/?/, "").split("/");
+  const [seccion, parametro, filtro, subfiltro] = location.hash.replace(/^#\/?/, "").split("/");
 
   if (!seccion) vistaInicio();
   else if (seccion === "proyectos") vistaProyectos(parametro);
   else if (seccion === "proyecto") vistaProyecto(parametro);
-  else if (seccion === "biblioteca") vistaBiblioteca(parametro);
+  else if (seccion === "biblioteca") vistaBiblioteca(parametro, filtro, subfiltro);
   else if (seccion === "generador") vistaGenerador();
   else vistaNoEncontrada();
 

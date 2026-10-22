@@ -312,6 +312,21 @@ body.portada-visible .cabecera { transform: translateY(-100%); opacity: 0; point
 .pestañas a { font-family: var(--serif); font-size: 26px; text-decoration: none; color: var(--texto-suave); }
 .pestañas a.activa { color: var(--texto); text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1px; }
 
+/* Subcategorías de la biblioteca */
+.filtros { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 28px; }
+.filtros a {
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--texto-suave);
+  padding-bottom: 3px;
+  border-bottom: 1px solid transparent;
+}
+.filtros a:hover, .filtros a.activa { color: var(--texto); border-color: var(--texto); }
+.filtros-segundo { margin-top: 14px; padding-left: 16px; border-left: 1px solid var(--linea); }
+.filtros-segundo a { text-transform: none; letter-spacing: .02em; font-size: 13px; }
+
 .rejilla-colores { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 24px 16px; padding-bottom: 96px; }
 .rejilla-piezas { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 32px 16px; padding-bottom: 96px; }
 .rejilla-colores .muestra-color { min-height: 200px; }
