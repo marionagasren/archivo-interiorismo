@@ -170,10 +170,6 @@ function fichaPieza(item, tipo) {
     </figure>`;
 }
 
-function piezaPendiente(etiqueta) {
-  return `<div class="pieza pendiente"><span>${etiqueta}<br><small>pendiente</small></span></div>`;
-}
-
 function enlacesProyectos(lista) {
   return lista.map(p => `<a href="#/proyecto/${p.id}">${texto(p.nombre)}</a>`).join(", ");
 }
@@ -266,89 +262,151 @@ function vistaProyecto(id) {
       </header>
 
       ${galeria.length ? `
-        <section class="galeria">
-          ${galeria.map(f => `<img src="${f}" alt="" loading="lazy">`).join("")}
+        <section class="bloque bloque-carrusel">
+          ${carrusel(galeria, "Fotografía")}
         </section>` : ""}
 
       ${p.planos.length ? `
-        <section class="bloque">
+        <section class="bloque bloque-carrusel">
           <h2 class="titulo-bloque">Planos</h2>
-          <div class="planos">${p.planos.map(f => `<img src="${f}" alt="Plano" loading="lazy">`).join("")}</div>
+          ${carrusel(p.planos, "Plano", "carrusel-planos")}
         </section>` : ""}
 
       ${moodboard(p)}
     </article>`;
 
-  colocarGaleria(app.querySelectorAll(".galeria img"));
-  activarAmpliar(app.querySelectorAll(".portada, .galeria img, .planos img"));
+  app.querySelectorAll(".carrusel").forEach(activarCarrusel);
+  activarAmpliar(app.querySelectorAll(".portada, .carrusel img"));
 }
 
-// Fotos horizontales a todo el ancho y verticales de dos en dos.
-// Si una vertical se queda sin pareja, se centra sola en su fila.
-function colocarGaleria(imagenes) {
-  const colocar = () => {
-    let seguidas = [];
-    const cerrarGrupo = () => {
-      if (seguidas.length % 2) seguidas.at(-1).classList.add("sola");
-      seguidas = [];
-    };
-    imagenes.forEach(img => {
-      img.classList.remove("sola");
-      const horizontal = img.naturalWidth > img.naturalHeight;
-      img.classList.toggle("horizontal", horizontal);
-      horizontal ? cerrarGrupo() : seguidas.push(img);
-    });
-    cerrarGrupo();
+// Fila de imágenes que se desplaza hacia los lados
+function carrusel(imagenes, alt, clase = "") {
+  return `
+    <div class="carrusel ${clase}">
+      <div class="carrusel-pista">
+        ${imagenes.map((f, i) => `<img src="${f}" alt="${alt} ${i + 1}" loading="lazy" draggable="false">`).join("")}
+      </div>
+      <div class="carrusel-controles">
+        <button class="carrusel-anterior" aria-label="Anterior">←</button>
+        <span class="carrusel-contador">1 / ${imagenes.length}</span>
+        <button class="carrusel-siguiente" aria-label="Siguiente">→</button>
+      </div>
+    </div>`;
+}
+
+// Con el ratón se arrastra; en el móvil se desliza con el dedo
+function activarCarrusel(carrusel) {
+  const pista = carrusel.querySelector(".carrusel-pista");
+  const imagenes = [...pista.querySelectorAll("img")];
+  const contador = carrusel.querySelector(".carrusel-contador");
+  let inicioX = 0, inicioScroll = 0, arrastrando = false, movido = false;
+
+  pista.addEventListener("pointerdown", e => {
+    if (e.pointerType !== "mouse") return;
+    arrastrando = true; movido = false;
+    inicioX = e.clientX; inicioScroll = pista.scrollLeft;
+    pista.classList.add("arrastrando");
+  });
+  window.addEventListener("pointermove", e => {
+    if (!arrastrando) return;
+    const dx = e.clientX - inicioX;
+    if (Math.abs(dx) > 5) movido = true;
+    pista.scrollLeft = inicioScroll - dx;
+  });
+  window.addEventListener("pointerup", () => {
+    if (!arrastrando) return;
+    arrastrando = false;
+    pista.classList.remove("arrastrando");
+  });
+  // Si se ha arrastrado, el clic no abre la imagen ampliada
+  pista.addEventListener("click", e => { if (movido) { e.stopPropagation(); movido = false; } }, true);
+
+  const actual = () => {
+    const centro = pista.scrollLeft + pista.clientWidth / 2;
+    let indice = 0;
+    imagenes.forEach((img, i) => { if (img.offsetLeft <= centro) indice = i; });
+    return indice;
   };
-  imagenes.forEach(img => img.complete || img.addEventListener("load", colocar));
-  colocar();
+  const ir = i => {
+    const img = imagenes[Math.max(0, Math.min(imagenes.length - 1, i))];
+    pista.scrollTo({ left: img.offsetLeft - (pista.clientWidth - img.clientWidth) / 2, behavior: "smooth" });
+  };
+  carrusel.querySelector(".carrusel-anterior").addEventListener("click", () => ir(actual() - 1));
+  carrusel.querySelector(".carrusel-siguiente").addEventListener("click", () => ir(actual() + 1));
+  pista.addEventListener("scroll", () => {
+    const fin = pista.scrollLeft + pista.clientWidth >= pista.scrollWidth - 4;
+    contador.textContent = `${fin ? imagenes.length : actual() + 1} / ${imagenes.length}`;
+  }, { passive: true });
+}
+
+// Huecos de la composición del moodboard, en % del lienzo: x, y, ancho, alto,
+// capa y lo que prefiere llevar (textura de material o color liso).
+// Si un proyecto tiene pocos materiales, sus huecos se rellenan con colores.
+const HUECOS_MOODBOARD = [
+  { x: 6,  y: 4,  w: 40, h: 33, z: 2, tipo: "material" },
+  { x: 52, y: 5,  w: 42, h: 26, z: 1, tipo: "color" },
+  { x: 9,  y: 37, w: 28, h: 47, z: 1, tipo: "material" },
+  { x: 35, y: 31, w: 38, h: 46, z: 0, tipo: "color" },
+  { x: 63, y: 37, w: 31, h: 19, z: 2, tipo: "material" },
+  { x: 12, y: 63, w: 32, h: 29, z: 3, tipo: "material" },
+  { x: 62, y: 59, w: 29, h: 35, z: 2, tipo: "material" },
+  { x: 39, y: 71, w: 19, h: 15, z: 4, tipo: "color" },
+  { x: 46, y: 21, w: 13, h: 9,  z: 3, tipo: "color" },
+];
+
+function composicionMoodboard(p) {
+  const materiales = p.materiales.filter(m => m.imagen);
+  const colores = [...p.colores];
+  // primero el color de fondo y los acentos, que son los más característicos
+  const muestras = HUECOS_MOODBOARD.map(hueco => {
+    if (hueco.tipo === "material" && materiales.length) return { hueco, material: materiales.shift() };
+    if (colores.length) return { hueco, color: colores.shift() };
+    if (materiales.length) return { hueco, material: materiales.shift() };
+    return null;
+  }).filter(Boolean);
+
+  return `
+    <div class="composicion" role="img" aria-label="Moodboard de ${texto(p.nombre)}">
+      ${muestras.map(({ hueco, material, color }) => `
+        <div class="muestra ${color ? "muestra-pintura" : ""}"
+             style="left:${hueco.x}%; top:${hueco.y}%; width:${hueco.w}%; height:${hueco.h}%; z-index:${hueco.z};
+                    ${material ? `background-image:url('${material.imagen}')` : `background-color:${color.hex}`}"
+             title="${texto(material ? material.nombre : color.nombre)}"></div>`).join("")}
+    </div>`;
 }
 
 function moodboard(p) {
-  const [fondo, ...resto] = p.colores;
-  const foto = p.fotos[1] || p.fotos[0];
-
-  // En el moodboard solo van las piezas con imagen (máximo 4 de cada);
-  // la lista completa aparece debajo, en "Materialidad y mobiliario"
-  const conImagen = lista => lista.filter(item => item.imagen).slice(0, 4);
-  const materiales = conImagen(p.materiales).length
-    ? conImagen(p.materiales).map(m => fichaPieza(m, "materiales")).join("")
-    : piezaPendiente("Material").repeat(4);
-  const mobiliario = conImagen(p.mobiliario).length
-    ? conImagen(p.mobiliario).map(m => fichaPieza(m, "mobiliario")).join("")
-    : piezaPendiente("Mobiliario").repeat(2);
-
+  if (!p.colores.length && !p.materiales.length) return "";
   return `
     <section class="bloque">
       <h2 class="titulo-bloque">Moodboard</h2>
       <div class="moodboard">
-        <div class="mb-foto">${foto ? `<img src="${foto}" alt="">` : ""}</div>
+        ${composicionMoodboard(p)}
 
-        <div class="mb-colores">
-          ${fondo ? fichaColor(fondo, true) : ""}
-          ${resto.map(c => fichaColor(c)).join("")}
-        </div>
+        <div class="mb-leyenda">
+          <h3>Paleta</h3>
+          <ul class="paleta-lista">
+            ${p.colores.map(c => `
+              <li>
+                <span class="punto" style="background:${c.hex}"></span>
+                <span>${texto(c.nombre)}${c.tipo === "acento" ? ' <em>acento</em>' : ""}</span>
+                <span>${texto(c.codigo)}<br><small>${texto(c.classic || "")}</small></span>
+                <span>${c.hex}</span>
+              </li>`).join("")}
+          </ul>
+          <p class="nota">Colores extraídos automáticamente de las fotografías y asociados al RAL más cercano.</p>
 
-        <div class="mb-piezas">
-          <div class="mb-grupo"><h3>Materiales</h3><div class="mb-materiales">${materiales}</div></div>
-          <div class="mb-grupo"><h3>Mobiliario</h3><div class="mb-mobiliario">${mobiliario}</div></div>
+          ${p.materiales.length ? `
+            <h3>Materiales</h3>
+            <ul class="materiales-lista">
+              ${p.materiales.map(m => `
+                <li>
+                  <span class="miniatura" style="${m.imagen ? `background-image:url('${m.imagen}')` : ""}"></span>
+                  <span>${texto(m.nombre)}</span>
+                </li>`).join("")}
+            </ul>` : ""}
         </div>
       </div>
-
-      <table class="leyenda">
-        <thead><tr><th></th><th>Color</th><th>RAL Design</th><th>RAL Classic aprox.</th><th>Hex</th></tr></thead>
-        <tbody>
-          ${p.colores.map(c => `
-            <tr>
-              <td><span class="punto" style="background:${c.hex}"></span></td>
-              <td>${texto(c.nombre)}${c.tipo === "acento" ? ' <em>acento</em>' : ""}</td>
-              <td>${texto(c.codigo)}</td>
-              <td>${texto(c.classic || "—")}</td>
-              <td>${c.hex}</td>
-            </tr>`).join("")}
-        </tbody>
-      </table>
-      <p class="nota">Colores extraídos automáticamente de las fotografías y asociados al RAL más cercano.</p>
     </section>
 
     ${listaPiezas(p)}`;
