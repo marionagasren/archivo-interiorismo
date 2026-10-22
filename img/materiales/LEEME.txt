@@ -13,3 +13,9 @@ Origen de las texturas actuales:
 - lino-natural: Poly Haven rough_linen (CC0), recoloreada a tono lino natural
 - microcemento-beige: imagen aportada por 341 Studio
 - microcemento-verde-oscuro: la misma textura de microcemento, teñida de verde oscuro
+- roble-tenido-oscuro: Poly Haven oak_veneer_01 (CC0), teñida de marrón oscuro
+- ceramica-terracota-esmaltada: ambientCG GlazedTerracotta001 (CC0), oscurecida
+- piedra-veteada-clara: ambientCG Marble014 (CC0)
+- piedra-gris-tipo-ceppo: ambientCG Terrazzo019L (CC0), pasada a gris
+- lana-pelo-largo: Poly Haven curly_teddy_natural (CC0), en tono crudo
+- ceramica-opus-incertum: dibujada por programa (piezas irregulares en los tonos del proyecto)

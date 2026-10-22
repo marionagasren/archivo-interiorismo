@@ -57,7 +57,7 @@ window.PROYECTOS = [
     fuente: "https://vivesstlaurent.com/en/montpellier2/",
     descripcion: "Una casa de tres plantas al pie del monte Saint-Bruno, en las afueras de Montreal, rodeada de bosque y pensada como un lugar de refugio y contemplación. La planta jardín se encaja en la pendiente del terreno y, frente a las casas de los años sesenta del barrio, el proyecto se adapta al desnivel del lugar. El interior se organiza alrededor de un patio, con recorridos fluidos y mucha luz natural, y la fachada trasera, completamente acristalada, abre la zona de día hacia el bosque.",
     colores: [],
-    materiales: [],
-    mobiliario: [],
+    materiales: ["roble-natural", "roble-tenido-oscuro", "ceramica-terracota-esmaltada", "ceramica-opus-incertum", "piedra-veteada-clara", "piedra-gris-tipo-ceppo", "lino-natural", "lana-pelo-largo"],
+    mobiliario: ["tekio-circular", "tekio-horizontal", "mesa-essai-mobilier"],
   },
 ];

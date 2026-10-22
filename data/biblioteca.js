@@ -24,11 +24,17 @@ window.BIBLIOTECA = {
   materiales: [
     { id: "microcemento-beige", nombre: "Microcemento beige", categoria: "Revestimientos continuos", acabado: "Suelos y paredes en un mismo tono", imagen: "img/materiales/microcemento-beige.jpg" },
     { id: "microcemento-verde-oscuro", nombre: "Microcemento verde oscuro", categoria: "Revestimientos continuos", acabado: "Suelo, paredes y techo del baño", imagen: "img/materiales/microcemento-verde-oscuro.jpg" },
-    { id: "roble-natural", nombre: "Roble natural", categoria: "Maderas", acabado: "Mobiliario de cocina", imagen: "img/materiales/roble-natural.jpg" },
+    { id: "roble-natural", nombre: "Roble natural", categoria: "Maderas", acabado: "Suelos, carpintería y mobiliario", imagen: "img/materiales/roble-natural.jpg" },
     { id: "hormigon", nombre: "Hormigón", categoria: "Hormigón y cemento", acabado: "Sofá integrado", imagen: "img/materiales/hormigon.jpg" },
-    { id: "lino-natural", nombre: "Lino natural", categoria: "Textiles", acabado: "Cortinas y cojines", imagen: "img/materiales/lino-natural.jpg" },
+    { id: "lino-natural", nombre: "Lino natural", categoria: "Textiles", acabado: "Cortinas y tapicerías", imagen: "img/materiales/lino-natural.jpg" },
     { id: "aluminio-encerado", nombre: "Aluminio encerado", categoria: "Metales", acabado: "Encerado", imagen: "img/materiales/aluminio-encerado.jpg" },
     { id: "bloque-vidrio", nombre: "Bloque de vidrio translúcido", categoria: "Vidrio", acabado: "Pared del baño", imagen: "" },
+    { id: "roble-tenido-oscuro", nombre: "Roble teñido oscuro", categoria: "Maderas", acabado: "Muebles empotrados y mesa de comedor", imagen: "img/materiales/roble-tenido-oscuro.jpg" },
+    { id: "ceramica-terracota-esmaltada", nombre: "Cerámica de terracota esmaltada", categoria: "Cerámica", acabado: "Revestimiento de chimenea · California", imagen: "img/materiales/ceramica-terracota-esmaltada.jpg" },
+    { id: "ceramica-opus-incertum", nombre: "Cerámica en opus incertum", categoria: "Cerámica", acabado: "Suelo en tonos de pizarra", imagen: "img/materiales/ceramica-opus-incertum.jpg" },
+    { id: "piedra-veteada-clara", nombre: "Piedra natural veteada clara", categoria: "Piedras naturales", acabado: "Isla de cocina", imagen: "img/materiales/piedra-veteada-clara.jpg" },
+    { id: "piedra-gris-tipo-ceppo", nombre: "Piedra gris tipo Ceppo", categoria: "Piedras naturales", acabado: "Encimera de baño", imagen: "img/materiales/piedra-gris-tipo-ceppo.jpg" },
+    { id: "lana-pelo-largo", nombre: "Lana de pelo largo", categoria: "Textiles", acabado: "Alfombra", imagen: "img/materiales/lana-pelo-largo.jpg" },
   ],
 
   mobiliario: [
@@ -45,6 +51,9 @@ window.BIBLIOTECA = {
     { id: "lampara-vis-a-vis", nombre: "Lámpara Vis à Vis", categoria: "Iluminación", subcategoria: "Sobremesa", autor: "Michele Groppi", marca: "Davide Groppi", año: 2023, imagen: "img/mobiliario/lampara-vis-a-vis.jpg" },
     { id: "lampara-lotek", nombre: "Lámpara Lotek", categoria: "Iluminación", subcategoria: "Pie", autor: "Benno Premsela", marca: "Hollands Licht · Prestada por Materia", año: 1982, imagen: "img/mobiliario/lampara-lotek.jpg" },
     { id: "taburetes-vintage-60", nombre: "Taburetes vintage años 60", categoria: "Taburetes", autor: "", marca: "Madera y hierro", imagen: "" },
+    { id: "tekio-circular", nombre: "Lámpara Tekio Circular", categoria: "Iluminación", subcategoria: "Suspensión", autor: "Anthony Dickens", marca: "Santa & Cole", imagen: "img/mobiliario/tekio-circular.jpg" },
+    { id: "tekio-horizontal", nombre: "Lámpara Tekio Horizontal", categoria: "Iluminación", subcategoria: "Suspensión", autor: "Anthony Dickens", marca: "Santa & Cole", imagen: "img/mobiliario/tekio-horizontal.jpg" },
+    { id: "mesa-essai-mobilier", nombre: "Mesa de comedor a medida", categoria: "Mesas", autor: "", marca: "Essai Mobilier", imagen: "" },
   ],
 
 };
