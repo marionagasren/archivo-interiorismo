@@ -150,12 +150,6 @@ function vistaInicio() {
       <img class="portada-foto" src="img/portada.jpg" alt="">
     </section>
     <div class="contenedor">${htmlProyectos("")}</div>`;
-
-  // Mientras se ve la portada, la cabecera va sin fondo
-  const portada = app.querySelector(".portada-estudio");
-  new IntersectionObserver(([entrada]) => {
-    document.body.classList.toggle("portada-visible", entrada.isIntersecting);
-  }, { rootMargin: "-72px 0px 0px 0px" }).observe(portada);
 }
 
 
@@ -515,11 +509,18 @@ function navegar() {
 
   // Marca en el menú la sección activa
   const activa = seccion === "proyecto" ? "proyectos" : seccion;
-  document.body.classList.toggle("en-portada", !seccion);
-  if (seccion) document.body.classList.remove("portada-visible");
   document.querySelectorAll(".menu a").forEach(a => a.classList.toggle("activa", a.dataset.seccion === activa));
+  document.body.classList.toggle("en-portada", !seccion);
   window.scrollTo(0, 0);
+  mostrarMenu();
 }
+
+// En la portada, el menú solo aparece cuando se empieza a bajar
+function mostrarMenu() {
+  const enLaPortada = document.body.classList.contains("en-portada") && window.scrollY < 60;
+  document.body.classList.toggle("portada-visible", enLaPortada);
+}
+window.addEventListener("scroll", mostrarMenu, { passive: true });
 
 window.addEventListener("hashchange", navegar);
 navegar();

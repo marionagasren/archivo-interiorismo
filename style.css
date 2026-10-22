@@ -88,16 +88,10 @@ main {
 body.en-portada main { max-width: none; padding: 0; }
 .contenedor { max-width: var(--ancho-max); margin: 0 auto; padding: 0 var(--margen); }
 
-/* Mientras se ve la portada, la cabecera no tiene fondo y el nombre
-   pequeño se oculta (ya se ve en grande); al bajar vuelven */
+/* En la portada el menú está escondido; aparece al deslizar hacia abajo */
 body.en-portada .cabecera { position: fixed; left: 0; right: 0; }
-.cabecera, .logo { transition: background-color .5s ease, border-color .5s ease, opacity .5s ease; }
-body.portada-visible .cabecera {
-  background-color: transparent;
-  backdrop-filter: none;
-  border-color: transparent;
-}
-body.portada-visible .logo { opacity: 0; pointer-events: none; }
+.cabecera { transition: transform .5s ease, opacity .5s ease; }
+body.portada-visible .cabecera { transform: translateY(-100%); opacity: 0; pointer-events: none; }
 
 /* Portada: foto centrada y el nombre a los dos lados, cada palabra
    centrada en su franja lisa */
@@ -108,7 +102,7 @@ body.portada-visible .logo { opacity: 0; pointer-events: none; }
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: clamp(20px, 3vw, 56px);
-  padding: 88px var(--margen) 48px;
+  padding: 48px var(--margen);
 }
 
 .nombre-estudio { display: contents; }   /* sus dos palabras se colocan en la rejilla */
@@ -411,7 +405,7 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
   .leyenda th:nth-child(4), .leyenda td:nth-child(4) { display: none; }
   .lista-piezas { grid-template-columns: 1fr; }
   .boton { margin-left: 0; width: 100%; }
-  .portada-estudio { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 12px; padding-top: 120px; }
+  .portada-estudio { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 12px; }
   .nombre-estudio span { font-size: clamp(36px, 11vw, 56px); }
   .portada-foto { order: 1; width: min(100%, 340px); height: auto; margin-top: 20px; }
 }
