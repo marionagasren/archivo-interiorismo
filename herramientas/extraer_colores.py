@@ -137,13 +137,22 @@ def elegir_colores(colores, pesos):
         if colores[i, 0] < 96 and distinto(i, 14):
             elegidos.append(i)
 
-    # 3. Acentos: los más saturados, aunque ocupen poco (lámparas, textiles...)
+    # 3. Acentos: colores que ocupan poco pero destacan (madera de cerezo,
+    #    una silla negra, un sofá azul...). Se elige el más diferente de los
+    #    que ya hay, favoreciendo los saturados y un poco los más presentes.
     principales = len(elegidos)
-    for i in np.argsort(-(croma * np.sqrt(pesos))):
-        if len(elegidos) >= principales + NUM_ACENTOS:
+    while len(elegidos) < principales + NUM_ACENTOS:
+        candidatos = [i for i in range(len(colores))
+                      if i not in elegidos and 12 < colores[i, 0] < 88 and pesos[i] > 0.004
+                      # dos acentos no pueden ser casi iguales
+                      and all(np.linalg.norm(colores[i] - colores[j]) > 20 for j in elegidos[principales:])]
+        if not candidatos:
             break
-        if i not in elegidos and 20 < colores[i, 0] < 88 and distinto(i, 15):
-            elegidos.append(i)
+        diferencia = lambda i: min(np.linalg.norm(colores[i] - colores[j]) for j in elegidos)
+        mejor = max(candidatos, key=lambda i: diferencia(i) * pesos[i] ** 0.25 * (1 + croma[i] / 40))
+        if diferencia(mejor) < 12:
+            break
+        elegidos.append(mejor)
 
     return [(i, presencia[i], "principal" if n < principales else "acento") for n, i in enumerate(elegidos)]
 

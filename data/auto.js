@@ -129,5 +129,131 @@ window.AUTO = {
         }
       }
     ]
+  },
+  "piso-barceloneta": {
+    "fotos": [
+      "img/proyectos/piso-barceloneta/foto-01.jpg",
+      "img/proyectos/piso-barceloneta/foto-02.jpg",
+      "img/proyectos/piso-barceloneta/foto-03.jpg",
+      "img/proyectos/piso-barceloneta/foto-04.jpg",
+      "img/proyectos/piso-barceloneta/foto-05.jpg"
+    ],
+    "planos": [],
+    "colores": [
+      {
+        "hex": "#DED1C6",
+        "tipo": "principal",
+        "presencia": 25.4,
+        "ral": {
+          "sistema": "RAL Design",
+          "codigo": "RAL 070 85 05",
+          "nombre": "Almond Beige",
+          "hex": "#DFD5CA",
+          "diferencia": 1.5
+        },
+        "ralClassic": {
+          "sistema": "RAL Classic",
+          "codigo": "RAL 9002",
+          "nombre": "Grey white",
+          "hex": "#D7D5CB",
+          "diferencia": 3.5
+        }
+      },
+      {
+        "hex": "#A7927B",
+        "tipo": "principal",
+        "presencia": 48.3,
+        "ral": {
+          "sistema": "RAL Design",
+          "codigo": "RAL 075 60 20",
+          "nombre": "Walnut Shell Brown",
+          "hex": "#A68B6E",
+          "diferencia": 3.5
+        },
+        "ralClassic": {
+          "sistema": "RAL Classic",
+          "codigo": "RAL 1019",
+          "nombre": "Grey beige",
+          "hex": "#A48F7A",
+          "diferencia": 1.4
+        }
+      },
+      {
+        "hex": "#77644D",
+        "tipo": "principal",
+        "presencia": 17.9,
+        "ral": {
+          "sistema": "RAL Design",
+          "codigo": "RAL 085 40 10",
+          "nombre": "Mineral Green",
+          "hex": "#665D4E",
+          "diferencia": 5.4
+        },
+        "ralClassic": {
+          "sistema": "RAL Classic",
+          "codigo": "RAL 7008",
+          "nombre": "Khaki grey",
+          "hex": "#725F3C",
+          "diferencia": 4.7
+        }
+      },
+      {
+        "hex": "#5B4131",
+        "tipo": "principal",
+        "presencia": 8.5,
+        "ral": {
+          "sistema": "RAL Design",
+          "codigo": "RAL 060 30 20",
+          "nombre": "Peat Brown",
+          "hex": "#5A3D29",
+          "diferencia": 2.4
+        },
+        "ralClassic": {
+          "sistema": "RAL Classic",
+          "codigo": "RAL 8011",
+          "nombre": "Nut brown",
+          "hex": "#583827",
+          "diferencia": 3.7
+        }
+      },
+      {
+        "hex": "#A46C49",
+        "tipo": "acento",
+        "presencia": 21.7,
+        "ral": {
+          "sistema": "RAL Design",
+          "codigo": "RAL 060 50 30",
+          "nombre": "Mustard Brown",
+          "hex": "#9D6C4A",
+          "diferencia": 1.7
+        },
+        "ralClassic": {
+          "sistema": "RAL Classic",
+          "codigo": "RAL 8001",
+          "nombre": "Ochre brown",
+          "hex": "#99632B",
+          "diferencia": 6.9
+        }
+      },
+      {
+        "hex": "#212422",
+        "tipo": "acento",
+        "presencia": 1.6,
+        "ral": {
+          "sistema": "RAL Design",
+          "codigo": "RAL 000 15 00",
+          "nombre": "Ink Black",
+          "hex": "#212122",
+          "diferencia": 3.3
+        },
+        "ralClassic": {
+          "sistema": "RAL Classic",
+          "codigo": "RAL 9011",
+          "nombre": "Graphite black",
+          "hex": "#27292B",
+          "diferencia": 4.2
+        }
+      }
+    ]
   }
 };
