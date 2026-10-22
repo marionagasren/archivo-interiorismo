@@ -38,7 +38,7 @@ window.PROYECTOS = [
     ubicacion: "Barcelona",
     año: "",
     tipologia: "Vivienda",
-    fotografo: "",
+    fotografo: "Salva López",
     fuente: "https://www.isernserra.com/es/projects/piso-barceloneta",
     descripcion: "",
     colores: [],
