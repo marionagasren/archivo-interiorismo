@@ -1,0 +1,6 @@
+Imágenes de la BIBLIOTECA DE MATERIALES (compartida entre proyectos).
+
+- Una imagen por material, con su textura (mejor cuadrada, unos 1000 px).
+- Nombre del archivo = id del material: roble-natural.jpg, travertino-romano.jpg...
+- Minúsculas, sin acentos, sin espacios (usa guiones).
+- Después se registra en data/biblioteca.js y se asigna a los proyectos en data/proyectos.js.

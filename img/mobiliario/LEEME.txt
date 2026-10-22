@@ -1,0 +1,6 @@
+Imágenes de la BIBLIOTECA DE MOBILIARIO (compartida entre proyectos).
+
+- Una imagen por pieza, idealmente con fondo neutro (mejor cuadrada, unos 1000 px).
+- Nombre del archivo = id de la pieza: ch24-wishbone.jpg, lampara-aj.jpg...
+- Minúsculas, sin acentos, sin espacios (usa guiones).
+- Después se registra en data/biblioteca.js y se asigna a los proyectos en data/proyectos.js.

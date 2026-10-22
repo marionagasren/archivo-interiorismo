@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Archivo de Interiorismo</title>
+
+  <!-- Tipografías -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- Diseño -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- CABECERA: siempre visible -->
+  <header class="cabecera">
+    <a href="#/" class="logo">Archivo<em>de interiorismo</em></a>
+    <nav class="menu">
+      <a href="#/" data-seccion="proyectos">Proyectos</a>
+      <a href="#/biblioteca/colores" data-seccion="biblioteca">Biblioteca</a>
+      <a href="#/generador" data-seccion="generador">Generador</a>
+    </nav>
+  </header>
+
+  <!-- CONTENIDO: script.js lo rellena según la página en la que estemos -->
+  <main id="app"></main>
+
+  <footer class="pie">
+    <p>Archivo personal de proyectos de interiorismo · Las imágenes pertenecen a sus autores.</p>
+  </footer>
+
+  <!-- Datos (el orden importa: primero los datos, después el script) -->
+  <script src="data/auto.js"></script>        <!-- generado automáticamente: fotos, planos y colores -->
+  <script src="data/biblioteca.js"></script>  <!-- materiales y mobiliario -->
+  <script src="data/proyectos.js"></script>   <!-- información de cada proyecto -->
+
+  <!-- Comportamiento -->
+  <script src="script.js"></script>
+</body>
+</html>

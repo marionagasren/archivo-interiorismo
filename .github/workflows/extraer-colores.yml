@@ -1,0 +1,44 @@
+# Cada vez que se suben o cambian imágenes de un proyecto, este proceso
+# se ejecuta solo en GitHub: extrae los colores, actualiza data/auto.js
+# y guarda el resultado en el repositorio.
+
+name: Extraer colores
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "img/proyectos/**"
+      - "herramientas/**"
+  workflow_dispatch:   # permite lanzarlo a mano desde la pestaña "Actions"
+
+permissions:
+  contents: write
+
+jobs:
+  extraer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar librerías
+        run: pip install pillow numpy
+
+      - name: Extraer colores de las fotos
+        run: python herramientas/extraer_colores.py
+
+      - name: Guardar el resultado
+        run: |
+          if git diff --quiet data/auto.js; then
+            echo "No hay cambios en los colores."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898333+github-actions[bot]@users.noreply.github.com"
+            git add data/auto.js
+            git commit -m "Actualiza colores extraídos de las fotos"
+            git push
+          fi
