@@ -99,7 +99,8 @@ body.portada-visible .cabecera {
 }
 body.portada-visible .logo { opacity: 0; pointer-events: none; }
 
-/* Portada: foto centrada y el nombre a los dos lados */
+/* Portada: foto centrada y el nombre a los dos lados, cada palabra
+   centrada en su franja lisa */
 .portada-estudio {
   min-height: 100vh;
   min-height: 100svh;
@@ -122,8 +123,8 @@ body.portada-visible .logo { opacity: 0; pointer-events: none; }
   color: var(--texto);
   animation: aparecer 1.6s ease both;
 }
-.nombre-estudio span:first-child { grid-column: 1; justify-self: end; }
-.nombre-estudio span:last-child { grid-column: 3; justify-self: start; }
+.nombre-estudio span:first-child { grid-column: 1; justify-self: center; }
+.nombre-estudio span:last-child { grid-column: 3; justify-self: center; }
 
 .portada-foto {
   grid-column: 2;
