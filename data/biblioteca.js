@@ -6,6 +6,8 @@
 //  indica qué "id" usa. Así en la biblioteca no salen repetidos.
 //
 //  Imágenes:  img/materiales/<id>.jpg   y   img/mobiliario/<id>.jpg
+//    - Materiales: una TEXTURA del material (no un recorte del proyecto)
+//    - Mobiliario: foto de la pieza sobre fondo liso
 //  Si todavía no hay imagen, deja imagen: "" y se mostrará solo el nombre.
 // =====================================================================
 
@@ -13,9 +15,9 @@ window.BIBLIOTECA = {
 
   materiales: [
     { id: "microcemento-beige", nombre: "Microcemento beige", tipo: "Revestimiento continuo", acabado: "Suelos y paredes en un mismo tono", imagen: "img/materiales/microcemento-beige.jpg" },
-    { id: "microcemento-verde-oscuro", nombre: "Microcemento verde oscuro", tipo: "Revestimiento continuo", acabado: "Suelo, paredes y techo del baño", imagen: "" },
+    { id: "microcemento-verde-oscuro", nombre: "Microcemento verde oscuro", tipo: "Revestimiento continuo", acabado: "Suelo, paredes y techo del baño", imagen: "img/materiales/microcemento-verde-oscuro.jpg" },
     { id: "roble-natural", nombre: "Roble natural", tipo: "Madera", acabado: "Mobiliario de cocina", imagen: "img/materiales/roble-natural.jpg" },
-    { id: "hormigon", nombre: "Hormigón", tipo: "Obra", acabado: "Sofá integrado", imagen: "" },
+    { id: "hormigon", nombre: "Hormigón", tipo: "Obra", acabado: "Sofá integrado", imagen: "img/materiales/hormigon.jpg" },
     { id: "lino-natural", nombre: "Lino natural", tipo: "Textil", acabado: "Cortinas y cojines", imagen: "img/materiales/lino-natural.jpg" },
     { id: "aluminio-encerado", nombre: "Aluminio encerado", tipo: "Metal", acabado: "Encerado", imagen: "img/materiales/aluminio-encerado.jpg" },
     { id: "bloque-vidrio", nombre: "Bloque de vidrio translúcido", tipo: "Vidrio", acabado: "Pared del baño", imagen: "" },

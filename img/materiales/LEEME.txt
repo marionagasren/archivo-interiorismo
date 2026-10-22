@@ -1,6 +1,15 @@
 Imágenes de la BIBLIOTECA DE MATERIALES (compartida entre proyectos).
 
-- Una imagen por material, con su textura (mejor cuadrada, unos 1000 px).
+- Una TEXTURA del material (no un recorte de las fotos del proyecto),
+  cuadrada, unos 900 px.
 - Nombre del archivo = id del material: roble-natural.jpg, travertino-romano.jpg...
 - Minúsculas, sin acentos, sin espacios (usa guiones).
 - Después se registra en data/biblioteca.js y se asigna a los proyectos en data/proyectos.js.
+
+Origen de las texturas actuales:
+- hormigon: ambientCG Concrete034 (CC0)
+- aluminio-encerado: ambientCG Metal009 (CC0)
+- roble-natural: Poly Haven oak_veneer_01 (CC0)
+- lino-natural: Poly Haven rough_linen (CC0), recoloreada a tono lino natural
+- microcemento-beige: imagen aportada por 341 Studio
+- microcemento-verde-oscuro: la misma textura de microcemento, teñida de verde oscuro
