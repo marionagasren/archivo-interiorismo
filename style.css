@@ -88,52 +88,51 @@ main {
 body.en-portada main { max-width: none; padding: 0; }
 .contenedor { max-width: var(--ancho-max); margin: 0 auto; padding: 0 var(--margen); }
 
-/* Mientras se ve la portada, la cabecera flota encima de la foto, en blanco
-   y sin fondo; al bajar recupera su aspecto normal */
+/* Mientras se ve la portada, la cabecera no tiene fondo y el nombre
+   pequeño se oculta (ya se ve en grande); al bajar vuelven */
 body.en-portada .cabecera { position: fixed; left: 0; right: 0; }
-.cabecera, .cabecera a { transition: background-color .5s ease, border-color .5s ease, color .5s ease; }
+.cabecera, .logo { transition: background-color .5s ease, border-color .5s ease, opacity .5s ease; }
 body.portada-visible .cabecera {
   background-color: transparent;
   backdrop-filter: none;
   border-color: transparent;
 }
-body.portada-visible .cabecera a { color: #fff; border-color: transparent; }
-body.portada-visible .menu a:hover { border-color: #fff; }
+body.portada-visible .logo { opacity: 0; pointer-events: none; }
 
+/* Portada: foto centrada y el nombre a los dos lados */
 .portada-estudio {
-  position: relative;
   min-height: 100vh;
   min-height: 100svh;
   display: grid;
-  place-items: center;
-  text-align: center;
-  color: #fff;
-  /* Foto de fondo: img/portada.jpg. Mientras no exista, se ve la segunda
-     (provisional). Cuando subas tu foto, puedes borrar la segunda. */
-  background:
-    url("img/portada.jpg") center / cover no-repeat,
-    url("img/proyectos/bori-fontesta/foto-01.jpg") center / cover no-repeat,
-    var(--fondo-suave);
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: clamp(20px, 3vw, 56px);
+  padding: 88px var(--margen) 48px;
 }
 
-/* Velo muy suave para que el texto blanco se lea sobre cualquier foto */
-.portada-estudio::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(rgba(0, 0, 0, .18), rgba(0, 0, 0, .08) 40%, rgba(0, 0, 0, .22));
-}
+.nombre-estudio { display: contents; }   /* sus dos palabras se colocan en la rejilla */
 
-.nombre-estudio {
-  position: relative;
+.nombre-estudio span {
   font-family: var(--titulo);
   font-weight: 500;
-  font-size: clamp(40px, 6vw, 84px);
+  font-size: clamp(36px, 5.5vw, 84px);
   line-height: 1;
   letter-spacing: .02em;
   text-transform: uppercase;
-  text-shadow: 0 1px 24px rgba(0, 0, 0, .12);
+  color: var(--texto);
   animation: aparecer 1.6s ease both;
+}
+.nombre-estudio span:first-child { grid-column: 1; justify-self: end; }
+.nombre-estudio span:last-child { grid-column: 3; justify-self: start; }
+
+.portada-foto {
+  grid-column: 2;
+  grid-row: 1;
+  height: min(76vh, 920px);
+  width: auto;
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+  animation: aparecer 1.6s ease .2s both;
 }
 
 @keyframes aparecer {
@@ -370,4 +369,7 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
   .ficha div { grid-template-columns: 100px 1fr; }
   .leyenda th:nth-child(4), .leyenda td:nth-child(4) { display: none; }
   .boton { margin-left: 0; width: 100%; }
+  .portada-estudio { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 12px; padding-top: 120px; }
+  .nombre-estudio span { font-size: clamp(36px, 11vw, 56px); }
+  .portada-foto { order: 1; width: min(100%, 340px); height: auto; margin-top: 20px; }
 }

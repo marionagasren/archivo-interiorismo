@@ -147,11 +147,12 @@ function franjaColores(colores) {
 function vistaInicio() {
   app.innerHTML = `
     <section class="portada-estudio">
-      <h1 class="nombre-estudio">341 Studio</h1>
+      <h1 class="nombre-estudio"><span>341</span> <span>Studio</span></h1>
+      <img class="portada-foto" src="img/portada.jpg" alt="">
     </section>
     <div class="contenedor">${htmlProyectos("")}</div>`;
 
-  // Mientras se ve la portada, la cabecera va en blanco y transparente
+  // Mientras se ve la portada, la cabecera va sin fondo
   const portada = app.querySelector(".portada-estudio");
   new IntersectionObserver(([entrada]) => {
     document.body.classList.toggle("portada-visible", entrada.isIntersecting);
