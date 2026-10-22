@@ -40,9 +40,9 @@ window.PROYECTOS = [
     tipologia: "Vivienda",
     fotografo: "Salva López",
     fuente: "https://www.isernserra.com/es/projects/piso-barceloneta",
-    descripcion: "",
+    descripcion: "Un piso en la Barceloneta pensado como una galería habitable de diseño coleccionable. Al eliminar las divisiones, la sala, la cocina y el comedor forman un único espacio abierto al balcón, y los dormitorios y baños se agrupan junto a la entrada. El microcemento continuo en suelos y paredes, la cocina de roble natural y un sofá de hormigón integrado crean una base mediterránea serena, en la que conviven piezas vintage y contemporáneas. Como contrapunto, el baño se reviste por completo de microcemento verde oscuro.",
     colores: [],
-    materiales: [],
-    mobiliario: [],
+    materiales: ["microcemento-beige", "roble-natural", "hormigon", "lino-natural", "aluminio-encerado", "microcemento-verde-oscuro", "bloque-vidrio"],
+    mobiliario: ["mesa-fusteria-vidal", "lampara-sisisi", "silla-markelius", "silla-quadra", "section-coffee-table", "silla-dr-sonderbar", "lampara-falkland", "fragile-lamp", "l4-stool", "lampara-j45", "lampara-vis-a-vis", "lampara-lotek", "taburetes-vintage-60"],
   },
 ];

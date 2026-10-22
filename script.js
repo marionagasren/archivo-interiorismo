@@ -117,10 +117,14 @@ function fichaColor(c, grande = false) {
 function fichaPieza(item, tipo) {
   const detalle = tipo === "materiales"
     ? [item.tipo, item.acabado].filter(Boolean).join(" · ")
-    : [item.autor, item.marca].filter(Boolean).join(" · ");
+    : [item.autor, item.marca, item.año].filter(Boolean).join(" · ");
+  // Sin imagen todavía: se muestra el nombre en una ficha lisa
+  const imagen = item.imagen
+    ? `<img src="${texto(item.imagen)}" alt="${texto(item.nombre)}" loading="lazy">`
+    : `<span class="sin-imagen">${texto(item.nombre)}</span>`;
   return `
     <figure class="pieza">
-      <div class="pieza-imagen"><img src="${texto(item.imagen)}" alt="${texto(item.nombre)}" loading="lazy"></div>
+      <div class="pieza-imagen">${imagen}</div>
       <figcaption><strong>${texto(item.nombre)}</strong>${detalle ? `<span>${texto(detalle)}</span>` : ""}</figcaption>
     </figure>`;
 }
@@ -276,11 +280,14 @@ function moodboard(p) {
   const [fondo, ...resto] = p.colores;
   const foto = p.fotos[1] || p.fotos[0];
 
-  const materiales = p.materiales.length
-    ? p.materiales.map(m => fichaPieza(m, "materiales")).join("")
+  // En el moodboard solo van las piezas con imagen (máximo 4 de cada);
+  // la lista completa aparece debajo, en "Materialidad y mobiliario"
+  const conImagen = lista => lista.filter(item => item.imagen).slice(0, 4);
+  const materiales = conImagen(p.materiales).length
+    ? conImagen(p.materiales).map(m => fichaPieza(m, "materiales")).join("")
     : piezaPendiente("Material").repeat(4);
-  const mobiliario = p.mobiliario.length
-    ? p.mobiliario.map(m => fichaPieza(m, "mobiliario")).join("")
+  const mobiliario = conImagen(p.mobiliario).length
+    ? conImagen(p.mobiliario).map(m => fichaPieza(m, "mobiliario")).join("")
     : piezaPendiente("Mobiliario").repeat(2);
 
   return `
@@ -314,6 +321,33 @@ function moodboard(p) {
         </tbody>
       </table>
       <p class="nota">Colores extraídos automáticamente de las fotografías y asociados al RAL más cercano.</p>
+    </section>
+
+    ${listaPiezas(p)}`;
+}
+
+// Lista completa de materiales y mobiliario del proyecto
+function listaPiezas(p) {
+  if (!p.materiales.length && !p.mobiliario.length) return "";
+  const columna = (titulo, lista, tipo) => lista.length ? `
+    <div>
+      <h3>${titulo}</h3>
+      <ul>
+        ${lista.map(item => {
+          const detalle = tipo === "materiales"
+            ? item.acabado
+            : [item.autor, item.marca, item.año].filter(Boolean).join(" · ");
+          return `<li><span>${texto(item.nombre)}</span><span>${texto(detalle || "")}</span></li>`;
+        }).join("")}
+      </ul>
+    </div>` : "";
+  return `
+    <section class="bloque">
+      <h2 class="titulo-bloque">Materialidad y mobiliario</h2>
+      <div class="lista-piezas">
+        ${columna("Materiales", p.materiales, "materiales")}
+        ${columna("Mobiliario e iluminación", p.mobiliario, "mobiliario")}
+      </div>
     </section>`;
 }
 
