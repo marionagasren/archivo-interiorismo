@@ -151,7 +151,7 @@ function vistaPortada() {
              onerror="this.src.endsWith('.svg') ? this.src = 'img/logo.png' : this.parentNode.classList.add('sin-logo')">
         <span class="marca-texto">341</span>
       </div>
-      <h1 class="nombre-estudio">341 <em>Studio</em></h1>
+      <h1 class="nombre-estudio">341 Studio</h1>
       <p class="lema">Interiorismo</p>
       <a class="entrar" href="#/proyectos">Entrar</a>
     </section>`;

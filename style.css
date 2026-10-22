@@ -12,6 +12,7 @@
 
   --serif: "Cormorant Garamond", Georgia, serif;
   --sans: "Inter", "Helvetica Neue", Arial, sans-serif;
+  --titulo: "Manrope", "Helvetica Neue", Arial, sans-serif;   /* nombre del estudio */
 
   --margen: clamp(16px, 4vw, 56px);
   --ancho-max: 1440px;
@@ -105,13 +106,21 @@ body.en-portada .pie { display: none; }
   aspect-ratio: 1;
   border: 1px solid var(--texto);
   border-radius: 50%;
-  font-family: var(--serif);
-  font-size: clamp(36px, 5vw, 56px);
-  letter-spacing: .04em;
+  font-family: var(--titulo);
+  font-weight: 500;
+  font-size: clamp(28px, 4vw, 44px);
+  letter-spacing: .02em;
 }
 
-.nombre-estudio { font-size: clamp(56px, 10vw, 128px); line-height: .95; margin-top: 12px; }
-.nombre-estudio em { color: var(--texto-suave); }
+.nombre-estudio {
+  font-family: var(--titulo);
+  font-weight: 500;
+  font-size: clamp(44px, 9vw, 120px);
+  line-height: 1;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  margin-top: 12px;
+}
 .lema { margin: 0; font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: var(--texto-suave); }
 
 .entrar {
