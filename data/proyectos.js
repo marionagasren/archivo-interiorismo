@@ -4,6 +4,8 @@
 //  bloque de ejemplo, cambia los datos y separa los bloques con comas.
 //
 //  - id: tiene que ser EXACTAMENTE el nombre de la carpeta en img/proyectos/
+//  - tipo: "referencia" (proyectos de otros que me inspiran)
+//          o "propio" (proyectos de 341 Studio, para el porfolio)
 //  - Las fotos (foto-01.jpg...), los planos (plano-01.png...) y los colores
 //    se detectan solos desde la carpeta: no hace falta escribirlos aquí.
 //  - materiales y mobiliario: los "id" de data/biblioteca.js
@@ -15,6 +17,7 @@
 window.PROYECTOS = [
   {
     id: "bori-fontesta",
+    tipo: "referencia",
     nombre: "Bori i Fontestà",
     autores: "Meritxell Ribé i Josep Puigdomènech",
     ubicacion: "Barcelona",

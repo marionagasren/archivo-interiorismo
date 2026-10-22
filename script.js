@@ -1,10 +1,11 @@
 // =====================================================================
-//  ARCHIVO DE INTERIORISMO · script.js
+//  341 STUDIO · script.js
 //  Lee los datos (data/*.js) y construye cada página de la web.
 //
 //  La web es de una sola página: según lo que hay después de "#" en la
 //  dirección, se muestra una vista u otra:
-//    #/                        → listado de proyectos
+//    #/                        → portada con el logo del estudio
+//    #/proyectos               → listado de proyectos
 //    #/proyecto/bori-fontesta  → ficha de un proyecto + moodboard
 //    #/biblioteca/colores      → biblioteca (colores, materiales, mobiliario)
 //    #/generador               → generador de paletas
@@ -15,6 +16,8 @@ const PROYECTOS = window.PROYECTOS || [];
 const BIBLIOTECA = window.BIBLIOTECA || { materiales: [], mobiliario: [] };
 
 const app = document.getElementById("app");
+
+const TIPOS_PROYECTO = { propio: "Proyectos propios", referencia: "Referencias" };
 
 
 // ---------------------------------------------------------------------
@@ -136,18 +139,53 @@ function franjaColores(colores) {
 
 
 // ---------------------------------------------------------------------
-//  VISTA: LISTADO DE PROYECTOS
+//  VISTA: PORTADA
+//  Si existe img/logo.svg o img/logo.png se usa; si no, un logo de texto.
 // ---------------------------------------------------------------------
 
-function vistaInicio() {
+function vistaPortada() {
+  app.innerHTML = `
+    <section class="portada-estudio">
+      <div class="marca">
+        <img class="marca-logo" src="img/logo.svg" alt=""
+             onerror="this.src.endsWith('.svg') ? this.src = 'img/logo.png' : this.parentNode.classList.add('sin-logo')">
+        <span class="marca-texto">341</span>
+      </div>
+      <h1 class="nombre-estudio">341 <em>Studio</em></h1>
+      <p class="lema">Interiorismo</p>
+      <a class="entrar" href="#/proyectos">Entrar</a>
+    </section>`;
+}
+
+
+// ---------------------------------------------------------------------
+//  VISTA: LISTADO DE PROYECTOS
+//  #/proyectos            → todos
+//  #/proyectos/propio     → solo los de 341 Studio
+//  #/proyectos/referencia → solo las referencias
+// ---------------------------------------------------------------------
+
+function vistaProyectos(filtro) {
+  const tiposPresentes = Object.keys(TIPOS_PROYECTO).filter(t => proyectos.some(p => p.tipo === t));
+  if (!tiposPresentes.includes(filtro)) filtro = "";
+  const lista = filtro ? proyectos.filter(p => p.tipo === filtro) : proyectos;
+
+  // El filtro solo aparece cuando ya hay proyectos de los dos tipos
+  const filtros = tiposPresentes.length > 1 ? `
+    <nav class="pestañas">
+      <a href="#/proyectos" class="${filtro ? "" : "activa"}">Todos</a>
+      ${tiposPresentes.map(t => `<a href="#/proyectos/${t}" class="${filtro === t ? "activa" : ""}">${TIPOS_PROYECTO[t]}</a>`).join("")}
+    </nav>` : "";
+
   app.innerHTML = `
     <section class="intro">
       <h1>Proyectos</h1>
-      <p>Una selección de interiores de referencia. Cada proyecto se descompone en su paleta de colores, materiales y mobiliario.</p>
+      <p>Interiores de referencia y proyectos del estudio. Cada uno se descompone en su paleta de colores, materiales y mobiliario.</p>
+      ${filtros}
     </section>
 
     <section class="rejilla-proyectos">
-      ${proyectos.map(p => `
+      ${lista.map(p => `
         <a class="tarjeta" href="#/proyecto/${p.id}">
           <div class="tarjeta-imagen">
             ${p.fotos[0] ? `<img src="${p.fotos[0]}" alt="${texto(p.nombre)}" loading="lazy">` : ""}
@@ -169,6 +207,7 @@ function vistaProyecto(id) {
   if (!p) return vistaNoEncontrada();
 
   const datos = [
+    ["Proyecto", p.tipo === "propio" ? "341 Studio" : p.tipo === "referencia" ? "Referencia" : ""],
     ["Autores", p.autores], ["Ubicación", p.ubicacion], ["Año", p.año],
     ["Tipología", p.tipologia], ["Fotografía", p.fotografo],
   ].filter(([, valor]) => valor);
@@ -428,20 +467,22 @@ document.addEventListener("keydown", evento => {
 // ---------------------------------------------------------------------
 
 function vistaNoEncontrada() {
-  app.innerHTML = `<section class="intro"><h1>No encontrado</h1><p><a href="#/">Volver a los proyectos</a></p></section>`;
+  app.innerHTML = `<section class="intro"><h1>No encontrado</h1><p><a href="#/proyectos">Volver a los proyectos</a></p></section>`;
 }
 
 function navegar() {
   const [seccion, parametro] = location.hash.replace(/^#\/?/, "").split("/");
 
-  if (!seccion) vistaInicio();
+  if (!seccion) vistaPortada();
+  else if (seccion === "proyectos") vistaProyectos(parametro);
   else if (seccion === "proyecto") vistaProyecto(parametro);
   else if (seccion === "biblioteca") vistaBiblioteca(parametro);
   else if (seccion === "generador") vistaGenerador();
   else vistaNoEncontrada();
 
   // Marca en el menú la sección activa
-  const activa = seccion === "proyecto" || !seccion ? "proyectos" : seccion;
+  const activa = seccion === "proyecto" ? "proyectos" : seccion;
+  document.body.classList.toggle("en-portada", !seccion);
   document.querySelectorAll(".menu a").forEach(a => a.classList.toggle("activa", a.dataset.seccion === activa));
   window.scrollTo(0, 0);
 }

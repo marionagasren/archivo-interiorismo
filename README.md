@@ -1,8 +1,8 @@
-# Archivo de interiorismo
+# 341 Studio
 
-Archivo personal de proyectos de interiorismo. Cada proyecto se presenta con sus fotos, sus planos y un moodboard de colores, materiales y mobiliario. A partir de ellos se forma una biblioteca compartida y un generador de paletas.
+Web de 341 Studio: archivo de proyectos de interiorismo de referencia y, más adelante, porfolio de los proyectos del estudio. Cada proyecto se presenta con sus fotos, sus planos y un moodboard de colores, materiales y mobiliario. A partir de ellos se forma una biblioteca compartida y un generador de paletas.
 
-Para ver la web, abre `index.html` en el navegador.
+Para ver la web, abre `index.html` en el navegador. El logo del estudio se pone en `img/logo.svg` (o `img/logo.png`); mientras no exista, la portada muestra un logo provisional de texto.
 
 ## Estructura
 
@@ -26,7 +26,7 @@ herramientas/
 ## Añadir un proyecto
 
 1. Crea la carpeta `img/proyectos/<id>/` y sube las fotos como `foto-01.jpg`, `foto-02.jpg`... (la 01 es la portada) y, si los hay, los planos como `plano-01.png`.
-2. Añade el proyecto en `data/proyectos.js` con el mismo `id` que la carpeta.
+2. Añade el proyecto en `data/proyectos.js` con el mismo `id` que la carpeta y `tipo: "referencia"` o `tipo: "propio"`.
 3. Los colores se extraen solos: al subir fotos, GitHub ejecuta `herramientas/extraer_colores.py` y actualiza `data/auto.js` (ver la pestaña *Actions*). También se puede ejecutar a mano con `python3 herramientas/extraer_colores.py`.
 
 ## Créditos

@@ -1,5 +1,5 @@
 /* =====================================================================
-   ARCHIVO DE INTERIORISMO · style.css
+   341 STUDIO · style.css
    ===================================================================== */
 
 /* ---------- Variables: la "paleta" y las medidas de la web ---------- */
@@ -32,6 +32,9 @@ body {
 img { display: block; max-width: 100%; }
 a { color: inherit; }
 h1, h2, h3 { font-family: var(--serif); font-weight: 400; margin: 0; }
+
+/* Números "normales" (la Cormorant usa por defecto números de estilo antiguo) */
+body { font-variant-numeric: lining-nums; }
 
 main {
   max-width: var(--ancho-max);
@@ -74,6 +77,59 @@ main {
   border-bottom: 1px solid transparent;
 }
 .menu a:hover, .menu a.activa { color: var(--texto); border-color: var(--texto); }
+
+
+/* ---------- Portada (pantalla de entrada) ---------- */
+body.en-portada .cabecera,
+body.en-portada .pie { display: none; }
+
+.portada-estudio {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 20px;
+  animation: aparecer 1.4s ease both;
+}
+
+.marca { width: clamp(96px, 14vw, 160px); }
+.marca-logo { width: 100%; height: auto; }
+.marca-texto { display: none; }
+.marca.sin-logo .marca-logo { display: none; }
+.marca.sin-logo .marca-texto {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border: 1px solid var(--texto);
+  border-radius: 50%;
+  font-family: var(--serif);
+  font-size: clamp(36px, 5vw, 56px);
+  letter-spacing: .04em;
+}
+
+.nombre-estudio { font-size: clamp(56px, 10vw, 128px); line-height: .95; margin-top: 12px; }
+.nombre-estudio em { color: var(--texto-suave); }
+.lema { margin: 0; font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: var(--texto-suave); }
+
+.entrar {
+  margin-top: 40px;
+  font-size: 12px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 14px 36px;
+  border: 1px solid var(--texto);
+  transition: background .3s, color .3s;
+}
+.entrar:hover { background: var(--texto); color: var(--fondo); }
+
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
 
 
 /* ---------- Introducción de cada página ---------- */
@@ -208,7 +264,7 @@ main {
 
 
 /* ---------- Biblioteca ---------- */
-.pestañas { display: flex; gap: 28px; margin-top: 8px; }
+.pestañas { display: flex; flex-wrap: wrap; gap: 8px 28px; margin-top: 24px; }
 .pestañas a { font-family: var(--serif); font-size: 26px; text-decoration: none; color: var(--texto-suave); }
 .pestañas a.activa { color: var(--texto); text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1px; }
 
