@@ -84,27 +84,56 @@ main {
 
 /* ---------- Portada (pantalla de entrada) ---------- */
 
-/* La cabecera se esconde mientras se ve la portada */
-.cabecera { transition: transform .5s ease, opacity .5s ease; }
-body.portada-visible .cabecera { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+/* En el inicio, la portada ocupa todo el ancho de la pantalla */
+body.en-portada main { max-width: none; padding: 0; }
+.contenedor { max-width: var(--ancho-max); margin: 0 auto; padding: 0 var(--margen); }
+
+/* Mientras se ve la portada, la cabecera flota encima de la foto, en blanco
+   y sin fondo; al bajar recupera su aspecto normal */
 body.en-portada .cabecera { position: fixed; left: 0; right: 0; }
+.cabecera, .cabecera a { transition: background-color .5s ease, border-color .5s ease, color .5s ease; }
+body.portada-visible .cabecera {
+  background-color: transparent;
+  backdrop-filter: none;
+  border-color: transparent;
+}
+body.portada-visible .cabecera a { color: #fff; border-color: transparent; }
+body.portada-visible .menu a:hover { border-color: #fff; }
 
 .portada-estudio {
+  position: relative;
   min-height: 100vh;
   min-height: 100svh;
   display: grid;
   place-items: center;
   text-align: center;
+  color: #fff;
+  /* Foto de fondo: img/portada.jpg. Mientras no exista, se ve la segunda
+     (provisional). Cuando subas tu foto, puedes borrar la segunda. */
+  background:
+    url("img/portada.jpg") center / cover no-repeat,
+    url("img/proyectos/bori-fontesta/foto-01.jpg") center / cover no-repeat,
+    var(--fondo-suave);
+}
+
+/* Velo muy suave para que el texto blanco se lea sobre cualquier foto */
+.portada-estudio::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(0, 0, 0, .18), rgba(0, 0, 0, .08) 40%, rgba(0, 0, 0, .22));
 }
 
 .nombre-estudio {
+  position: relative;
   font-family: var(--titulo);
   font-weight: 500;
-  font-size: clamp(44px, 9vw, 120px);
+  font-size: clamp(40px, 6vw, 84px);
   line-height: 1;
   letter-spacing: .02em;
   text-transform: uppercase;
-  animation: aparecer 1.4s ease both;
+  text-shadow: 0 1px 24px rgba(0, 0, 0, .12);
+  animation: aparecer 1.6s ease both;
 }
 
 @keyframes aparecer {

@@ -149,13 +149,13 @@ function vistaInicio() {
     <section class="portada-estudio">
       <h1 class="nombre-estudio">341 Studio</h1>
     </section>
-    ${htmlProyectos("")}`;
+    <div class="contenedor">${htmlProyectos("")}</div>`;
 
-  // La cabecera se esconde mientras se ve la portada y aparece al bajar
+  // Mientras se ve la portada, la cabecera va en blanco y transparente
   const portada = app.querySelector(".portada-estudio");
   new IntersectionObserver(([entrada]) => {
     document.body.classList.toggle("portada-visible", entrada.isIntersecting);
-  }, { threshold: 0.15 }).observe(portada);
+  }, { rootMargin: "-72px 0px 0px 0px" }).observe(portada);
 }
 
 
