@@ -61,11 +61,13 @@ main {
 }
 
 .logo {
-  font-family: var(--serif);
-  font-size: 22px;
+  font-family: var(--titulo);
+  font-weight: 500;
+  font-size: 17px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
   text-decoration: none;
 }
-.logo em { margin-left: 6px; color: var(--texto-suave); }
 
 .menu { display: flex; gap: 28px; }
 .menu a {
@@ -81,35 +83,18 @@ main {
 
 
 /* ---------- Portada (pantalla de entrada) ---------- */
-body.en-portada .cabecera,
-body.en-portada .pie { display: none; }
+
+/* La cabecera se esconde mientras se ve la portada */
+.cabecera { transition: transform .5s ease, opacity .5s ease; }
+body.portada-visible .cabecera { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+body.en-portada .cabecera { position: fixed; left: 0; right: 0; }
 
 .portada-estudio {
   min-height: 100vh;
   min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  gap: 20px;
-  animation: aparecer 1.4s ease both;
-}
-
-.marca { width: clamp(96px, 14vw, 160px); }
-.marca-logo { width: 100%; height: auto; }
-.marca-texto { display: none; }
-.marca.sin-logo .marca-logo { display: none; }
-.marca.sin-logo .marca-texto {
   display: grid;
   place-items: center;
-  aspect-ratio: 1;
-  border: 1px solid var(--texto);
-  border-radius: 50%;
-  font-family: var(--titulo);
-  font-weight: 500;
-  font-size: clamp(28px, 4vw, 44px);
-  letter-spacing: .02em;
+  text-align: center;
 }
 
 .nombre-estudio {
@@ -119,21 +104,8 @@ body.en-portada .pie { display: none; }
   line-height: 1;
   letter-spacing: .02em;
   text-transform: uppercase;
-  margin-top: 12px;
+  animation: aparecer 1.4s ease both;
 }
-.lema { margin: 0; font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: var(--texto-suave); }
-
-.entrar {
-  margin-top: 40px;
-  font-size: 12px;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-  text-decoration: none;
-  padding: 14px 36px;
-  border: 1px solid var(--texto);
-  transition: background .3s, color .3s;
-}
-.entrar:hover { background: var(--texto); color: var(--fondo); }
 
 @keyframes aparecer {
   from { opacity: 0; transform: translateY(12px); }
@@ -360,7 +332,6 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 @media (max-width: 800px) {
   .cabecera { flex-direction: column; gap: 8px; }
   .menu { gap: 20px; }
-  .logo em { display: none; }
   .proyecto-cabecera { grid-template-columns: 1fr; }
   .descripcion { grid-column: 1; }
   .galeria { grid-template-columns: 1fr; }

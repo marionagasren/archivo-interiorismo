@@ -4,7 +4,7 @@
 //
 //  La web es de una sola página: según lo que hay después de "#" en la
 //  dirección, se muestra una vista u otra:
-//    #/                        → portada con el logo del estudio
+//    #/                        → portada con el nombre del estudio + proyectos
 //    #/proyectos               → listado de proyectos
 //    #/proyecto/bori-fontesta  → ficha de un proyecto + moodboard
 //    #/biblioteca/colores      → biblioteca (colores, materiales, mobiliario)
@@ -139,22 +139,23 @@ function franjaColores(colores) {
 
 
 // ---------------------------------------------------------------------
-//  VISTA: PORTADA
-//  Si existe img/logo.svg o img/logo.png se usa; si no, un logo de texto.
+//  VISTA: INICIO
+//  Primero una portada a pantalla completa con el nombre del estudio;
+//  al deslizar hacia abajo aparecen los proyectos.
 // ---------------------------------------------------------------------
 
-function vistaPortada() {
+function vistaInicio() {
   app.innerHTML = `
     <section class="portada-estudio">
-      <div class="marca">
-        <img class="marca-logo" src="img/logo.svg" alt=""
-             onerror="this.src.endsWith('.svg') ? this.src = 'img/logo.png' : this.parentNode.classList.add('sin-logo')">
-        <span class="marca-texto">341</span>
-      </div>
       <h1 class="nombre-estudio">341 Studio</h1>
-      <p class="lema">Interiorismo</p>
-      <a class="entrar" href="#/proyectos">Entrar</a>
-    </section>`;
+    </section>
+    ${htmlProyectos("")}`;
+
+  // La cabecera se esconde mientras se ve la portada y aparece al bajar
+  const portada = app.querySelector(".portada-estudio");
+  new IntersectionObserver(([entrada]) => {
+    document.body.classList.toggle("portada-visible", entrada.isIntersecting);
+  }, { threshold: 0.15 }).observe(portada);
 }
 
 
@@ -166,6 +167,10 @@ function vistaPortada() {
 // ---------------------------------------------------------------------
 
 function vistaProyectos(filtro) {
+  app.innerHTML = htmlProyectos(filtro);
+}
+
+function htmlProyectos(filtro) {
   const tiposPresentes = Object.keys(TIPOS_PROYECTO).filter(t => proyectos.some(p => p.tipo === t));
   if (!tiposPresentes.includes(filtro)) filtro = "";
   const lista = filtro ? proyectos.filter(p => p.tipo === filtro) : proyectos;
@@ -177,7 +182,7 @@ function vistaProyectos(filtro) {
       ${tiposPresentes.map(t => `<a href="#/proyectos/${t}" class="${filtro === t ? "activa" : ""}">${TIPOS_PROYECTO[t]}</a>`).join("")}
     </nav>` : "";
 
-  app.innerHTML = `
+  return `
     <section class="intro">
       <h1>Proyectos</h1>
       <p>Interiores de referencia y proyectos del estudio. Cada uno se descompone en su paleta de colores, materiales y mobiliario.</p>
@@ -473,7 +478,7 @@ function vistaNoEncontrada() {
 function navegar() {
   const [seccion, parametro] = location.hash.replace(/^#\/?/, "").split("/");
 
-  if (!seccion) vistaPortada();
+  if (!seccion) vistaInicio();
   else if (seccion === "proyectos") vistaProyectos(parametro);
   else if (seccion === "proyecto") vistaProyecto(parametro);
   else if (seccion === "biblioteca") vistaBiblioteca(parametro);
@@ -483,6 +488,7 @@ function navegar() {
   // Marca en el menú la sección activa
   const activa = seccion === "proyecto" ? "proyectos" : seccion;
   document.body.classList.toggle("en-portada", !seccion);
+  if (seccion) document.body.classList.remove("portada-visible");
   document.querySelectorAll(".menu a").forEach(a => a.classList.toggle("activa", a.dataset.seccion === activa));
   window.scrollTo(0, 0);
 }
