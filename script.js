@@ -8,7 +8,7 @@
 //    #/proyectos               → listado de proyectos
 //    #/proyecto/bori-fontesta  → ficha de un proyecto + moodboard
 //    #/biblioteca/colores      → biblioteca (colores, materiales, mobiliario)
-//    #/generador               → generador de paletas
+//    #/generador               → generador de moodboards (generador.js)
 // =====================================================================
 
 const AUTO = window.AUTO || {};
@@ -34,15 +34,6 @@ function texto(valor) {
 function esOscuro(hex) {
   const [r, g, b] = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
   return 0.299 * r + 0.587 * g + 0.114 * b < 140;
-}
-
-function mezclar(lista) {
-  const copia = [...lista];
-  for (let i = copia.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copia[i], copia[j]] = [copia[j], copia[i]];
-  }
-  return copia;
 }
 
 // Convierte un nombre en un trozo de dirección: "Hormigón y cemento" → "hormigon-y-cemento"
@@ -508,95 +499,8 @@ function vistaBiblioteca(tipo, filtro, subfiltro) {
 
 
 // ---------------------------------------------------------------------
-//  VISTA: GENERADOR DE PALETAS
-//  Versión base: más adelante se le darán los diseños de Pinterest.
+//  VISTA: GENERADOR DE MOODBOARDS → está en generador.js
 // ---------------------------------------------------------------------
-
-const generador = { tipos: ["colores"], cantidad: 5, fijados: [], resultado: [] };
-
-function elementosDisponibles() {
-  const lista = [];
-  if (generador.tipos.includes("colores"))
-    bibliotecaColores().forEach(c => lista.push({ ...c, grupo: "colores", clave: c.codigo || c.hex }));
-  for (const tipo of ["materiales", "mobiliario"])
-    if (generador.tipos.includes(tipo))
-      bibliotecaPiezas(tipo).forEach(item => lista.push({ ...item, grupo: tipo, clave: item.id }));
-  return lista;
-}
-
-function generarPaleta() {
-  const disponibles = elementosDisponibles();
-  const fijados = generador.resultado.filter(e => generador.fijados.includes(e.clave));
-  const nuevos = mezclar(disponibles.filter(e => !generador.fijados.includes(e.clave)))
-    .slice(0, Math.max(0, generador.cantidad - fijados.length));
-  generador.resultado = [...fijados, ...nuevos];
-  pintarPaleta();
-}
-
-function pintarPaleta() {
-  const zona = document.getElementById("paleta");
-  if (!generador.resultado.length) {
-    zona.innerHTML = `<p class="vacio">No hay elementos de este tipo en la biblioteca todavía.</p>`;
-    return;
-  }
-  zona.innerHTML = generador.resultado.map(e => `
-    <div class="paleta-item ${generador.fijados.includes(e.clave) ? "fijado" : ""}" data-clave="${texto(e.clave)}">
-      ${e.grupo === "colores" ? fichaColor(e, true) : fichaPieza(e, e.grupo)}
-      <button class="fijar" title="Fijar este elemento">${generador.fijados.includes(e.clave) ? "Fijado" : "Fijar"}</button>
-    </div>`).join("");
-
-  zona.querySelectorAll(".fijar").forEach(boton => boton.addEventListener("click", () => {
-    const clave = boton.closest(".paleta-item").dataset.clave;
-    generador.fijados = generador.fijados.includes(clave)
-      ? generador.fijados.filter(c => c !== clave)
-      : [...generador.fijados, clave];
-    pintarPaleta();
-  }));
-}
-
-function vistaGenerador() {
-  const opciones = [["colores", "Colores"], ["materiales", "Materiales"], ["mobiliario", "Mobiliario"]];
-
-  app.innerHTML = `
-    <section class="intro">
-      <h1>Generador</h1>
-      <p>Combina colores, materiales y mobiliario de la biblioteca. Fija los que te gusten y vuelve a generar el resto. Pulsa la barra espaciadora para generar.</p>
-    </section>
-
-    <form class="controles" onsubmit="return false">
-      <fieldset>
-        <legend>Incluir</legend>
-        ${opciones.map(([clave, nombre]) => `
-          <label><input type="checkbox" name="tipo" value="${clave}" ${generador.tipos.includes(clave) ? "checked" : ""}> ${nombre}</label>`).join("")}
-      </fieldset>
-      <label class="cantidad">Elementos <input type="range" min="3" max="8" value="${generador.cantidad}" name="cantidad"> <output>${generador.cantidad}</output></label>
-      <button type="button" id="generar" class="boton">Generar</button>
-    </form>
-
-    <section id="paleta" class="paleta"></section>`;
-
-  app.querySelectorAll('input[name="tipo"]').forEach(casilla => casilla.addEventListener("change", () => {
-    generador.tipos = [...app.querySelectorAll('input[name="tipo"]:checked')].map(c => c.value);
-    generador.fijados = [];
-    generarPaleta();
-  }));
-  const rango = app.querySelector('input[name="cantidad"]');
-  rango.addEventListener("input", () => {
-    generador.cantidad = Number(rango.value);
-    app.querySelector(".cantidad output").textContent = rango.value;
-    generarPaleta();
-  });
-  document.getElementById("generar").addEventListener("click", generarPaleta);
-
-  generarPaleta();
-}
-
-document.addEventListener("keydown", evento => {
-  if (evento.code === "Space" && location.hash === "#/generador" && evento.target === document.body) {
-    evento.preventDefault();
-    generarPaleta();
-  }
-});
 
 
 // ---------------------------------------------------------------------

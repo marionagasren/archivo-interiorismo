@@ -355,55 +355,110 @@ body.portada-visible .cabecera { transform: translateY(-100%); opacity: 0; point
 code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background: var(--fondo-suave); padding: 2px 6px; font-style: normal; }
 
 
-/* ---------- Generador ---------- */
-.controles {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 24px 40px;
-  padding: 20px 0;
-  border-top: 1px solid var(--linea);
-  border-bottom: 1px solid var(--linea);
-}
-.controles fieldset { border: 0; margin: 0; padding: 0; display: flex; gap: 20px; flex-wrap: wrap; }
-.controles legend { float: left; margin-right: 8px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--texto-suave); }
-.controles label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
-.controles input { accent-color: var(--texto); }
+/* ---------- Generador de moodboards ---------- */
+.etiqueta { font-family: var(--sans); font-size: 11px; font-weight: 400; letter-spacing: .12em; text-transform: uppercase; color: var(--texto-suave); margin-bottom: 14px; }
 
-.boton {
-  margin-left: auto;
+/* Franja de plantillas */
+.plantillas { padding-bottom: 40px; border-bottom: 1px solid var(--linea); }
+.plantillas-fila { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: thin; }
+.plantilla {
+  position: relative;
+  flex: none;
+  min-width: 130px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  background: none;
+  border: 1px solid transparent;
   font: inherit;
   font-size: 12px;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  padding: 12px 28px;
-  border: 1px solid var(--texto);
-  background: var(--texto);
-  color: var(--fondo);
+  color: var(--texto);
   cursor: pointer;
+  text-align: left;
 }
-.boton:hover { background: transparent; color: var(--texto); }
+.plantilla:hover { border-color: var(--linea); }
+.plantilla.activa { border-color: var(--texto); }
+.plantilla .lienzo-mini { height: 150px; width: calc(150px * var(--prop)); margin: 0 auto; }
+.borrar-plantilla { position: absolute; top: 2px; right: 6px; font-size: 16px; color: var(--texto-suave); }
+.borrar-plantilla:hover { color: var(--texto); }
+.plantilla-nueva { justify-content: center; align-items: flex-start; border: 1px dashed var(--linea); cursor: default; }
+.plantilla-mas { font-family: var(--serif); font-size: 34px; line-height: 1; }
+.plantilla-nueva select, .plantilla-nueva button { font: inherit; font-size: 12px; padding: 4px 6px; border: 1px solid var(--linea); background: var(--fondo); cursor: pointer; }
 
-.paleta {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 12px;
-  padding: 40px 0 96px;
-}
-.paleta .muestra-color.grande { min-height: 360px; }
-.paleta-item { display: flex; flex-direction: column; gap: 8px; }
-.fijar {
+/* Editor: lienzo a la izquierda y biblioteca a la derecha */
+.editor { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 40px; padding: 40px 0 96px; align-items: start; }
+.barra { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 10px; }
+.barra button {
   font: inherit;
-  font-size: 11px;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  background: none;
+  font-size: 12px;
+  padding: 7px 12px;
   border: 1px solid var(--linea);
-  padding: 6px;
+  background: transparent;
+  color: var(--texto);
   cursor: pointer;
-  color: var(--texto-suave);
 }
-.paleta-item.fijado .fijar { background: var(--texto); color: var(--fondo); border-color: var(--texto); }
+.barra button:hover, .barra button.activa { border-color: var(--texto); }
+.barra-separador { width: 1px; height: 22px; background: var(--linea); margin: 0 6px; }
+.barra-seleccion { min-height: 34px; }
+.barra-titulo { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--texto-suave); margin-right: 8px; }
+.aviso { font-size: 13px; color: var(--texto-suave); font-style: italic; min-height: 20px; }
+
+#zona-lienzo .lienzo { width: min(100%, calc(78vh * var(--prop, 1))); margin: 0 auto; }
+
+/* Lienzo y recuadros (también en las miniaturas de las plantillas) */
+.lienzo { position: relative; background: #ECE9E3; overflow: hidden; touch-action: none; container-type: inline-size; }
+.recuadro { position: absolute; }
+.recuadro-forma { position: absolute; inset: 0; overflow: hidden; }
+.forma-circulo .recuadro-forma { border-radius: 50%; }
+.forma-piedra .recuadro-forma { clip-path: polygon(8% 14%, 30% 2%, 62% 6%, 88% 0%, 100% 30%, 94% 62%, 100% 88%, 70% 100%, 38% 95%, 12% 100%, 0% 74%, 4% 42%); }
+
+.recuadro.sin-relleno .recuadro-forma { border: 1px dashed rgba(42, 38, 34, .45); background: rgba(255, 255, 255, .25); }
+.forma-piedra.sin-relleno .recuadro-forma { border: 0; background: rgba(42, 38, 34, .12); }
+.lienzo-mini .recuadro.sin-relleno .recuadro-forma { border-color: rgba(42, 38, 34, .35); background: rgba(255, 255, 255, .45); }
+.recuadro.lleno { filter: drop-shadow(0 2px 2px rgba(40, 30, 20, .16)) drop-shadow(0 10px 14px rgba(40, 30, 20, .16)); }
+.recuadro.lleno-mueble { filter: none; mix-blend-mode: multiply; }
+
+.relleno { position: absolute; inset: 0; width: 100%; height: 100%; background-size: cover; background-position: center; }
+.relleno-color::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .18;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+/* Los muebles se ven enteros y su fondo blanco se funde con el lienzo */
+.relleno-mueble { object-fit: contain; }
+
+#zona-lienzo .recuadro { cursor: move; }
+#zona-lienzo .recuadro.seleccionado::after { content: ""; position: absolute; inset: -4px; border: 1px solid var(--texto); pointer-events: none; }
+#zona-lienzo .recuadro.destino .recuadro-forma { outline: 2px solid var(--texto); outline-offset: -2px; }
+.tirador { position: absolute; right: -6px; bottom: -6px; width: 12px; height: 12px; background: var(--fondo); border: 1px solid var(--texto); cursor: nwse-resize; display: none; z-index: 2; }
+.recuadro.seleccionado .tirador { display: block; }
+
+/* Textos del lienzo */
+.texto-lienzo { position: absolute; z-index: 50; color: var(--texto); cursor: move; line-height: 1.2; }
+.texto-lienzo[contenteditable="true"] { cursor: text; outline: 1px dashed var(--texto); background: rgba(255, 255, 255, .6); }
+.texto-lienzo.seleccionado { outline: 1px solid var(--texto); outline-offset: 4px; }
+/* El tamaño del texto va en proporción al ancho del lienzo (cqw) */
+.texto-titulo { font-family: var(--serif); font-size: 7cqw; line-height: .95; text-transform: uppercase; }
+.texto-subtitulo { font-size: 1.7cqw; letter-spacing: .18em; text-transform: uppercase; line-height: 1.5; }
+.texto-nota { font-family: var(--serif); font-size: 2.1cqw; line-height: 1.3; }
+.lienzo-mini .texto-lienzo { font-size: 3px; line-height: 1; overflow: hidden; height: 3px; background: rgba(42, 38, 34, .35); color: transparent; }
+.lienzo-mini .texto-titulo { height: 5px; }
+
+/* Biblioteca del editor */
+.editor-biblioteca { position: sticky; top: 90px; }
+.pestañas-biblioteca { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-bottom: 16px; }
+.pestañas-biblioteca button { font: inherit; font-family: var(--serif); font-size: 19px; background: none; border: 0; padding: 0 0 2px; color: var(--texto-suave); cursor: pointer; border-bottom: 1px solid transparent; }
+.pestañas-biblioteca button.activa { color: var(--texto); border-color: var(--texto); }
+.piezas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 10px; max-height: 70vh; overflow-y: auto; padding: 4px; }
+.pieza-editor { display: flex; flex-direction: column; gap: 6px; background: none; border: 0; padding: 0; font: inherit; text-align: left; cursor: grab; }
+.pieza-muestra { display: block; aspect-ratio: 1; background: var(--fondo-suave) center / cover no-repeat; box-shadow: 0 1px 3px rgba(0, 0, 0, .12); }
+.pieza-mueble { background-size: contain; background-color: #fff; }
+.pieza-nombre { font-size: 11px; line-height: 1.25; color: var(--texto-suave); }
+.pieza-editor:hover .pieza-muestra, .pieza-editor.en-mano .pieza-muestra { outline: 2px solid var(--texto); outline-offset: 2px; }
 
 
 /* ---------- Imagen ampliada ---------- */
@@ -436,7 +491,9 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
   .moodboard { grid-template-columns: 1fr; gap: 40px; }
   .ficha div { grid-template-columns: 100px 1fr; }
     .lista-piezas { grid-template-columns: 1fr; }
-  .boton { margin-left: 0; width: 100%; }
+  .editor { grid-template-columns: 1fr; }
+  .editor-biblioteca { position: static; }
+  .piezas { grid-template-columns: repeat(4, 1fr); max-height: 50vh; }
   .portada-estudio { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 12px; }
   .nombre-estudio span { font-size: clamp(36px, 11vw, 56px); }
   .portada-foto { order: 1; width: min(100%, 340px); height: auto; margin-top: 20px; }

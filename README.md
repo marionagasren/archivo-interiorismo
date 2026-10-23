@@ -9,10 +9,12 @@ Para ver la web, abre `index.html` en el navegador. El logo del estudio se pone 
 ```
 index.html            contenido y estructura
 style.css             diseño
-script.js             comportamiento (vistas, moodboard, biblioteca, generador)
+script.js             comportamiento (vistas, moodboard, biblioteca)
+generador.js          generador de moodboards (editor con plantillas)
 data/
   proyectos.js        información de cada proyecto (se edita a mano)
   biblioteca.js       materiales y mobiliario (se edita a mano)
+  plantillas.js       plantillas del generador de moodboards
   auto.js             fotos, planos y colores (GENERADO automáticamente)
 img/
   proyectos/<id>/     foto-01.jpg, foto-02.jpg... plano-01.png... info.txt
