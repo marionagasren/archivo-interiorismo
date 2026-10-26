@@ -14,6 +14,7 @@ const CLAVE_PLANTILLAS = "341-mis-plantillas";
 
 let tablero = null;       // el moodboard en el que se está trabajando
 let seleccion = null;     // id del recuadro o texto seleccionado
+let portapapeles = null; // copia del recuadro o texto (Ctrl/Cmd + C)
 let enMano = null;        // pieza de la biblioteca elegida con un toque (móvil)
 let pestañaBiblioteca = "material";
 let filtroBiblioteca = "";     // subcategoría elegida en la biblioteca del editor
@@ -239,15 +240,22 @@ function pintarHerramientas() {
       <button data-accion="delante">Al frente</button>
       <button data-accion="detras">Atrás</button>
       ${r.contenido ? `<button data-accion="quitar">Vaciar recuadro</button>` : ""}
+      <button data-accion="copiar" title="Ctrl/Cmd + C">Copiar</button>
+      <button data-accion="pegar" title="Ctrl/Cmd + V">Pegar</button>
+      <button data-accion="duplicar" title="Ctrl/Cmd + D">Duplicar</button>
       <button data-accion="eliminar">Eliminar</button>`;
   } else if (t) {
     barra.innerHTML = `
       <span class="barra-titulo">Texto · doble clic para escribir</span>
       ${["titulo", "subtitulo", "nota"].map(e => `<button data-estilo="${e}" class="${t.estilo === e ? "activa" : ""}">${{ titulo: "Título", subtitulo: "Subtítulo", nota: "Nota" }[e]}</button>`).join("")}
       <span class="barra-separador"></span>
+      <button data-accion="copiar" title="Ctrl/Cmd + C">Copiar</button>
+      <button data-accion="pegar" title="Ctrl/Cmd + V">Pegar</button>
+      <button data-accion="duplicar" title="Ctrl/Cmd + D">Duplicar</button>
       <button data-accion="eliminar">Eliminar</button>`;
   } else {
-    barra.innerHTML = `<span class="barra-titulo">Selecciona un recuadro para cambiarlo</span>`;
+    barra.innerHTML = `<span class="barra-titulo">Selecciona un recuadro para cambiarlo</span>
+      ${portapapeles ? `<button data-accion="pegar" title="Ctrl/Cmd + V">Pegar</button>` : ""}`;
   }
   document.getElementById("aviso").textContent = enMano
     ? `Toca un recuadro para colocar «${buscarPieza(enMano)?.nombre}», o una zona libre para crear uno nuevo.`
@@ -329,6 +337,41 @@ function borrarPlantilla(id) {
   pintarPlantillas();
 }
 
+// Copiar y pegar: la copia es idéntica (forma, tamaño, contenido) y aparece
+// un poco desplazada y por encima de las demás. Pegar varias veces seguidas
+// va creando una escalera de copias.
+function copiar() {
+  const r = tablero.recuadros.find(x => x.id === seleccion);
+  const t = tablero.textos.find(x => x.id === seleccion);
+  if (!r && !t) return;
+  portapapeles = { tipo: r ? "recuadro" : "texto", datos: structuredClone(r || t), veces: 0 };
+  pintarHerramientas();
+}
+
+function pegar() {
+  if (!portapapeles) return;
+  portapapeles.veces++;
+  const desplazamiento = 3 * portapapeles.veces;
+  const copia = { ...structuredClone(portapapeles.datos), id: nuevoId(portapapeles.tipo === "recuadro" ? "r" : "t") };
+  copia.x = Math.round((copia.x + desplazamiento) * 10) / 10;
+  copia.y = Math.round((copia.y + desplazamiento) * 10) / 10;
+  if (portapapeles.tipo === "recuadro") {
+    copia.z = Math.max(0, ...tablero.recuadros.map(x => x.z ?? 0)) + 1;
+    tablero.recuadros.push(copia);
+  } else {
+    tablero.textos.push(copia);
+  }
+  seleccion = copia.id;
+  pintarLienzo();
+}
+
+// Mover lo seleccionado con las flechas (Mayúsculas = pasos más grandes)
+function empujar(item, dx, dy) {
+  item.x = Math.round((item.x + dx) * 10) / 10;
+  item.y = Math.round((item.y + dy) * 10) / 10;
+  pintarLienzo();
+}
+
 function colocar(idRecuadro, pieza) {
   const r = tablero.recuadros.find(x => x.id === idRecuadro);
   if (!r) return;
@@ -358,7 +401,7 @@ function ejes(r, proporcion) {
   return { x: [r.x, r.x + r.w / 2, r.x + r.w], y: h ? [r.y, r.y + h / 2, r.y + h] : [r.y] };
 }
 
-function alinear(item, tipo, caja) {
+function alinear(item, tipo, caja, ejeBloqueado = null) {
   const proporcion = tablero.proporcion;
   const otros = [...tablero.recuadros, ...tablero.textos].filter(o => o.id !== item.id);
   const lineasX = [0, 50, 100, ...otros.flatMap(o => ejes(o, proporcion).x)];
@@ -380,9 +423,10 @@ function alinear(item, tipo, caja) {
   let guiaX = null, guiaY = null;
 
   if (tipo === "mover") {
-    const mx = cercana(propios.x, lineasX, imanX);
+    // con el eje bloqueado (Mayúsculas), solo se imanta en la dirección del movimiento
+    const mx = ejeBloqueado === "y" ? null : cercana(propios.x, lineasX, imanX);
     if (mx) { item.x = Math.round((item.x + mx.d) * 100) / 100; guiaX = mx.linea; }
-    const my = cercana(propios.y, lineasY, imanY);
+    const my = ejeBloqueado === "x" ? null : cercana(propios.y, lineasY, imanY);
     if (my) { item.y = Math.round((item.y + my.d) * 100) / 100; guiaY = my.linea; }
   } else {
     // Al estirar solo se mueven el borde derecho y el inferior
@@ -506,6 +550,9 @@ function activarEditor() {
     if (accion === "delante" && r) r.z = Math.max(...zs) + 1;
     if (accion === "detras" && r) r.z = Math.min(...zs) - 1;
     if (accion === "quitar" && r) r.contenido = null;
+    if (accion === "copiar") return copiar();
+    if (accion === "pegar") return pegar();
+    if (accion === "duplicar") return copiar() || pegar();
     if (accion === "eliminar") {
       tablero.recuadros = tablero.recuadros.filter(x => x.id !== seleccion);
       tablero.textos = tablero.textos.filter(x => x.id !== seleccion);
@@ -550,8 +597,16 @@ function activarEditor() {
   });
   zona.addEventListener("pointermove", e => {
     if (!gesto) return;
-    const dx = (e.clientX - gesto.inicioX) / gesto.caja.width * 100;
-    const dy = (e.clientY - gesto.inicioY) / gesto.caja.height * 100;
+    let dx = (e.clientX - gesto.inicioX) / gesto.caja.width * 100;
+    let dy = (e.clientY - gesto.inicioY) / gesto.caja.height * 100;
+    // Con Mayúsculas el movimiento se bloquea en el eje en el que más se ha
+    // desplazado: solo horizontal (eje X) o solo vertical (eje Y)
+    gesto.eje = null;
+    if (e.shiftKey && gesto.tipo === "mover") {
+      const horizontal = Math.abs(e.clientX - gesto.inicioX) >= Math.abs(e.clientY - gesto.inicioY);
+      if (horizontal) dy = 0; else dx = 0;
+      gesto.eje = horizontal ? "x" : "y";
+    }
     if (Math.abs(dx) + Math.abs(dy) > .3) gesto.movido = true;
     const { item, original } = gesto;
     if (gesto.tipo === "mover") {
@@ -561,7 +616,7 @@ function activarEditor() {
       item.w = Math.max(4, Math.round((original.w + dx) * 10) / 10);
       if (item.forma !== "circulo" && item.h !== undefined) item.h = Math.max(3, Math.round((original.h + dy) * 10) / 10);
     }
-    alinear(item, gesto.tipo, gesto.caja);
+    alinear(item, gesto.tipo, gesto.caja, gesto.eje);
     const el = zona.querySelector(`[data-id="${item.id}"]`);
     el.style.left = item.x + "%"; el.style.top = item.y + "%"; el.style.width = item.w + "%";
     if (item.h !== undefined) el.style.height = altoRecuadro(item, tablero.proporcion) + "%";
@@ -606,6 +661,20 @@ function teclaEditor(e) {
     pintarLienzo();
   }
   if (e.key === "Escape") { enMano = null; seleccion = null; pintarBibliotecaEditor(); pintarLienzo(); }
+
+  const mando = e.ctrlKey || e.metaKey;   // Ctrl en Windows, Cmd en Mac
+  const tecla = e.key.toLowerCase();
+  if (mando && tecla === "c" && seleccion) { e.preventDefault(); copiar(); }
+  if (mando && tecla === "v" && portapapeles) { e.preventDefault(); pegar(); }
+  if (mando && tecla === "d" && seleccion) { e.preventDefault(); copiar(); pegar(); }
+
+  const item = tablero.recuadros.find(x => x.id === seleccion) || tablero.textos.find(x => x.id === seleccion);
+  const flechas = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+  if (item && flechas[e.key]) {
+    e.preventDefault();
+    const paso = e.shiftKey ? 2 : 0.2;
+    empujar(item, flechas[e.key][0] * paso, flechas[e.key][1] * paso);
+  }
 }
 
 
