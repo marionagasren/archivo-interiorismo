@@ -444,10 +444,18 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 .relleno-mueble { object-fit: contain; }
 
 #zona-lienzo .recuadro { cursor: move; }
-#zona-lienzo .recuadro.seleccionado::after { content: ""; position: absolute; inset: -4px; border: 1px solid var(--texto); pointer-events: none; }
+.marco-seleccion { position: absolute; z-index: 90; pointer-events: none; outline: 1px solid var(--texto); outline-offset: 3px; }
+.marco-seleccion[hidden] { display: none; }
 #zona-lienzo .recuadro.destino .recuadro-forma { outline: 2px solid var(--texto); outline-offset: -2px; }
-.tirador { position: absolute; right: -6px; bottom: -6px; width: 12px; height: 12px; background: var(--fondo); border: 1px solid var(--texto); cursor: nwse-resize; display: none; z-index: 2; }
-.recuadro.seleccionado .tirador { display: block; }
+.tirador { position: absolute; right: -9px; bottom: -9px; width: 12px; height: 12px; background: var(--fondo); border: 1px solid var(--texto); cursor: nwse-resize; pointer-events: auto; touch-action: none; }
+
+/* Guías de alineación (aparecen al mover o estirar un recuadro) */
+.guia { position: absolute; z-index: 100; pointer-events: none; background: #C2593A; }
+.guia-v { top: 0; bottom: 0; width: 1px; margin-left: -.5px; }
+.guia-h { left: 0; right: 0; height: 1px; margin-top: -.5px; }
+
+/* Botones de orientación del lienzo */
+.orientacion { display: inline-flex; gap: 6px; }
 
 /* Textos del lienzo */
 .texto-lienzo { position: absolute; z-index: 50; color: var(--texto); cursor: move; line-height: 1.2; }

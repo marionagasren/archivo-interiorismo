@@ -88,7 +88,6 @@ function htmlRecuadro(r, proporcion, miniatura = false) {
          style="left:${r.x}%; top:${r.y}%; width:${r.w}%; height:${altoRecuadro(r, proporcion)}%; z-index:${r.z ?? 1}"
          title="${pieza ? texto(pieza.nombre) : ""}">
       <div class="recuadro-forma">${relleno}</div>
-      ${miniatura ? "" : `<span class="tirador" title="Cambiar tamaño"></span>`}
     </div>`;
 }
 
@@ -104,11 +103,29 @@ function htmlLienzo(datos, miniatura = false) {
     <div class="lienzo ${miniatura ? "lienzo-mini" : ""}" style="aspect-ratio:${ancho} / ${alto}; --prop:${ancho / alto}">
       ${datos.recuadros.map(r => htmlRecuadro(r, datos.proporcion, miniatura)).join("")}
       ${(datos.textos || []).map(t => htmlTexto(t, miniatura)).join("")}
+      ${miniatura ? "" : `<div class="marco-seleccion" hidden><span class="tirador" title="Cambiar tamaño"></span></div>`}
     </div>`;
+}
+
+// Marco de la selección: va en una capa propia por encima de todo, para que
+// la esquina de estirar se vea aunque el recuadro tenga otros encima
+function actualizarMarco() {
+  const marco = document.querySelector("#zona-lienzo .marco-seleccion");
+  if (!marco) return;
+  const r = tablero.recuadros.find(x => x.id === seleccion);
+  marco.hidden = !r;
+  if (!r) return;
+  Object.assign(marco.style, { left: r.x + "%", top: r.y + "%", width: r.w + "%", height: altoRecuadro(r, tablero.proporcion) + "%" });
+  marco.classList.toggle("marco-circulo", r.forma === "circulo");
 }
 
 function pintarLienzo() {
   document.getElementById("zona-lienzo").innerHTML = htmlLienzo(tablero);
+  actualizarMarco();
+  const [a, b] = tablero.proporcion;
+  document.getElementById("orientacion").innerHTML = `
+    <button data-orientacion="vertical" class="${a <= b ? "activa" : ""}" title="Lienzo vertical">▯ Vertical</button>
+    <button data-orientacion="horizontal" class="${a > b ? "activa" : ""}" title="Lienzo horizontal">▭ Horizontal</button>`;
   pintarHerramientas();
   guardarTablero();
 }
@@ -137,6 +154,8 @@ function vistaGenerador() {
     <section class="editor">
       <div class="editor-lienzo">
         <div class="barra">
+          <span class="orientacion" id="orientacion"></span>
+          <span class="barra-separador"></span>
           <button data-accion="recuadro">+ Recuadro</button>
           <button data-accion="circulo">+ Círculo</button>
           <button data-accion="texto">+ Texto</button>
@@ -326,6 +345,63 @@ function puntoEnLienzo(evento) {
 
 
 // ---------------------------------------------------------------------
+//  GUÍAS DE ALINEACIÓN
+//  Al mover o estirar un recuadro, si uno de sus bordes o su centro queda
+//  cerca del borde o del centro de otro recuadro (o del lienzo), se
+//  "imanta" a esa línea y se dibuja una guía fina para marcar el eje.
+// ---------------------------------------------------------------------
+
+const IMAN_PX = 6;   // distancia, en píxeles de pantalla, a la que se imanta
+
+function ejes(r, proporcion) {
+  const h = r.h === undefined ? 0 : altoRecuadro(r, proporcion);
+  return { x: [r.x, r.x + r.w / 2, r.x + r.w], y: h ? [r.y, r.y + h / 2, r.y + h] : [r.y] };
+}
+
+function alinear(item, tipo, caja) {
+  const proporcion = tablero.proporcion;
+  const otros = [...tablero.recuadros, ...tablero.textos].filter(o => o.id !== item.id);
+  const lineasX = [0, 50, 100, ...otros.flatMap(o => ejes(o, proporcion).x)];
+  const lineasY = [0, 50, 100, ...otros.flatMap(o => ejes(o, proporcion).y)];
+  const imanX = IMAN_PX / caja.width * 100, imanY = IMAN_PX / caja.height * 100;
+
+  // Busca la línea más cercana a alguno de los ejes propios
+  const cercana = (propios, lineas, iman) => {
+    let mejor = null;
+    for (const p of propios) for (const l of lineas) {
+      const d = l - p;
+      if (Math.abs(d) <= iman && (!mejor || Math.abs(d) < Math.abs(mejor.d))) mejor = { d, linea: l };
+    }
+    return mejor;
+  };
+
+  const propios = ejes(item, proporcion);
+  const alto = item.h === undefined ? 0 : altoRecuadro(item, proporcion);
+  let guiaX = null, guiaY = null;
+
+  if (tipo === "mover") {
+    const mx = cercana(propios.x, lineasX, imanX);
+    if (mx) { item.x = Math.round((item.x + mx.d) * 100) / 100; guiaX = mx.linea; }
+    const my = cercana(propios.y, lineasY, imanY);
+    if (my) { item.y = Math.round((item.y + my.d) * 100) / 100; guiaY = my.linea; }
+  } else {
+    // Al estirar solo se mueven el borde derecho y el inferior
+    const mx = cercana([item.x + item.w], lineasX, imanX);
+    if (mx) { item.w = Math.round((item.w + mx.d) * 100) / 100; guiaX = mx.linea; }
+    if (item.forma !== "circulo" && alto) {
+      const my = cercana([item.y + alto], lineasY, imanY);
+      if (my) { item.h = Math.round((item.h + my.d) * 100) / 100; guiaY = my.linea; }
+    }
+  }
+
+  const lienzo = document.querySelector("#zona-lienzo .lienzo");
+  lienzo.querySelectorAll(".guia").forEach(g => g.remove());
+  if (guiaX !== null) lienzo.insertAdjacentHTML("beforeend", `<div class="guia guia-v" style="left:${guiaX}%"></div>`);
+  if (guiaY !== null) lienzo.insertAdjacentHTML("beforeend", `<div class="guia guia-h" style="top:${guiaY}%"></div>`);
+}
+
+
+// ---------------------------------------------------------------------
 //  EVENTOS: clics, arrastrar desde la biblioteca, mover y redimensionar
 // ---------------------------------------------------------------------
 
@@ -395,6 +471,18 @@ function activarEditor() {
     añadirRecuadro("rect", Math.max(0, x - 14), Math.max(0, y - 10), pieza);
   });
 
+  // Orientación del lienzo: se intercambian ancho y alto. Las posiciones van
+  // en %, así que la composición se adapta sola al nuevo formato.
+  document.getElementById("orientacion").addEventListener("click", e => {
+    const b = e.target.closest("[data-orientacion]");
+    if (!b) return;
+    const [ancho, alto] = tablero.proporcion;
+    const vertical = ancho <= alto;
+    if ((b.dataset.orientacion === "vertical") === vertical) return;
+    tablero.proporcion = [alto, ancho];
+    pintarLienzo();
+  });
+
   // Barra de herramientas
   editor.addEventListener("click", e => {
     const b = e.target.closest("button[data-accion], button[data-forma], button[data-estilo]");
@@ -429,7 +517,10 @@ function activarEditor() {
   // Mover y redimensionar con el ratón o el dedo
   let gesto = null;
   zona.addEventListener("pointerdown", e => {
-    const elemento = e.target.closest(".recuadro, .texto-lienzo");
+    const tirador = e.target.classList.contains("tirador");
+    const elemento = tirador
+      ? zona.querySelector(`.recuadro[data-id="${seleccion}"]`)
+      : e.target.closest(".recuadro, .texto-lienzo");
     if (e.target.isContentEditable) return;
     if (!elemento) {
       // Zona libre: si hay una pieza en la mano, se crea un recuadro con ella
@@ -450,11 +541,11 @@ function activarEditor() {
     gesto = {
       item, caja, inicioX: e.clientX, inicioY: e.clientY,
       original: { ...item },
-      tipo: e.target.classList.contains("tirador") ? "tamaño" : "mover",
+      tipo: tirador ? "tamaño" : "mover",
       movido: false,
     };
-    if (seleccion !== id) { seleccion = id; zona.querySelectorAll(".seleccionado").forEach(x => x.classList.remove("seleccionado")); elemento.classList.add("seleccionado"); pintarHerramientas(); }
-    elemento.setPointerCapture(e.pointerId);
+    if (seleccion !== id) { seleccion = id; zona.querySelectorAll(".seleccionado").forEach(x => x.classList.remove("seleccionado")); elemento.classList.add("seleccionado"); pintarHerramientas(); actualizarMarco(); }
+    e.target.setPointerCapture(e.pointerId);
     e.preventDefault();
   });
   zona.addEventListener("pointermove", e => {
@@ -470,11 +561,19 @@ function activarEditor() {
       item.w = Math.max(4, Math.round((original.w + dx) * 10) / 10);
       if (item.forma !== "circulo" && item.h !== undefined) item.h = Math.max(3, Math.round((original.h + dy) * 10) / 10);
     }
+    alinear(item, gesto.tipo, gesto.caja);
     const el = zona.querySelector(`[data-id="${item.id}"]`);
     el.style.left = item.x + "%"; el.style.top = item.y + "%"; el.style.width = item.w + "%";
     if (item.h !== undefined) el.style.height = altoRecuadro(item, tablero.proporcion) + "%";
+    actualizarMarco();
   });
-  const terminar = () => { if (gesto) { const movido = gesto.movido; gesto = null; if (movido) guardarTablero(); } };
+  const terminar = () => {
+    if (!gesto) return;
+    const movido = gesto.movido;
+    gesto = null;
+    zona.querySelectorAll(".guia").forEach(g => g.remove());
+    if (movido) guardarTablero();
+  };
   zona.addEventListener("pointerup", terminar);
   zona.addEventListener("pointercancel", terminar);
 
