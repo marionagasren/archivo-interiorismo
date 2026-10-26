@@ -14,7 +14,7 @@ Origen de las texturas actuales (fotos de Pexels, licencia libre, sin atribució
 - roble-natural: imagen aportada por 341 Studio
 - roble-tenido-oscuro: imagen aportada por 341 Studio
 - hormigon: pexels.com/photo/20818872
-- lino-natural: pexels.com/photo/7794365
+- lino-natural: imagen aportada por 341 Studio
 - aluminio-encerado: imagen aportada por 341 Studio
 - bloque-vidrio: imagen aportada por 341 Studio
 - ceramica-terracota-esmaltada: imagen aportada por 341 Studio
