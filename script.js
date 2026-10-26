@@ -433,6 +433,36 @@ function listaPiezas(p) {
 //  VISTA: BIBLIOTECA
 // ---------------------------------------------------------------------
 
+// Materiales presentados como una hoja de catálogo: cada uno con su
+// número fijo (CAT. 341-001...), según su orden en data/biblioteca.js
+function codigoCatalogo(id) {
+  const n = BIBLIOTECA.materiales.findIndex(m => m.id === id) + 1;
+  return `CAT. 341-${String(n).padStart(3, "0")}`;
+}
+
+function catalogoMateriales(items, total) {
+  return `
+    <section class="catalogo">
+      <header class="catalogo-cabecera">
+        <h2>Catálogo</h2>
+        <p>Biblioteca de materiales<br>Volumen I / ${String(total).padStart(3, "0")}</p>
+      </header>
+      <div class="catalogo-rejilla">
+        ${items.map(m => `
+          <figure class="catalogo-item">
+            <div class="catalogo-imagen">
+              ${m.imagen ? `<img src="${texto(m.imagen)}" alt="${texto(m.nombre)}" loading="lazy">` : `<span class="sin-imagen">${texto(m.nombre)}</span>`}
+            </div>
+            <figcaption>
+              <span class="catalogo-nombre">${texto(m.nombre)}</span>
+              <span class="catalogo-codigo">${codigoCatalogo(m.id)} · ${texto(m.categoria || "")}</span>
+              <span class="catalogo-proyectos">${enlacesProyectos(m.proyectos)}</span>
+            </figcaption>
+          </figure>`).join("")}
+      </div>
+    </section>`;
+}
+
 // #/biblioteca/<tipo>/<subcategoría>/<tipo de iluminación>
 // p. ej. #/biblioteca/materiales/maderas   o   #/biblioteca/mobiliario/iluminacion/suspension
 function vistaBiblioteca(tipo, filtro, subfiltro) {
@@ -478,6 +508,8 @@ function vistaBiblioteca(tipo, filtro, subfiltro) {
           <p class="aparece">${enlacesProyectos(c.proyectos)}</p>
         </div>`).join("")}
     </div>`;
+  } else if (tipo === "materiales") {
+    contenido = catalogoMateriales(items, todos.length);
   } else {
     contenido = `<div class="rejilla-piezas">${items.map(item => `
       <div class="item-biblioteca">

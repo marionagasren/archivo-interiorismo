@@ -6,16 +6,22 @@ Imágenes de la BIBLIOTECA DE MATERIALES (compartida entre proyectos).
 - Minúsculas, sin acentos, sin espacios (usa guiones).
 - Después se registra en data/biblioteca.js y se asigna a los proyectos en data/proyectos.js.
 
-Origen de las texturas actuales:
-- hormigon: ambientCG Concrete034 (CC0)
-- aluminio-encerado: ambientCG Metal009 (CC0)
-- roble-natural: Poly Haven oak_veneer_01 (CC0)
-- lino-natural: Poly Haven rough_linen (CC0), recoloreada a tono lino natural
+Formato de catálogo: vertical 4:5 (900 x 1125 px). Todas pasan por el mismo
+"revelado" (saturación contenida, tono cálido suave, luz lateral y grano fino)
+para que el catálogo tenga unidad.
+
+Origen de las texturas actuales (fotos de Pexels, licencia libre, sin atribución obligatoria):
+- roble-natural: pexels.com/photo/129733
+- roble-tenido-oscuro: pexels.com/photo/326311
+- hormigon: pexels.com/photo/20818872
+- lino-natural: pexels.com/photo/7794365
+- aluminio-encerado: pexels.com/photo/5497872
+- bloque-vidrio: pexels.com/photo/5512664
+- ceramica-terracota-esmaltada: pexels.com/photo/131661 (girada en vertical)
+- piedra-veteada-clara: pexels.com/photo/4705833
+- piedra-gris-tipo-ceppo: pexels.com/photo/7794405
+- lana-pelo-largo: pexels.com/photo/6757419
+- ceramica-opus-incertum: composición de piezas irregulares rellenas con fotos de
+  piedra de Pexels (4705833, 4705853, 16777685, 20818872, 4078194)
 - microcemento-beige: imagen aportada por 341 Studio
-- microcemento-verde-oscuro: la misma textura de microcemento, teñida de verde oscuro
-- roble-tenido-oscuro: Poly Haven oak_veneer_01 (CC0), teñida de marrón oscuro
-- ceramica-terracota-esmaltada: ambientCG GlazedTerracotta001 (CC0), oscurecida
-- piedra-veteada-clara: ambientCG Marble014 (CC0)
-- piedra-gris-tipo-ceppo: ambientCG Terrazzo019L (CC0), pasada a gris
-- lana-pelo-largo: Poly Haven curly_teddy_natural (CC0), en tono crudo
-- ceramica-opus-incertum: dibujada por programa (piezas irregulares en los tonos del proyecto)
+- microcemento-verde-oscuro: la misma imagen de microcemento, teñida de verde oscuro

@@ -12,6 +12,7 @@
 
   --serif: "Cormorant Garamond", Georgia, serif;
   --sans: "Inter", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;   /* fichas de catálogo */
   --titulo: "Manrope", "Helvetica Neue", Arial, sans-serif;   /* nombre del estudio */
 
   --margen: clamp(16px, 4vw, 56px);
@@ -331,6 +332,20 @@ body.portada-visible .cabecera { transform: translateY(-100%); opacity: 0; point
 .pestañas a { font-family: var(--serif); font-size: 26px; text-decoration: none; color: var(--texto-suave); }
 .pestañas a.activa { color: var(--texto); text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1px; }
 
+/* Catálogo de materiales: hoja con rejilla de muestras y fichas en monoespaciada */
+.catalogo { margin: 8px 0 96px; padding: clamp(24px, 5vw, 64px); background: #F1EDE6; }
+.catalogo-cabecera { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--texto); margin-bottom: clamp(28px, 4vw, 48px); }
+.catalogo-cabecera h2 { font-family: var(--mono); font-size: clamp(20px, 2.4vw, 28px); letter-spacing: .14em; text-transform: uppercase; }
+.catalogo-cabecera p { margin: 0; font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; text-align: right; line-height: 1.6; }
+.catalogo-rejilla { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(28px, 4vw, 52px) clamp(20px, 3.5vw, 48px); }
+.catalogo-item { margin: 0; }
+.catalogo-imagen { aspect-ratio: 4 / 5; overflow: hidden; background: var(--fondo-suave); }
+.catalogo-imagen img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s ease; }
+.catalogo-item:hover .catalogo-imagen img { transform: scale(1.04); }
+.catalogo-item figcaption { display: flex; flex-direction: column; gap: 6px; padding-top: 14px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; }
+.catalogo-codigo { color: var(--texto-suave); }
+.catalogo-proyectos { font-family: var(--sans); text-transform: none; letter-spacing: 0; font-size: 11px; color: var(--texto-suave); }
+
 /* Subcategorías de la biblioteca */
 .filtros { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 28px; }
 .filtros a {
@@ -453,6 +468,11 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 .pestañas-biblioteca { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-bottom: 16px; }
 .pestañas-biblioteca button { font: inherit; font-family: var(--serif); font-size: 19px; background: none; border: 0; padding: 0 0 2px; color: var(--texto-suave); cursor: pointer; border-bottom: 1px solid transparent; }
 .pestañas-biblioteca button.activa { color: var(--texto); border-color: var(--texto); }
+.filtros-editor { margin: 0 0 14px; gap: 6px 14px; }
+.filtros-editor button { font: inherit; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; background: none; border: 0; border-bottom: 1px solid transparent; padding: 0 0 2px; color: var(--texto-suave); cursor: pointer; }
+.filtros-editor button:hover, .filtros-editor button.activa { color: var(--texto); border-color: var(--texto); }
+.barra button.boton-oscuro { background: var(--texto); color: var(--fondo); border-color: var(--texto); }
+.barra button.boton-oscuro:hover { background: transparent; color: var(--texto); }
 .piezas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 10px; max-height: 70vh; overflow-y: auto; padding: 4px; }
 .pieza-editor { display: flex; flex-direction: column; gap: 6px; background: none; border: 0; padding: 0; font: inherit; text-align: left; cursor: grab; }
 .pieza-muestra { display: block; aspect-ratio: 1; background: var(--fondo-suave) center / cover no-repeat; box-shadow: 0 1px 3px rgba(0, 0, 0, .12); }
@@ -491,6 +511,7 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
   .moodboard { grid-template-columns: 1fr; gap: 40px; }
   .ficha div { grid-template-columns: 100px 1fr; }
     .lista-piezas { grid-template-columns: 1fr; }
+  .catalogo-rejilla { grid-template-columns: repeat(2, 1fr); }
   .editor { grid-template-columns: 1fr; }
   .editor-biblioteca { position: static; }
   .piezas { grid-template-columns: repeat(4, 1fr); max-height: 50vh; }

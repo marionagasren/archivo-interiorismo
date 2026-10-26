@@ -16,6 +16,7 @@ let tablero = null;       // el moodboard en el que se está trabajando
 let seleccion = null;     // id del recuadro o texto seleccionado
 let enMano = null;        // pieza de la biblioteca elegida con un toque (móvil)
 let pestañaBiblioteca = "material";
+let filtroBiblioteca = "";     // subcategoría elegida en la biblioteca del editor
 
 
 // ---------------------------------------------------------------------
@@ -143,6 +144,7 @@ function vistaGenerador() {
           <button data-accion="azar">Rellenar al azar</button>
           <button data-accion="vaciar">Vaciar</button>
           <button data-accion="guardar">Guardar como plantilla</button>
+          <button data-accion="descargar" class="boton-oscuro">Descargar PNG</button>
         </div>
         <div class="barra barra-seleccion" id="barra-seleccion"></div>
         <div id="zona-lienzo"></div>
@@ -155,6 +157,7 @@ function vistaGenerador() {
           <button data-tipo="color">Añadir color</button>
           <button data-tipo="mueble">Añadir mobiliario</button>
         </nav>
+        <nav class="filtros filtros-editor" id="filtros-editor"></nav>
         <div class="piezas" id="piezas"></div>
       </aside>
     </section>`;
@@ -185,7 +188,15 @@ function pintarPlantillas() {
 
 function pintarBibliotecaEditor() {
   document.querySelectorAll(".pestañas-biblioteca button").forEach(b => b.classList.toggle("activa", b.dataset.tipo === pestañaBiblioteca));
-  const piezas = piezasBiblioteca(pestañaBiblioteca);
+  const todas = piezasBiblioteca(pestañaBiblioteca);
+  // Subcategorías, en el mismo orden que en la Biblioteca
+  const orden = { material: CATEGORIAS.materiales, mueble: CATEGORIAS.mobiliario, color: FAMILIAS_COLOR }[pestañaBiblioteca];
+  const presentes = orden.filter(cat => todas.some(p => p.categoria === cat));
+  if (!presentes.includes(filtroBiblioteca)) filtroBiblioteca = "";
+  document.getElementById("filtros-editor").innerHTML = presentes.length > 1 ? `
+    <button data-filtro="" class="${filtroBiblioteca ? "" : "activa"}">Todos</button>
+    ${presentes.map(cat => `<button data-filtro="${cat}" class="${cat === filtroBiblioteca ? "activa" : ""}">${cat}</button>`).join("")}` : "";
+  const piezas = filtroBiblioteca ? todas.filter(p => p.categoria === filtroBiblioteca) : todas;
   document.getElementById("piezas").innerHTML = piezas.length ? piezas.map(p => `
     <button class="pieza-editor ${enMano?.tipo === p.tipo && enMano?.id === p.id ? "en-mano" : ""}"
             draggable="true" data-tipo="${p.tipo}" data-id="${texto(p.id)}" title="${texto(p.nombre)}">
@@ -340,6 +351,13 @@ function activarEditor() {
     const b = e.target.closest("button");
     if (!b) return;
     pestañaBiblioteca = b.dataset.tipo;
+    filtroBiblioteca = "";
+    pintarBibliotecaEditor();
+  });
+  document.getElementById("filtros-editor").addEventListener("click", e => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    filtroBiblioteca = b.dataset.filtro;
     pintarBibliotecaEditor();
   });
   const piezas = document.getElementById("piezas");
@@ -389,6 +407,7 @@ function activarEditor() {
     if (accion === "texto") return añadirTexto();
     if (accion === "azar") return rellenarAlAzar();
     if (accion === "guardar") return guardarComoPlantilla();
+    if (accion === "descargar") return descargarPNG();
     if (accion === "vaciar") {
       if (confirm("¿Quitar todas las texturas, colores y muebles del moodboard?")) { tablero.recuadros.forEach(x => x.contenido = null); pintarLienzo(); }
       return;
@@ -488,4 +507,118 @@ function teclaEditor(e) {
     pintarLienzo();
   }
   if (e.key === "Escape") { enMano = null; seleccion = null; pintarBibliotecaEditor(); pintarLienzo(); }
+}
+
+
+// ---------------------------------------------------------------------
+//  DESCARGAR EL MOODBOARD COMO IMAGEN (PNG)
+//  Se vuelve a dibujar el tablero en un <canvas> a alta resolución.
+// ---------------------------------------------------------------------
+
+const PIEDRA = [[8, 14], [30, 2], [62, 6], [88, 0], [100, 30], [94, 62], [100, 88], [70, 100], [38, 95], [12, 100], [0, 74], [4, 42]];
+
+function cargarImagen(src) {
+  return new Promise((ok, mal) => {
+    const img = new Image();
+    img.onload = () => ok(img);
+    img.onerror = mal;
+    img.src = src;
+  });
+}
+
+function trazarForma(ctx, forma, x, y, w, h) {
+  ctx.beginPath();
+  if (forma === "circulo") ctx.ellipse(x + w / 2, y + h / 2, w / 2, h / 2, 0, 0, Math.PI * 2);
+  else if (forma === "piedra") PIEDRA.forEach(([px, py], i) => ctx[i ? "lineTo" : "moveTo"](x + px / 100 * w, y + py / 100 * h));
+  else ctx.rect(x, y, w, h);
+  ctx.closePath();
+}
+
+// Dibuja la imagen cubriendo el hueco (como background-size: cover) o entera (contain)
+function dibujarImagen(ctx, img, x, y, w, h, modo) {
+  const escala = (modo === "contain" ? Math.min : Math.max)(w / img.width, h / img.height);
+  const iw = img.width * escala, ih = img.height * escala;
+  ctx.drawImage(img, x + (w - iw) / 2, y + (h - ih) / 2, iw, ih);
+}
+
+async function descargarPNG() {
+  const boton = document.querySelector('[data-accion="descargar"]');
+  boton.textContent = "Preparando…";
+  try {
+    const ANCHO = 2000;
+    const [pa, pb] = tablero.proporcion;
+    const W = ANCHO, H = Math.round(ANCHO * pb / pa);
+    const canvas = document.createElement("canvas");
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#ECE9E3";
+    ctx.fillRect(0, 0, W, H);
+
+    const recuadros = tablero.recuadros.filter(r => r.contenido).sort((a, b) => (a.z ?? 0) - (b.z ?? 0));
+    const imagenes = {};
+    await Promise.all(recuadros.map(async r => {
+      const pieza = buscarPieza(r.contenido);
+      if (pieza?.imagen) imagenes[r.id] = await cargarImagen(pieza.imagen);
+    }));
+
+    for (const r of recuadros) {
+      const pieza = buscarPieza(r.contenido);
+      if (!pieza) continue;
+      const x = r.x / 100 * W, y = r.y / 100 * H, w = r.w / 100 * W, h = altoRecuadro(r, tablero.proporcion) / 100 * H;
+      ctx.save();
+      if (pieza.tipo === "mueble") {
+        // los muebles van sin sombra y su fondo blanco se funde con el lienzo
+        ctx.globalCompositeOperation = "multiply";
+        trazarForma(ctx, r.forma, x, y, w, h); ctx.clip();
+        dibujarImagen(ctx, imagenes[r.id], x, y, w, h, "contain");
+      } else {
+        // sombra suave, como una muestra apoyada sobre la mesa
+        ctx.shadowColor = "rgba(40, 30, 20, .28)";
+        ctx.shadowBlur = W * .018; ctx.shadowOffsetY = W * .006;
+        trazarForma(ctx, r.forma, x, y, w, h);
+        ctx.fillStyle = pieza.hex || "#ddd"; ctx.fill();
+        ctx.shadowColor = "transparent";
+        if (pieza.imagen) { trazarForma(ctx, r.forma, x, y, w, h); ctx.clip(); dibujarImagen(ctx, imagenes[r.id], x, y, w, h, "cover"); }
+      }
+      ctx.restore();
+    }
+
+    // Textos
+    await document.fonts.ready;
+    const estilos = {
+      titulo: { fuente: `400 ${W * .07}px "Cormorant Garamond", serif`, alto: W * .067, mayus: true, espacio: 0 },
+      subtitulo: { fuente: `400 ${W * .017}px "Inter", sans-serif`, alto: W * .026, mayus: true, espacio: W * .003 },
+      nota: { fuente: `400 ${W * .021}px "Cormorant Garamond", serif`, alto: W * .028, mayus: false, espacio: 0 },
+    };
+    ctx.fillStyle = "#2A2622"; ctx.textBaseline = "top";
+    for (const t of tablero.textos) {
+      const e = estilos[t.estilo] || estilos.nota;
+      ctx.font = e.fuente;
+      if ("letterSpacing" in ctx) ctx.letterSpacing = e.espacio + "px";
+      const palabras = (e.mayus ? t.texto.toUpperCase() : t.texto).split(/\s+/);
+      const maximo = t.w / 100 * W;
+      let linea = "", y = t.y / 100 * H;
+      for (const palabra of palabras) {
+        const prueba = linea ? linea + " " + palabra : palabra;
+        if (ctx.measureText(prueba).width > maximo && linea) { ctx.fillText(linea, t.x / 100 * W, y); linea = palabra; y += e.alto; }
+        else linea = prueba;
+      }
+      ctx.fillText(linea, t.x / 100 * W, y);
+    }
+
+    const blob = await new Promise(ok => canvas.toBlob(ok, "image/png"));
+    const enlace = document.createElement("a");
+    enlace.href = URL.createObjectURL(blob);
+    enlace.download = `moodboard-341-studio-${new Date().toISOString().slice(0, 10)}.png`;
+    enlace.click();
+    setTimeout(() => URL.revokeObjectURL(enlace.href), 2000);
+  } catch (error) {
+    // Al abrir index.html con doble clic (file://), el navegador no deja exportar
+    // un dibujo hecho con imágenes locales. Publicada en internet funciona.
+    alert("No se ha podido crear la imagen. Si has abierto la web con doble clic en index.html, " +
+          "el navegador lo bloquea por seguridad: funciona con la web publicada (GitHub Pages).");
+    console.error(error);
+  } finally {
+    boton.textContent = "Descargar PNG";
+  }
 }

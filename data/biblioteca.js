@@ -28,7 +28,7 @@ window.BIBLIOTECA = {
     { id: "hormigon", nombre: "Hormigón", categoria: "Hormigón y cemento", acabado: "Sofá integrado", imagen: "img/materiales/hormigon.jpg" },
     { id: "lino-natural", nombre: "Lino natural", categoria: "Textiles", acabado: "Cortinas y tapicerías", imagen: "img/materiales/lino-natural.jpg" },
     { id: "aluminio-encerado", nombre: "Aluminio encerado", categoria: "Metales", acabado: "Encerado", imagen: "img/materiales/aluminio-encerado.jpg" },
-    { id: "bloque-vidrio", nombre: "Bloque de vidrio translúcido", categoria: "Vidrio", acabado: "Pared del baño", imagen: "" },
+    { id: "bloque-vidrio", nombre: "Bloque de vidrio translúcido", categoria: "Vidrio", acabado: "Pared del baño", imagen: "img/materiales/bloque-vidrio.jpg" },
     { id: "roble-tenido-oscuro", nombre: "Roble teñido oscuro", categoria: "Maderas", acabado: "Muebles empotrados y mesa de comedor", imagen: "img/materiales/roble-tenido-oscuro.jpg" },
     { id: "ceramica-terracota-esmaltada", nombre: "Cerámica de terracota esmaltada", categoria: "Cerámica", acabado: "Revestimiento de chimenea · California", imagen: "img/materiales/ceramica-terracota-esmaltada.jpg" },
     { id: "ceramica-opus-incertum", nombre: "Cerámica en opus incertum", categoria: "Cerámica", acabado: "Suelo en tonos de pizarra", imagen: "img/materiales/ceramica-opus-incertum.jpg" },
