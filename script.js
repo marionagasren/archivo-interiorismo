@@ -440,13 +440,9 @@ function codigoCatalogo(id) {
   return `CAT. 341-${String(n).padStart(3, "0")}`;
 }
 
-function catalogoMateriales(items, total) {
+function catalogoMateriales(items) {
   return `
     <section class="catalogo">
-      <header class="catalogo-cabecera">
-        <h2>Catálogo</h2>
-        <p>Biblioteca de materiales<br>Volumen I / ${String(total).padStart(3, "0")}</p>
-      </header>
       <div class="catalogo-rejilla">
         ${items.map(m => `
           <figure class="catalogo-item">
@@ -509,7 +505,7 @@ function vistaBiblioteca(tipo, filtro, subfiltro) {
         </div>`).join("")}
     </div>`;
   } else if (tipo === "materiales") {
-    contenido = catalogoMateriales(items, todos.length);
+    contenido = catalogoMateriales(items);
   } else {
     contenido = `<div class="rejilla-piezas">${items.map(item => `
       <div class="item-biblioteca">
