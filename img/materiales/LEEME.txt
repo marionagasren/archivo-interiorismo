@@ -12,7 +12,7 @@ para que el catálogo tenga unidad.
 
 Origen de las texturas actuales (fotos de Pexels, licencia libre, sin atribución obligatoria):
 - roble-natural: pexels.com/photo/129733
-- roble-tenido-oscuro: pexels.com/photo/326311
+- roble-tenido-oscuro: imagen aportada por 341 Studio
 - hormigon: pexels.com/photo/20818872
 - lino-natural: pexels.com/photo/7794365
 - aluminio-encerado: pexels.com/photo/5497872
