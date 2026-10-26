@@ -21,7 +21,6 @@ Origen de las texturas actuales (fotos de Pexels, licencia libre, sin atribució
 - piedra-veteada-clara: pexels.com/photo/4705833
 - piedra-gris-tipo-ceppo: pexels.com/photo/7794405
 - lana-pelo-largo: pexels.com/photo/6757419
-- ceramica-opus-incertum: composición de piezas irregulares rellenas con fotos de
-  piedra de Pexels (4705833, 4705853, 16777685, 20818872, 4078194)
+- ceramica-opus-incertum: imagen aportada por 341 Studio
 - microcemento-beige: imagen aportada por 341 Studio
 - microcemento-verde-oscuro: la misma imagen de microcemento, teñida de verde oscuro
