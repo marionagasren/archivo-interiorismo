@@ -17,7 +17,7 @@ Origen de las texturas actuales (fotos de Pexels, licencia libre, sin atribució
 - lino-natural: pexels.com/photo/7794365
 - aluminio-encerado: pexels.com/photo/5497872
 - bloque-vidrio: imagen aportada por 341 Studio
-- ceramica-terracota-esmaltada: pexels.com/photo/131661 (girada en vertical)
+- ceramica-terracota-esmaltada: imagen aportada por 341 Studio
 - piedra-veteada-clara: pexels.com/photo/4705833
 - piedra-gris-tipo-ceppo: pexels.com/photo/7794405
 - lana-pelo-largo: pexels.com/photo/6757419
