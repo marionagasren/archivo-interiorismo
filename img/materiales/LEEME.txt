@@ -11,7 +11,7 @@ Formato de catálogo: vertical 4:5 (900 x 1125 px). Todas pasan por el mismo
 para que el catálogo tenga unidad.
 
 Origen de las texturas actuales (fotos de Pexels, licencia libre, sin atribución obligatoria):
-- roble-natural: pexels.com/photo/129733
+- roble-natural: imagen aportada por 341 Studio
 - roble-tenido-oscuro: imagen aportada por 341 Studio
 - hormigon: pexels.com/photo/20818872
 - lino-natural: pexels.com/photo/7794365
