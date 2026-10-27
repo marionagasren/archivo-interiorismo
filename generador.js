@@ -32,7 +32,30 @@ function leer(clave, porDefecto) {
 function escribir(clave, valor) {
   try { localStorage.setItem(clave, JSON.stringify(valor)); } catch { /* sin almacenamiento: no pasa nada */ }
 }
-const guardarTablero = () => escribir(CLAVE_ACTUAL, tablero);
+// Historial para «Atrás» (deshacer): cada vez que el tablero cambia se guarda
+// cómo estaba antes. Se recuerdan los últimos 60 pasos.
+let historial = [];
+let estadoAnterior = null;
+function guardarTablero() {
+  const ahora = JSON.stringify(tablero);
+  if (estadoAnterior !== null && ahora !== estadoAnterior) {
+    historial.push(estadoAnterior);
+    if (historial.length > 60) historial.shift();
+  }
+  estadoAnterior = ahora;
+  escribir(CLAVE_ACTUAL, tablero);
+  const boton = document.querySelector('[data-accion="deshacer"]');
+  if (boton) boton.disabled = !historial.length;
+}
+
+function deshacer() {
+  if (!historial.length) return;
+  estadoAnterior = historial.pop();
+  tablero = JSON.parse(estadoAnterior);
+  seleccion = null;
+  pintarPlantillas();
+  pintarLienzo();
+}
 const misPlantillas = () => leer(CLAVE_PLANTILLAS, []);
 
 let contadorIds = 0;
@@ -164,6 +187,8 @@ function vistaGenerador(modo) {
   if (modo === "paleta") return vistaPaleta();
   filtroInicial = true;
   tablero = leer(CLAVE_ACTUAL, null) || tableroDesde(window.PLANTILLAS[0]);
+  historial = [];
+  estadoAnterior = null;
   seleccion = null;
   enMano = null;
 
@@ -181,6 +206,11 @@ function vistaGenerador(modo) {
 
     <section class="editor">
       <aside class="editor-panel">
+        <div class="panel-grupo">
+          <div class="barra">
+            <button data-accion="deshacer" class="boton-ancho" title="Deshacer el último cambio (Ctrl/Cmd + Z)" disabled>↶ Atrás</button>
+          </div>
+        </div>
         <div class="panel-grupo">
           <h3 class="panel-titulo">Formato</h3>
           <div class="barra" id="orientacion"></div>
@@ -307,7 +337,7 @@ function pintarHerramientas() {
       <button data-forma="piedra" class="${r.forma === "piedra" ? "activa" : ""}">Piedra</button>
       <span class="barra-separador"></span>
       <button data-accion="delante">Al frente</button>
-      <button data-accion="detras">Atrás</button>
+      <button data-accion="detras">Al fondo</button>
       ${r.contenido ? `<button data-accion="quitar">Vaciar recuadro</button>` : ""}
       <button data-accion="copiar" title="Ctrl/Cmd + C">Copiar</button>
       <button data-accion="pegar" title="Ctrl/Cmd + V">Pegar</button>
@@ -628,6 +658,7 @@ function activarEditor() {
     const t = tablero.textos.find(x => x.id === seleccion);
     const accion = b.dataset.accion;
     if (accion === "deseleccionar") { seleccion = null; return pintarLienzo(); }
+    if (accion === "deshacer") return deshacer();
     if (accion === "recuadro") return añadirRecuadro("rect");
     if (accion === "texto") return añadirTexto();
     if (accion === "azar") return rellenarAlAzar();
@@ -766,6 +797,7 @@ function teclaEditor(e) {
   if (mando && tecla === "c" && seleccion) { e.preventDefault(); copiar(); }
   if (mando && tecla === "v" && portapapeles) { e.preventDefault(); pegar(); }
   if (mando && tecla === "d" && seleccion) { e.preventDefault(); copiar(); pegar(); }
+  if (mando && tecla === "z" && !e.shiftKey) { e.preventDefault(); deshacer(); }
 
   const item = tablero.recuadros.find(x => x.id === seleccion) || tablero.textos.find(x => x.id === seleccion);
   const flechas = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
