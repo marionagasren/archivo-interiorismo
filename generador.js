@@ -197,8 +197,6 @@ function vistaGenerador(modo) {
           <h3 class="panel-titulo">Añadir</h3>
           <div class="barra">
             <button data-accion="recuadro">+ Recuadro</button>
-            <button data-accion="cuadrado">+ Cuadrado</button>
-            <button data-accion="circulo">+ Círculo</button>
             <button data-accion="texto">+ Texto</button>
           </div>
         </div>
@@ -631,8 +629,6 @@ function activarEditor() {
     const accion = b.dataset.accion;
     if (accion === "deseleccionar") { seleccion = null; return pintarLienzo(); }
     if (accion === "recuadro") return añadirRecuadro("rect");
-    if (accion === "circulo") return añadirRecuadro("circulo");
-    if (accion === "cuadrado") return añadirRecuadro("cuadrado");
     if (accion === "texto") return añadirTexto();
     if (accion === "azar") return rellenarAlAzar();
     if (accion === "guardar") return guardarComoPlantilla();
