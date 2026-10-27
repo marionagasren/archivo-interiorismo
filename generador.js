@@ -109,7 +109,7 @@ function htmlRecuadro(r, proporcion, miniatura = false) {
 function htmlTexto(t, miniatura = false) {
   return `
     <div class="texto-lienzo texto-${t.estilo || "nota"} ${seleccion === t.id && !miniatura ? "seleccionado" : ""}"
-         data-id="${t.id || ""}" style="left:${t.x}%; top:${t.y}%; width:${t.w}%">${texto(t.texto)}</div>`;
+         data-id="${t.id || ""}" style="left:${t.x}%; top:${t.y}%; width:${t.w}%${t.alinear ? `; text-align:${t.alinear === "centro" ? "center" : "left"}` : ""}${t.color ? `; color:${t.color}; text-shadow:0 0 .6cqw rgba(0, 0, 0, .4)` : ""}">${texto(t.texto)}</div>`;
 }
 
 function htmlLienzo(datos, miniatura = false) {
@@ -283,7 +283,7 @@ function pintarHerramientas() {
   } else if (t) {
     barra.innerHTML = `
       <span class="barra-titulo">Texto · doble clic para escribir</span>
-      ${["titulo", "subtitulo", "nota"].map(e => `<button data-estilo="${e}" class="${t.estilo === e ? "activa" : ""}">${{ titulo: "Título", subtitulo: "Subtítulo", nota: "Nota" }[e]}</button>`).join("")}
+      ${["titulo", "encabezado", "subtitulo", "nota", "etiqueta"].map(e => `<button data-estilo="${e}" class="${t.estilo === e ? "activa" : ""}">${{ titulo: "Título", encabezado: "Encabezado", subtitulo: "Subtítulo", nota: "Nota", etiqueta: "Etiqueta" }[e]}</button>`).join("")}
       <span class="barra-separador"></span>
       <button data-accion="copiar" title="Ctrl/Cmd + C">Copiar</button>
       <button data-accion="pegar" title="Ctrl/Cmd + V">Pegar</button>
@@ -799,23 +799,33 @@ async function descargarPNG() {
     await document.fonts.ready;
     const estilos = {
       titulo: { fuente: `400 ${W * .07}px "Cormorant Garamond", serif`, alto: W * .067, mayus: true, espacio: 0 },
+      encabezado: { fuente: `400 ${W * .042}px "Cormorant Garamond", serif`, alto: W * .046, mayus: false, espacio: 0 },
       subtitulo: { fuente: `400 ${W * .017}px "Inter", sans-serif`, alto: W * .026, mayus: true, espacio: W * .003 },
       nota: { fuente: `400 ${W * .021}px "Cormorant Garamond", serif`, alto: W * .028, mayus: false, espacio: 0 },
+      etiqueta: { fuente: `400 ${W * .012}px "Inter", sans-serif`, alto: W * .018, mayus: true, espacio: W * .0007 },
     };
     ctx.fillStyle = "#2A2622"; ctx.textBaseline = "top";
     for (const t of tablero.textos) {
       const e = estilos[t.estilo] || estilos.nota;
       ctx.font = e.fuente;
       if ("letterSpacing" in ctx) ctx.letterSpacing = e.espacio + "px";
+      ctx.fillStyle = t.color || "#2A2622";
+      // los textos con color propio (claros sobre texturas) llevan una sombra suave para leerse siempre
+      ctx.shadowColor = t.color ? "rgba(0, 0, 0, .4)" : "transparent";
+      ctx.shadowBlur = t.color ? W * .006 : 0;
+      // texto centrado: se escribe desde el centro de su caja
+      const centrado = t.alinear === "centro";
+      ctx.textAlign = centrado ? "center" : "left";
+      const x = (t.x + (centrado ? t.w / 2 : 0)) / 100 * W;
       const palabras = (e.mayus ? t.texto.toUpperCase() : t.texto).split(/\s+/);
       const maximo = t.w / 100 * W;
       let linea = "", y = t.y / 100 * H;
       for (const palabra of palabras) {
         const prueba = linea ? linea + " " + palabra : palabra;
-        if (ctx.measureText(prueba).width > maximo && linea) { ctx.fillText(linea, t.x / 100 * W, y); linea = palabra; y += e.alto; }
+        if (ctx.measureText(prueba).width > maximo && linea) { ctx.fillText(linea, x, y); linea = palabra; y += e.alto; }
         else linea = prueba;
       }
-      ctx.fillText(linea, t.x / 100 * W, y);
+      ctx.fillText(linea, x, y);
     }
 
     const blob = await new Promise(ok => canvas.toBlob(ok, "image/png"));

@@ -466,8 +466,10 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 .texto-lienzo.seleccionado { outline: 1px solid var(--texto); outline-offset: 4px; }
 /* El tamaño del texto va en proporción al ancho del lienzo (cqw) */
 .texto-titulo { font-family: var(--serif); font-size: 7cqw; line-height: .95; text-transform: uppercase; }
+.texto-encabezado { font-family: var(--serif); font-size: 4.2cqw; line-height: 1.1; }
 .texto-subtitulo { font-size: 1.7cqw; letter-spacing: .18em; text-transform: uppercase; line-height: 1.5; }
 .texto-nota { font-family: var(--serif); font-size: 2.1cqw; line-height: 1.3; }
+.texto-etiqueta { font-size: 1.2cqw; letter-spacing: .06em; text-transform: uppercase; line-height: 1.4; }
 .lienzo-mini .texto-lienzo { font-size: 3px; line-height: 1; overflow: hidden; height: 3px; background: rgba(42, 38, 34, .35); color: transparent; }
 .lienzo-mini .texto-titulo { height: 5px; }
 
