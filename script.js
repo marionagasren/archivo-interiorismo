@@ -152,11 +152,13 @@ function fichaPieza(item, tipo) {
     ? [item.categoria, item.acabado].filter(Boolean).join(" · ")
     : [item.autor, item.marca, item.año].filter(Boolean).join(" · ");
   // Sin imagen todavía: se muestra el nombre en una ficha lisa
+  // Si hay foto de detalle, aparece al pasar el ratón por encima
   const imagen = item.imagen
-    ? `<img src="${texto(item.imagen)}" alt="${texto(item.nombre)}" loading="lazy">`
+    ? `<img src="${texto(item.imagen)}" alt="${texto(item.nombre)}" loading="lazy">${item.detalle
+        ? `<img class="pieza-detalle" src="${texto(item.detalle)}" alt="${texto(item.nombre)} · detalle" loading="lazy">` : ""}`
     : `<span class="sin-imagen">${texto(item.nombre)}</span>`;
   return `
-    <figure class="pieza">
+    <figure class="pieza ${item.detalle ? "con-detalle" : ""}">
       <div class="pieza-imagen">${imagen}</div>
       <figcaption><strong>${texto(item.nombre)}</strong>${detalle ? `<span>${texto(detalle)}</span>` : ""}</figcaption>
     </figure>`;

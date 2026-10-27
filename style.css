@@ -256,7 +256,10 @@ body.portada-visible .cabecera { transform: translateY(-100%); opacity: 0; point
 /* ---------- Materiales y mobiliario ---------- */
 .pieza { margin: 0; }
 .pieza-imagen { aspect-ratio: 1; overflow: hidden; background: var(--fondo-suave); }
+.pieza-imagen { position: relative; }
 .pieza-imagen img { width: 100%; height: 100%; object-fit: cover; }
+.pieza-imagen .pieza-detalle { position: absolute; inset: 0; opacity: 0; transition: opacity .5s ease; }
+.pieza.con-detalle:hover .pieza-detalle { opacity: 1; }
 .sin-imagen {
   height: 100%;
   display: grid;
