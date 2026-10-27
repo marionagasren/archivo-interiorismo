@@ -115,7 +115,7 @@ function htmlTexto(t, miniatura = false) {
 function htmlLienzo(datos, miniatura = false) {
   const [ancho, alto] = datos.proporcion;
   return `
-    <div class="lienzo ${miniatura ? "lienzo-mini" : ""}" style="aspect-ratio:${ancho} / ${alto}; --prop:${ancho / alto}${datos.fondo && !miniatura ? `; background:${FONDOS_LIENZO[datos.fondo]}` : ""}">
+    <div class="lienzo ${miniatura ? "lienzo-mini" : ""} ${datos.sombras && !miniatura ? "con-sombras" : ""}" style="aspect-ratio:${ancho} / ${alto}; --prop:${ancho / alto}${datos.fondo && !miniatura ? `; background:${FONDOS_LIENZO[datos.fondo]}` : ""}">
       ${datos.recuadros.map(r => htmlRecuadro(r, datos.proporcion, miniatura)).join("")}
       ${(datos.textos || []).map(t => htmlTexto(t, miniatura)).join("")}
       ${miniatura ? "" : `<div class="marco-seleccion" hidden><span class="tirador" title="Cambiar tamaño"></span></div>`}
@@ -146,6 +146,8 @@ function pintarLienzo() {
     <button data-orientacion="horizontal" class="${a > b ? "activa" : ""}" title="Lienzo horizontal">▭ Horizontal</button>`;
   document.getElementById("fondo-lienzo").innerHTML = Object.entries(FONDOS_LIENZO).map(([clave, color]) => `
     <button data-fondo="${clave}" class="${(tablero.fondo || "crema") === clave ? "activa" : ""}" title="Fondo ${clave}"><span class="punto-color" style="background:${color}"></span>${clave === "crema" ? "Crema" : "Blanco"}</button>`).join("");
+  document.getElementById("sombras-lienzo").innerHTML = `
+    <button data-sombras class="boton-ancho ${tablero.sombras ? "activa" : ""}" aria-pressed="${!!tablero.sombras}">${tablero.sombras ? "✓ Sombras añadidas" : "Añadir sombras"}</button>`;
   pintarHerramientas();
   guardarTablero();
 }
@@ -183,6 +185,10 @@ function vistaGenerador(modo) {
         <div class="panel-grupo">
           <h3 class="panel-titulo">Fondo</h3>
           <div class="barra" id="fondo-lienzo"></div>
+        </div>
+        <div class="panel-grupo">
+          <h3 class="panel-titulo">Sombras</h3>
+          <div class="barra" id="sombras-lienzo"></div>
         </div>
         <div class="panel-grupo">
           <h3 class="panel-titulo">Añadir</h3>
@@ -332,7 +338,7 @@ function elegirPlantilla(id) {
   if (!plantilla) return;
   const hayContenido = tablero.recuadros.some(r => r.contenido);
   if (hayContenido && !confirm("Se empezará un moodboard nuevo con esta plantilla. ¿Continuar?")) return;
-  tablero = { ...tableroDesde(plantilla), fondo: tablero.fondo };
+  tablero = { ...tableroDesde(plantilla), fondo: tablero.fondo, sombras: tablero.sombras };
   seleccion = null;
   pintarPlantillas();
   pintarLienzo();
@@ -342,7 +348,7 @@ function crearLienzoEnBlanco() {
   const proporcion = PROPORCIONES[document.getElementById("proporcion-nueva").value] || [2, 3];
   const hayContenido = tablero.recuadros.some(r => r.contenido);
   if (hayContenido && !confirm("Se empezará un lienzo en blanco. ¿Continuar?")) return;
-  tablero = { plantilla: null, nombre: "Mi plantilla", proporcion, recuadros: [], textos: [], fondo: tablero.fondo };
+  tablero = { plantilla: null, nombre: "Mi plantilla", proporcion, recuadros: [], textos: [], fondo: tablero.fondo, sombras: tablero.sombras };
   seleccion = null;
   pintarPlantillas();
   pintarLienzo();
@@ -595,6 +601,12 @@ function activarEditor() {
     pintarLienzo();
   });
 
+  document.getElementById("sombras-lienzo").addEventListener("click", e => {
+    if (!e.target.closest("[data-sombras]")) return;
+    tablero.sombras = !tablero.sombras;
+    pintarLienzo();
+  });
+
   document.getElementById("fondo-lienzo").addEventListener("click", e => {
     const b = e.target.closest("[data-fondo]");
     if (!b) return;
@@ -816,11 +828,17 @@ async function descargarPNG() {
         trazarForma(ctx, r.forma, x, y, w, h); ctx.clip();
         dibujarImagen(ctx, imagenes[r.id], x, y, w, h, "contain");
       } else {
-        // sombra suave, como una muestra apoyada sobre la mesa
-        ctx.shadowColor = "rgba(40, 30, 20, .28)";
-        ctx.shadowBlur = W * .018; ctx.shadowOffsetY = W * .006;
-        trazarForma(ctx, r.forma, x, y, w, h);
-        ctx.fillStyle = pieza.hex || "#ddd"; ctx.fill();
+        // sombra suave, como una muestra apoyada sobre la mesa; con «Añadir sombras»,
+        // sombra marcada hacia abajo a la derecha (luz desde arriba a la izquierda)
+        const sombras = tablero.sombras
+          ? [["rgba(30, 22, 15, .30)", W * .004, W * .0015, W * .003], ["rgba(30, 22, 15, .26)", W * .026, W * .01, W * .015]]
+          : [["rgba(40, 30, 20, .28)", W * .018, 0, W * .006]];
+        ctx.fillStyle = pieza.hex || "#ddd";
+        for (const [color, difuminado, dx, dy] of sombras) {
+          ctx.shadowColor = color; ctx.shadowBlur = difuminado; ctx.shadowOffsetX = dx; ctx.shadowOffsetY = dy;
+          trazarForma(ctx, r.forma, x, y, w, h); ctx.fill();
+        }
+        ctx.shadowOffsetX = ctx.shadowOffsetY = 0;
         ctx.shadowColor = "transparent";
         if (pieza.imagen) { trazarForma(ctx, r.forma, x, y, w, h); ctx.clip(); dibujarImagen(ctx, imagenes[r.id], x, y, w, h, "cover"); }
       }

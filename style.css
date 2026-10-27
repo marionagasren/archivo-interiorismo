@@ -409,7 +409,7 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 .editor-panel .barra { flex-direction: row; flex-wrap: wrap; align-items: stretch; gap: 5px; margin: 0; }
 .editor-panel .barra button { flex: 1 1 calc(50% - 3px); padding: 6px 8px; font-size: 11.5px; text-align: left; white-space: nowrap; }
 .editor-panel .barra button[data-accion="azar"], .editor-panel .barra button[data-accion="guardar"],
-.editor-panel .barra button.boton-oscuro, .editor-panel .barra-titulo { flex-basis: 100%; }
+.editor-panel .barra button.boton-oscuro, .editor-panel .barra button.boton-ancho, .editor-panel .barra-titulo { flex-basis: 100%; }
 .panel-seleccion { border-top: 1px solid var(--linea); padding-top: 18px; }
 .editor-panel .barra-seleccion { min-height: 0; }
 .editor-panel .barra-titulo { margin: 0 0 2px; font-size: 10.5px; letter-spacing: .12em; }
@@ -444,6 +444,8 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 .lienzo-mini .recuadro.sin-relleno .recuadro-forma { border-color: rgba(42, 38, 34, .35); background: rgba(255, 255, 255, .45); }
 .recuadro.lleno { filter: drop-shadow(0 2px 2px rgba(40, 30, 20, .16)) drop-shadow(0 10px 14px rgba(40, 30, 20, .16)); }
 .recuadro.lleno-mueble { filter: none; mix-blend-mode: multiply; }
+/* «Añadir sombras»: sombra marcada hacia abajo a la derecha, como piezas apoyadas con luz lateral */
+.lienzo.con-sombras .recuadro.lleno:not(.lleno-mueble) { filter: drop-shadow(.15cqw .3cqw .2cqw rgba(30, 22, 15, .30)) drop-shadow(1cqw 1.5cqw 1.3cqw rgba(30, 22, 15, .26)); }
 
 .relleno { position: absolute; inset: 0; width: 100%; height: 100%; background-size: cover; background-position: center; }
 .relleno-color::after {
