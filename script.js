@@ -467,7 +467,7 @@ function catalogoMateriales(items) {
 // #/biblioteca/<tipo>/<subcategoría>/<tipo de iluminación>
 // p. ej. #/biblioteca/materiales/maderas   o   #/biblioteca/mobiliario/iluminacion/suspension
 function vistaBiblioteca(tipo, filtro, subfiltro) {
-  const pestañas = [["colores", "Colores"], ["materiales", "Materiales"], ["mobiliario", "Mobiliario"]];
+  const pestañas = [["colores", "Colores"], ["materiales", "Texturas y materiales"], ["mobiliario", "Mobiliario"]];
   if (!pestañas.some(([clave]) => clave === tipo)) tipo = "colores";
   const navPestañas = `
       <nav class="pestañas">

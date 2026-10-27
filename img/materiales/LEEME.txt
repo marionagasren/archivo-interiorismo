@@ -24,3 +24,8 @@ Origen de las texturas actuales (fotos de Pexels, licencia libre, sin atribució
 - ceramica-opus-incertum: imagen aportada por 341 Studio
 - microcemento-beige: imagen aportada por 341 Studio
 - microcemento-verde-oscuro: la misma imagen de microcemento, teñida de verde oscuro
+- rafia-tejida: imagen aportada por 341 Studio
+- yute-natural: imagen aportada por 341 Studio
+- azulejo-verde-esmaltado: imagen aportada por 341 Studio
+- estuco-terracota: imagen aportada por 341 Studio
+- metal-martele: imagen aportada por 341 Studio

@@ -6,7 +6,7 @@
 // =====================================================================
 
 const CLAVE_FAVORITOS = "341-favoritos";
-const TIPOS_FAVORITOS = [["colores", "Colores"], ["materiales", "Materiales"], ["mobiliario", "Mobiliario"]];
+const TIPOS_FAVORITOS = [["colores", "Colores"], ["materiales", "Texturas y materiales"], ["mobiliario", "Mobiliario"]];
 
 function leerFavoritos() {
   try {

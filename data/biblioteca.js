@@ -36,6 +36,11 @@ window.BIBLIOTECA = {
     { id: "piedra-veteada-clara", nombre: "Piedra natural veteada clara", categoria: "Piedras naturales", acabado: "Isla de cocina", imagen: "img/materiales/piedra-veteada-clara.jpg" },
     { id: "piedra-gris-tipo-ceppo", nombre: "Piedra clara tipo Ceppo", categoria: "Piedras naturales", acabado: "Encimera de baño", imagen: "img/materiales/piedra-gris-tipo-ceppo.jpg" },
     { id: "lana-pelo-largo", nombre: "Lana bouclé", categoria: "Textiles", acabado: "Alfombra", imagen: "img/materiales/lana-pelo-largo.jpg" },
+    { id: "rafia-tejida", nombre: "Rafia tejida", categoria: "Textiles", acabado: "Revestimiento de pared", imagen: "img/materiales/rafia-tejida.jpg" },
+    { id: "yute-natural", nombre: "Yute natural", categoria: "Textiles", acabado: "Alfombra", imagen: "img/materiales/yute-natural.jpg" },
+    { id: "azulejo-verde-esmaltado", nombre: "Azulejo verde esmaltado", categoria: "Cerámica", acabado: "Revestimiento de pared · formato alargado", imagen: "img/materiales/azulejo-verde-esmaltado.jpg" },
+    { id: "estuco-terracota", nombre: "Estuco terracota", categoria: "Revestimientos continuos", acabado: "Paredes", imagen: "img/materiales/estuco-terracota.jpg" },
+    { id: "metal-martele", nombre: "Metal martelé", categoria: "Metales", acabado: "Acabado plateado reflectante", imagen: "img/materiales/metal-martele.jpg" },
   ],
 
   mobiliario: [
