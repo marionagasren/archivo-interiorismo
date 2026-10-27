@@ -9,9 +9,7 @@
 //    z      → capa: los números altos quedan encima
 //    pide   → qué suele ir dentro: "material", "color" o "mueble"
 //             (sirve para "Rellenar al azar"; puedes poner lo que quieras)
-//  textos (opcional): títulos y notas que se pueden editar con doble clic.
-//             estilo: "titulo", "encabezado", "subtitulo", "nota" o "etiqueta"
-//             alinear: "centro" (opcional) · color: "#..." (opcional, p. ej. claro sobre texturas oscuras)
+//  Las plantillas no llevan textos: se añaden a mano en el editor (+ Texto).
 // =====================================================================
 
 window.PLANTILLAS = [
@@ -65,16 +63,6 @@ window.PLANTILLAS = [
       { x: 68.1, y: 38.5, w: 10.3, h: 23.1, z: 1, pide: "color" },
       { x: 79.3, y: 38.5, w: 14.3, h: 23.1, z: 1, pide: "material" },
     ],
-    textos: [
-      { x: 6.5, y: 4.4, w: 40, texto: "Baño de invitados", estilo: "nota" },
-      { x: 6.5, y: 6.6, w: 40, texto: "materiales", estilo: "encabezado" },
-      { x: 6.5,  y: 62.3, w: 18.9, texto: "Piedra natural", estilo: "etiqueta" },
-      { x: 26.4, y: 62.3, w: 14.4, texto: "Pared", estilo: "etiqueta" },
-      { x: 41.8, y: 62.3, w: 10.1, texto: "Cobre", estilo: "etiqueta" },
-      { x: 52.9, y: 62.3, w: 14.3, texto: "Roble", estilo: "etiqueta" },
-      { x: 68.1, y: 62.3, w: 10.3, texto: "Cerámica", estilo: "etiqueta" },
-      { x: 79.3, y: 62.3, w: 14.3, texto: "Azulejo", estilo: "etiqueta" },
-    ],
   },
 
   {
@@ -86,14 +74,6 @@ window.PLANTILLAS = [
       { x: 20.1, y: 31.9, w: 59.9, h: 18.1, z: 1, pide: "material" },
       { x: 20.1, y: 49.9, w: 59.9, h: 18,   z: 1, pide: "material" },
       { x: 20.1, y: 67.8, w: 59.9, h: 17.7, z: 1, pide: "material" },
-    ],
-    textos: [
-      { x: 20, y: 6.6, w: 60, texto: "Paleta de materiales", estilo: "encabezado", alinear: "centro" },
-      { x: 22, y: 28.3, w: 40, texto: "Terciopelo de mohair", estilo: "nota", color: "#F2ECE3" },
-      { x: 22, y: 46.4, w: 40, texto: "Nogal oscuro", estilo: "nota", color: "#F2ECE3" },
-      { x: 22, y: 64.3, w: 40, texto: "Mármol Emperador", estilo: "nota", color: "#F2ECE3" },
-      { x: 22, y: 82.1, w: 40, texto: "Travertino", estilo: "nota", color: "#F2ECE3" },
-      { x: 30, y: 93.5, w: 40, texto: "341 Studio", estilo: "subtitulo", alinear: "centro" },
     ],
   },
 

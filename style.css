@@ -469,6 +469,7 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 .texto-encabezado { font-family: var(--serif); font-size: 4.2cqw; line-height: 1.1; }
 .texto-subtitulo { font-size: 1.7cqw; letter-spacing: .18em; text-transform: uppercase; line-height: 1.5; }
 .texto-nota { font-family: var(--serif); font-size: 2.1cqw; line-height: 1.3; }
+.punto-color { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: 0; box-shadow: 0 0 0 1px rgba(42, 38, 34, .35); }
 .texto-etiqueta { font-size: 1.2cqw; letter-spacing: .06em; text-transform: uppercase; line-height: 1.4; }
 .lienzo-mini .texto-lienzo { font-size: 3px; line-height: 1; overflow: hidden; height: 3px; background: rgba(42, 38, 34, .35); color: transparent; }
 .lienzo-mini .texto-titulo { height: 5px; }

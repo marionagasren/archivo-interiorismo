@@ -109,7 +109,7 @@ function htmlRecuadro(r, proporcion, miniatura = false) {
 function htmlTexto(t, miniatura = false) {
   return `
     <div class="texto-lienzo texto-${t.estilo || "nota"} ${seleccion === t.id && !miniatura ? "seleccionado" : ""}"
-         data-id="${t.id || ""}" style="left:${t.x}%; top:${t.y}%; width:${t.w}%${t.alinear ? `; text-align:${t.alinear === "centro" ? "center" : "left"}` : ""}${t.color ? `; color:${t.color}; text-shadow:0 0 .6cqw rgba(0, 0, 0, .4)` : ""}">${texto(t.texto)}</div>`;
+         data-id="${t.id || ""}" style="left:${t.x}%; top:${t.y}%; width:${t.w}%${t.alinear ? `; text-align:${t.alinear === "centro" ? "center" : "left"}` : ""}${t.color ? `; color:${t.color}` : ""}">${texto(t.texto)}</div>`;
 }
 
 function htmlLienzo(datos, miniatura = false) {
@@ -284,6 +284,8 @@ function pintarHerramientas() {
     barra.innerHTML = `
       <span class="barra-titulo">Texto · doble clic para escribir</span>
       ${["titulo", "encabezado", "subtitulo", "nota", "etiqueta"].map(e => `<button data-estilo="${e}" class="${t.estilo === e ? "activa" : ""}">${{ titulo: "Título", encabezado: "Encabezado", subtitulo: "Subtítulo", nota: "Nota", etiqueta: "Etiqueta" }[e]}</button>`).join("")}
+      <span class="barra-separador"></span>
+      ${[["", "Negro"], ["#FFFFFF", "Blanco"]].map(([color, nombre]) => `<button data-color="${color}" class="${(t.color || "") === color ? "activa" : ""}"><span class="punto-color" style="background:${color || "var(--texto)"}"></span>${nombre}</button>`).join("")}
       <span class="barra-separador"></span>
       <button data-accion="copiar" title="Ctrl/Cmd + C">Copiar</button>
       <button data-accion="pegar" title="Ctrl/Cmd + V">Pegar</button>
@@ -573,7 +575,7 @@ function activarEditor() {
 
   // Barra de herramientas
   editor.addEventListener("click", e => {
-    const b = e.target.closest("button[data-accion], button[data-forma], button[data-estilo]");
+    const b = e.target.closest("button[data-accion], button[data-forma], button[data-estilo], button[data-color]");
     if (!b) return;
     const r = tablero.recuadros.find(x => x.id === seleccion);
     const t = tablero.textos.find(x => x.id === seleccion);
@@ -590,6 +592,7 @@ function activarEditor() {
     }
     if (b.dataset.forma && r) { r.forma = b.dataset.forma; if (r.forma !== "circulo" && !r.h) r.h = r.w; }
     if (b.dataset.estilo && t) t.estilo = b.dataset.estilo;
+    if (b.dataset.color !== undefined && t) { if (b.dataset.color) t.color = b.dataset.color; else delete t.color; }
     const zs = tablero.recuadros.map(x => x.z ?? 0);
     if (accion === "delante" && r) r.z = Math.max(...zs) + 1;
     if (accion === "detras" && r) r.z = Math.min(...zs) - 1;
@@ -810,9 +813,6 @@ async function descargarPNG() {
       ctx.font = e.fuente;
       if ("letterSpacing" in ctx) ctx.letterSpacing = e.espacio + "px";
       ctx.fillStyle = t.color || "#2A2622";
-      // los textos con color propio (claros sobre texturas) llevan una sombra suave para leerse siempre
-      ctx.shadowColor = t.color ? "rgba(0, 0, 0, .4)" : "transparent";
-      ctx.shadowBlur = t.color ? W * .006 : 0;
       // texto centrado: se escribe desde el centro de su caja
       const centrado = t.alinear === "centro";
       ctx.textAlign = centrado ? "center" : "left";
