@@ -401,8 +401,19 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 .plantilla-mas { font-family: var(--serif); font-size: 34px; line-height: 1; }
 .plantilla-nueva select, .plantilla-nueva button { font: inherit; font-size: 12px; padding: 4px 6px; border: 1px solid var(--linea); background: var(--fondo); cursor: pointer; }
 
-/* Editor: lienzo a la izquierda y biblioteca a la derecha */
-.editor { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 40px; padding: 40px 0 96px; align-items: start; }
+/* Editor: herramientas a la izquierda, lienzo en el centro y biblioteca a la derecha */
+.editor { display: grid; grid-template-columns: 180px minmax(0, 1fr) 300px; gap: 36px; padding: 40px 0 96px; align-items: start; }
+.editor-panel { position: sticky; top: 90px; display: flex; flex-direction: column; gap: 22px; }
+.panel-titulo { margin: 0 0 8px; font-family: var(--sans); font-weight: 400; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--texto-suave); }
+.editor-panel { max-height: calc(100vh - 110px); overflow-y: auto; scrollbar-width: thin; }
+.editor-panel .barra { flex-direction: row; flex-wrap: wrap; align-items: stretch; gap: 5px; margin: 0; }
+.editor-panel .barra button { flex: 1 1 calc(50% - 3px); padding: 6px 8px; font-size: 11.5px; text-align: left; white-space: nowrap; }
+.editor-panel .barra button[data-accion="azar"], .editor-panel .barra button[data-accion="guardar"],
+.editor-panel .barra button.boton-oscuro, .editor-panel .barra-titulo { flex-basis: 100%; }
+.panel-seleccion { border-top: 1px solid var(--linea); padding-top: 18px; }
+.editor-panel .barra-seleccion { min-height: 0; }
+.editor-panel .barra-titulo { margin: 0 0 2px; font-size: 10.5px; letter-spacing: .12em; }
+.editor-panel .barra-separador { flex-basis: 100%; width: auto; height: 1px; margin: 4px 0; }
 .barra { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 10px; }
 .barra button {
   font: inherit;
@@ -659,7 +670,12 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
   .columna:hover { flex: 1; }
   .columna-acciones { opacity: 1; order: 2; align-items: flex-end; }
   .editor { grid-template-columns: 1fr; }
-  .editor-biblioteca { position: static; }
+  .editor-biblioteca, .editor-panel { position: static; max-height: none; }
+  .editor-panel .barra button { flex: 0 0 auto; }
+  .editor-panel { flex-direction: row; flex-wrap: wrap; gap: 14px 22px; }
+  .editor-panel .barra { flex-direction: row; flex-wrap: wrap; }
+  .panel-seleccion { flex-basis: 100%; }
+  .editor-panel .barra-separador { display: none; }
   .piezas { grid-template-columns: repeat(4, 1fr); max-height: 50vh; }
   .portada-estudio { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 12px; }
   .nombre-estudio span { font-size: clamp(36px, 11vw, 56px); }

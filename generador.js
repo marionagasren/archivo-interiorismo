@@ -175,22 +175,38 @@ function vistaGenerador(modo) {
     </section>
 
     <section class="editor">
-      <div class="editor-lienzo">
-        <div class="barra">
-          <span class="orientacion" id="orientacion"></span>
-          <span class="barra-separador"></span>
-          <span class="orientacion" id="fondo-lienzo"></span>
-          <span class="barra-separador"></span>
-          <button data-accion="recuadro">+ Recuadro</button>
-          <button data-accion="circulo">+ Círculo</button>
-          <button data-accion="texto">+ Texto</button>
-          <span class="barra-separador"></span>
-          <button data-accion="azar">Rellenar al azar</button>
-          <button data-accion="vaciar">Vaciar</button>
-          <button data-accion="guardar">Guardar como plantilla</button>
-          <button data-accion="descargar" class="boton-oscuro">Descargar PNG</button>
+      <aside class="editor-panel">
+        <div class="panel-grupo">
+          <h3 class="panel-titulo">Formato</h3>
+          <div class="barra" id="orientacion"></div>
         </div>
-        <div class="barra barra-seleccion" id="barra-seleccion"></div>
+        <div class="panel-grupo">
+          <h3 class="panel-titulo">Fondo</h3>
+          <div class="barra" id="fondo-lienzo"></div>
+        </div>
+        <div class="panel-grupo">
+          <h3 class="panel-titulo">Añadir</h3>
+          <div class="barra">
+            <button data-accion="recuadro">+ Recuadro</button>
+            <button data-accion="circulo">+ Círculo</button>
+            <button data-accion="texto">+ Texto</button>
+          </div>
+        </div>
+        <div class="panel-grupo">
+          <h3 class="panel-titulo">Moodboard</h3>
+          <div class="barra">
+            <button data-accion="azar">Rellenar al azar</button>
+            <button data-accion="vaciar">Vaciar</button>
+            <button data-accion="guardar">Guardar como plantilla</button>
+            <button data-accion="descargar" class="boton-oscuro">Descargar PNG</button>
+          </div>
+        </div>
+        <div class="panel-grupo panel-seleccion">
+          <div class="barra barra-seleccion" id="barra-seleccion"></div>
+        </div>
+      </aside>
+
+      <div class="editor-lienzo">
         <div id="zona-lienzo"></div>
         <p class="aviso" id="aviso"></p>
       </div>
