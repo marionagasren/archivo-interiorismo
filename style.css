@@ -402,17 +402,25 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 .plantilla-nueva select, .plantilla-nueva button { font: inherit; font-size: 12px; padding: 4px 6px; border: 1px solid var(--linea); background: var(--fondo); cursor: pointer; }
 
 /* Editor: herramientas a la izquierda, lienzo en el centro y biblioteca a la derecha */
-.editor { display: grid; grid-template-columns: 180px minmax(0, 1fr) 300px; gap: 36px; padding: 40px 0 96px; align-items: start; }
+.editor { display: grid; grid-template-columns: 180px 190px minmax(0, 1fr) 280px; gap: 36px; padding: 40px 0 96px; align-items: start; }
 .editor-panel { position: sticky; top: 90px; display: flex; flex-direction: column; gap: 22px; }
 .panel-titulo { margin: 0 0 8px; font-family: var(--sans); font-weight: 400; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--texto-suave); }
 .editor-panel { max-height: calc(100vh - 110px); overflow-y: auto; scrollbar-width: thin; }
 .editor-panel .barra { flex-direction: row; flex-wrap: wrap; align-items: stretch; gap: 5px; margin: 0; }
-.editor-panel .barra button { flex: 1 1 calc(50% - 3px); padding: 6px 8px; font-size: 11.5px; text-align: left; white-space: nowrap; }
+.editor-panel .barra button { flex: 1 1 calc(50% - 3px); min-width: 0; padding: 6px 8px; font-size: 11.5px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .editor-panel .barra button[data-accion="azar"], .editor-panel .barra button[data-accion="guardar"],
 .editor-panel .barra button.boton-oscuro, .editor-panel .barra button.boton-ancho, .editor-panel .barra-titulo { flex-basis: 100%; }
-.panel-seleccion { border-top: 1px solid var(--linea); padding-top: 18px; }
+/* Segunda columna: opciones de lo seleccionado (texto o recuadro) */
+.panel-seleccion { position: sticky; border-left: 1px solid var(--linea); padding: 2px 0 0 18px; }
+.panel-seleccion:not(.vacio-seleccion) .barra-seleccion { animation: aparecer-panel .25s ease; }
+.vacio-seleccion .cerrar-panel { display: none; }
+.panel-seleccion .barra button { padding: 6px 6px; font-size: 11px; }
+.panel-vacio { margin: 0; font-family: var(--serif); font-style: italic; font-size: 15px; line-height: 1.4; color: var(--texto-suave); }
+.cerrar-panel { position: absolute; top: -4px; right: 0; background: none; border: 0; padding: 0 2px; font-size: 20px; line-height: 1; color: var(--texto-suave); cursor: pointer; }
+.cerrar-panel:hover { color: var(--texto); }
 .editor-panel .barra-seleccion { min-height: 0; }
-.editor-panel .barra-titulo { margin: 0 0 2px; font-size: 10.5px; letter-spacing: .12em; }
+@keyframes aparecer-panel { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
+.editor-panel .barra-titulo { padding-right: 24px; margin: 0 0 2px; font-size: 10.5px; letter-spacing: .12em; }
 .editor-panel .barra-separador { flex-basis: 100%; width: auto; height: 1px; margin: 4px 0; }
 .barra { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 10px; }
 .barra button {
@@ -676,7 +684,8 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
   .editor-panel .barra button { flex: 0 0 auto; }
   .editor-panel { flex-direction: row; flex-wrap: wrap; gap: 14px 22px; }
   .editor-panel .barra { flex-direction: row; flex-wrap: wrap; }
-  .panel-seleccion { flex-basis: 100%; }
+  .vacio-seleccion { display: none; }
+  .panel-seleccion { border-left: 0; border-top: 1px solid var(--linea); padding: 14px 0 0; }
   .editor-panel .barra-separador { display: none; }
   .piezas { grid-template-columns: repeat(4, 1fr); max-height: 50vh; }
   .portada-estudio { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 12px; }

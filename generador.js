@@ -207,9 +207,11 @@ function vistaGenerador(modo) {
             <button data-accion="descargar" class="boton-oscuro">Descargar PNG</button>
           </div>
         </div>
-        <div class="panel-grupo panel-seleccion">
-          <div class="barra barra-seleccion" id="barra-seleccion"></div>
-        </div>
+      </aside>
+
+      <aside class="editor-panel panel-seleccion" id="panel-seleccion">
+        <button class="cerrar-panel" data-accion="deseleccionar" title="Cerrar (Esc)" aria-label="Cerrar">×</button>
+        <div class="barra barra-seleccion" id="barra-seleccion"></div>
       </aside>
 
       <div class="editor-lienzo">
@@ -320,9 +322,10 @@ function pintarHerramientas() {
       <button data-accion="duplicar" title="Ctrl/Cmd + D">Duplicar</button>
       <button data-accion="eliminar">Eliminar</button>`;
   } else {
-    barra.innerHTML = `<span class="barra-titulo">Selecciona un recuadro para cambiarlo</span>
-      ${portapapeles ? `<button data-accion="pegar" title="Ctrl/Cmd + V">Pegar</button>` : ""}`;
+    barra.innerHTML = `<p class="panel-vacio">Selecciona un texto o un recuadro del lienzo para editarlo aquí.</p>`;
   }
+  // Lo seleccionado se edita en la segunda columna, junto a las herramientas
+  document.getElementById("panel-seleccion").classList.toggle("vacio-seleccion", !(r || t));
   document.getElementById("aviso").textContent = enMano
     ? `Toca un recuadro para colocar «${buscarPieza(enMano)?.nombre}», o una zona libre para crear uno nuevo.`
     : "";
@@ -621,6 +624,7 @@ function activarEditor() {
     const r = tablero.recuadros.find(x => x.id === seleccion);
     const t = tablero.textos.find(x => x.id === seleccion);
     const accion = b.dataset.accion;
+    if (accion === "deseleccionar") { seleccion = null; return pintarLienzo(); }
     if (accion === "recuadro") return añadirRecuadro("rect");
     if (accion === "circulo") return añadirRecuadro("circulo");
     if (accion === "texto") return añadirTexto();
