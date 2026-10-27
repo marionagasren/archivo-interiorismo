@@ -44,7 +44,7 @@ window.BIBLIOTECA = {
     { id: "silla-markelius", nombre: "Silla Markelius", categoria: "Sillas", autor: "", marca: "Vintage · Fenix Originals", imagen: "img/mobiliario/silla-markelius.jpg", detalle: "img/mobiliario/silla-markelius-detalle.jpg" },
     { id: "silla-quadra", nombre: "Silla Quadra", categoria: "Sillas", autor: "", marca: "Otra Objects", imagen: "img/mobiliario/silla-quadra.jpg", detalle: "img/mobiliario/silla-quadra-detalle.jpg" },
     { id: "section-coffee-table", nombre: "Section Coffee Table", categoria: "Mesas", autor: "Paul Coenen", marca: "Vasto Gallery", año: 2023, imagen: "img/mobiliario/section-coffee-table.jpg" },
-    { id: "silla-dr-sonderbar", nombre: "Silla Dr. Sonderbar", categoria: "Sillas", autor: "Philippe Starck", marca: "XO · Vintage, Polop Store", año: 1983, imagen: "img/mobiliario/silla-dr-sonderbar.jpg" },
+    { id: "silla-dr-sonderbar", nombre: "Silla Dr. Sonderbar", categoria: "Sillas", autor: "Philippe Starck", marca: "XO · Vintage, Polop Store", año: 1983, imagen: "img/mobiliario/silla-dr-sonderbar.jpg", detalle: "img/mobiliario/silla-dr-sonderbar-detalle.jpg" },
     { id: "lampara-falkland", nombre: "Lámpara Falkland", categoria: "Iluminación", subcategoria: "Suspensión", autor: "Bruno Munari", marca: "Artemide", año: 1964, imagen: "img/mobiliario/lampara-falkland.jpg" },
     { id: "fragile-lamp", nombre: "Fragile Lamp", categoria: "Iluminación", subcategoria: "Sobremesa", autor: "Jaume Ramírez", marca: "Marset", año: 2023, imagen: "img/mobiliario/fragile-lamp.jpg" },
     { id: "l4-stool", nombre: "L4 Stool", categoria: "Taburetes", autor: "Lucas Cambier", marca: "Cambier Studio", imagen: "img/mobiliario/l4-stool.jpg" },
