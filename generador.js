@@ -831,7 +831,7 @@ async function descargarPNG() {
         // sombra suave, como una muestra apoyada sobre la mesa; con «Añadir sombras»,
         // sombra marcada hacia abajo a la derecha (luz desde arriba a la izquierda)
         const sombras = tablero.sombras
-          ? [["rgba(30, 22, 15, .30)", W * .004, W * .0015, W * .003], ["rgba(30, 22, 15, .26)", W * .026, W * .01, W * .015]]
+          ? [["rgba(25, 18, 12, .42)", W * .005, W * .002, W * .004], ["rgba(25, 18, 12, .40)", W * .032, W * .015, W * .022]]
           : [["rgba(40, 30, 20, .28)", W * .018, 0, W * .006]];
         ctx.fillStyle = pieza.hex || "#ddd";
         for (const [color, difuminado, dx, dy] of sombras) {
