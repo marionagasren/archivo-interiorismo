@@ -39,7 +39,7 @@ window.BIBLIOTECA = {
   ],
 
   mobiliario: [
-    { id: "mesa-fusteria-vidal", nombre: "Mesa de comedor artesanal", categoria: "Mesas", autor: "", marca: "Fusteria Vidal", imagen: "img/mobiliario/mesa-fusteria-vidal.jpg" },
+    { id: "mesa-fusteria-vidal", nombre: "Mesa de comedor artesanal", categoria: "Mesas", autor: "", marca: "Fusteria Vidal", imagen: "img/mobiliario/mesa-fusteria-vidal.jpg", detalle: "img/mobiliario/mesa-fusteria-vidal-detalle.jpg" },
     { id: "lampara-sisisi", nombre: "Lámpara Sísísí Cónicas Planas", categoria: "Iluminación", subcategoria: "Suspensión", autor: "Gabriel Ordeig", marca: "Santa & Cole", año: 1987, imagen: "img/mobiliario/lampara-sisisi.jpg" },
     { id: "silla-markelius", nombre: "Silla Markelius", categoria: "Sillas", autor: "", marca: "Vintage · Fenix Originals", imagen: "img/mobiliario/silla-markelius.jpg", detalle: "img/mobiliario/silla-markelius-detalle.jpg" },
     { id: "silla-quadra", nombre: "Silla Quadra", categoria: "Sillas", autor: "", marca: "Otra Objects", imagen: "img/mobiliario/silla-quadra.jpg", detalle: "img/mobiliario/silla-quadra-detalle.jpg" },
