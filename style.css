@@ -639,7 +639,8 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 /* ---------- Móvil ---------- */
 @media (max-width: 800px) {
   .cabecera { flex-direction: column; gap: 8px; }
-  .menu { gap: 20px; }
+  .menu { gap: 14px; }
+  .menu a { font-size: 11px; letter-spacing: .09em; }
   .proyecto-cabecera { grid-template-columns: 1fr; }
   .descripcion { grid-column: 1; }
   .carrusel-pista img { height: 56vh; }
@@ -661,3 +662,29 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
   .nombre-estudio span { font-size: clamp(36px, 11vw, 56px); }
   .portada-foto { order: 1; width: min(100%, 340px); height: auto; margin-top: 20px; }
 }
+
+
+/* ---------- Guardar en favoritos ---------- */
+.guardar {
+  position: absolute; top: 8px; right: 0;
+  display: grid; place-items: center; width: 22px; height: 24px;
+  background: none; border: 0; padding: 0; cursor: pointer; color: var(--texto);
+}
+.guardar svg { width: 12px; height: 15px; fill: none; stroke: currentColor; stroke-width: .9; stroke-linejoin: round; transition: fill .25s ease, transform .25s ease; }
+.guardar:hover svg { transform: translateY(-1px); }
+.guardar.guardado svg { fill: currentColor; }
+.pieza figcaption { position: relative; padding-right: 30px; }
+.catalogo-item figcaption { position: relative; padding-right: 30px; }
+.catalogo-item .guardar { top: 11px; }
+.carta-color figcaption { position: relative; padding-right: 22px; }
+.carta-color .guardar { top: 5px; right: -4px; }
+.carta-color .guardar svg { width: 10px; height: 13px; }
+/* en la carta de colores solo aparece al pasar por encima (o si ya está guardado) */
+@media (hover: hover) {
+  .carta-color .guardar:not(.guardado) { opacity: 0; transition: opacity .2s ease; }
+  .carta-color:hover .guardar, .carta-color .guardar:focus-visible { opacity: 1; }
+}
+.icono-en-texto { width: 10px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1; vertical-align: -1px; }
+.favoritos { padding-bottom: 40px; }
+.favoritos .catalogo, .favoritos .rejilla-piezas { padding-bottom: 0; }
+.favoritos .carta-grupo-cabecera { justify-content: space-between; }

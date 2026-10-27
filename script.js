@@ -10,6 +10,7 @@
 //    #/biblioteca/colores      → biblioteca (colores, materiales, mobiliario)
 //    #/generador               → generador de moodboards (generador.js)
 //    #/generador/paleta        → generador de paletas de colores (paleta.js)
+//    #/favoritos               → colores, materiales y mobiliario guardados (favoritos.js)
 // =====================================================================
 
 const AUTO = window.AUTO || {};
@@ -160,7 +161,7 @@ function fichaPieza(item, tipo) {
   return `
     <figure class="pieza ${item.detalle ? "con-detalle" : ""}">
       <div class="pieza-imagen">${imagen}</div>
-      <figcaption><strong>${texto(item.nombre)}</strong>${detalle ? `<span>${texto(detalle)}</span>` : ""}</figcaption>
+      <figcaption><strong>${texto(item.nombre)}</strong>${detalle ? `<span>${texto(detalle)}</span>` : ""}${botonGuardar(tipo, item.id, item.nombre)}</figcaption>
     </figure>`;
 }
 
@@ -456,6 +457,7 @@ function catalogoMateriales(items) {
               <span class="catalogo-nombre">${texto(m.nombre)}</span>
               <span class="catalogo-codigo">${codigoCatalogo(m.id)} · ${texto(m.categoria || "")}</span>
               <span class="catalogo-proyectos">${enlacesProyectos(m.proyectos)}</span>
+              ${botonGuardar("materiales", m.id, m.nombre)}
             </figcaption>
           </figure>`).join("")}
       </div>
@@ -612,6 +614,7 @@ function navegar() {
   else if (seccion === "proyecto") vistaProyecto(parametro);
   else if (seccion === "biblioteca") vistaBiblioteca(parametro, filtro, subfiltro);
   else if (seccion === "generador") vistaGenerador(parametro);
+  else if (seccion === "favoritos") vistaFavoritos();
   else vistaNoEncontrada();
 
   // Marca en el menú la sección activa

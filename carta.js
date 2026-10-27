@@ -80,17 +80,7 @@ function htmlCarta({ accion = "Añadir a la paleta" } = {}) {
                 <span class="carta-grupo-total">${grupo.length} colores</span>
               </header>
               <div class="carta-rejilla">
-                ${grupo.map((c, i) => `
-                  <figure class="carta-color ${muestra.has(i) ? "" : "extra"}" data-hex="${c.hex}" data-familia="${c.familia}" data-proyectos="${c.proyectos.length ? 1 : 0}" data-busqueda="${c.busqueda}">
-                    <button class="carta-muestra ${esOscuro(c.hex) ? "oscuro" : ""}" style="background:${c.hex}" title="Copiar ${c.hex}">
-                      <span class="carta-mas" data-anadir title="${accion}">+</span>
-                    </button>
-                    <figcaption>
-                      <span class="carta-nombre">${texto(c.nombre)}</span>
-                      <span class="carta-codigo">${texto(c.codigo)} · ${c.hex}</span>
-                      ${c.proyectos.length ? `<span class="carta-proyectos">${c.proyectos.map(p => texto(p.nombre)).join(", ")}</span>` : ""}
-                    </figcaption>
-                  </figure>`).join("")}
+                ${grupo.map((c, i) => fichaCarta(c, { accion, extra: !muestra.has(i) })).join("")}
               </div>
               <button class="carta-desplegar" data-desplegar>Ver los ${grupo.length} ${familia.toLowerCase()}</button>
             </section>`;
@@ -98,6 +88,22 @@ function htmlCarta({ accion = "Añadir a la paleta" } = {}) {
       </div>
       <p class="vacio carta-sin-resultados" hidden>No hay colores que coincidan con la búsqueda.</p>
     </div>`;
+}
+
+// Una muestra de la carta (también se usa en Favoritos)
+function fichaCarta(c, { accion = "Añadir a la paleta", extra = false } = {}) {
+  return `
+    <figure class="carta-color ${extra ? "extra" : ""}" data-hex="${c.hex}" data-familia="${c.familia}" data-proyectos="${c.proyectos.length ? 1 : 0}" data-busqueda="${c.busqueda}">
+      <button class="carta-muestra ${esOscuro(c.hex) ? "oscuro" : ""}" style="background:${c.hex}" title="Copiar ${c.hex}">
+        <span class="carta-mas" data-anadir title="${accion}">+</span>
+      </button>
+      <figcaption>
+        <span class="carta-nombre">${texto(c.nombre)}</span>
+        <span class="carta-codigo">${texto(c.codigo)} · ${c.hex}</span>
+        ${c.proyectos.length ? `<span class="carta-proyectos">${c.proyectos.map(p => texto(p.nombre)).join(", ")}</span>` : ""}
+        ${botonGuardar("colores", c.codigo, c.nombre)}
+      </figcaption>
+    </figure>`;
 }
 
 // Filtra la carta sin volver a dibujarla (más rápido con 2.000 colores).
@@ -157,7 +163,7 @@ function activarCarta(contenedor, { alAnadir, alElegir } = {}) {
   });
   contenedor.querySelector(".carta-grupos").addEventListener("click", e => {
     const ficha = e.target.closest(".carta-color");
-    if (!ficha) return;
+    if (!ficha || e.target.closest("[data-guardar]")) return;
     const color = cartaColores().find(c => c.hex === ficha.dataset.hex);
     if (e.target.closest("[data-anadir]")) { alAnadir?.(color); return; }
     if (alElegir) { alElegir(color); return; }
