@@ -316,13 +316,18 @@ function pintarBibliotecaEditor() {
     if (todas.some(p => p.deProyectos)) extras.push("De los proyectos");
     if (filtroInicial) { filtroBiblioteca = extras[0] || ""; filtroInicial = false; }
   }
-  if (![...extras, ...presentes].includes(filtroBiblioteca)) filtroBiblioteca = "";
-  document.getElementById("filtros-editor").innerHTML = presentes.length + extras.length > 1 ? `
+  // «Favoritos» (lo guardado con el marcador en la Biblioteca) va siempre junto a «Todos»
+  const tipoFavoritos = { material: "materiales", mueble: "mobiliario", color: "colores" }[pestañaBiblioteca];
+  const favoritos = leerFavoritos()[tipoFavoritos];
+  const claveFavorito = p => pestañaBiblioteca === "color" ? p.codigo : p.id;
+  if (!["Favoritos", ...extras, ...presentes].includes(filtroBiblioteca)) filtroBiblioteca = "";
+  document.getElementById("filtros-editor").innerHTML = `
     <button data-filtro="" class="${filtroBiblioteca ? "" : "activa"}">Todos</button>
-    ${[...extras, ...presentes].map(cat => `<button data-filtro="${cat}" class="${cat === filtroBiblioteca ? "activa" : ""}">${cat}</button>`).join("")}` : "";
+    ${["Favoritos", ...extras, ...presentes].map(cat => `<button data-filtro="${cat}" class="${cat === filtroBiblioteca ? "activa" : ""}">${cat}</button>`).join("")}`;
 
   let piezas = todas;
-  if (filtroBiblioteca === "Mi paleta") piezas = todas.filter(p => enPaleta.includes(p.hex));
+  if (filtroBiblioteca === "Favoritos") piezas = favoritos.map(id => todas.find(p => claveFavorito(p) === id)).filter(Boolean);
+  else if (filtroBiblioteca === "Mi paleta") piezas = todas.filter(p => enPaleta.includes(p.hex));
   else if (filtroBiblioteca === "De los proyectos") piezas = todas.filter(p => p.deProyectos);
   else if (filtroBiblioteca) piezas = todas.filter(p => p.categoria === filtroBiblioteca);
   const palabras = normalizar(busquedaEditor).split(" ").filter(Boolean);
@@ -334,7 +339,9 @@ function pintarBibliotecaEditor() {
       <span class="pieza-muestra ${p.tipo === "mueble" ? "pieza-mueble" : ""}"
             style="${p.hex ? `background-color:${p.hex}` : `background-image:url('${p.imagen}')`}"></span>
       <span class="pieza-nombre">${texto(p.nombre)}</span>
-    </button>`).join("") : `<p class="vacio">No hay nada que coincida.</p>`;
+    </button>`).join("") : filtroBiblioteca === "Favoritos" && !palabras.length
+      ? `<p class="vacio">Todavía no has guardado nada aquí. Usa el marcador de la <a href="#/biblioteca/${{ material: "materiales", mueble: "mobiliario", color: "colores" }[pestañaBiblioteca]}">Biblioteca</a> para guardar lo que te guste y aparecerá en esta lista.</p>`
+      : `<p class="vacio">No hay nada que coincida.</p>`;
 }
 
 function pintarHerramientas() {
