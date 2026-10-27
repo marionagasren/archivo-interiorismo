@@ -86,8 +86,11 @@ function coloresParaAzar() {
 // ---------------------------------------------------------------------
 
 // Alto en % de un círculo, para que sea redondo en cualquier proporción
+// El círculo y el cuadrado mantienen siempre la misma medida de ancho y alto
+const proporcional = forma => forma === "circulo" || forma === "cuadrado";
+
 function altoRecuadro(r, proporcion) {
-  return r.forma === "circulo" ? r.w * proporcion[0] / proporcion[1] : r.h;
+  return proporcional(r.forma) ? r.w * proporcion[0] / proporcion[1] : r.h;
 }
 
 function htmlRecuadro(r, proporcion, miniatura = false) {
@@ -194,6 +197,7 @@ function vistaGenerador(modo) {
           <h3 class="panel-titulo">Añadir</h3>
           <div class="barra">
             <button data-accion="recuadro">+ Recuadro</button>
+            <button data-accion="cuadrado">+ Cuadrado</button>
             <button data-accion="circulo">+ Círculo</button>
             <button data-accion="texto">+ Texto</button>
           </div>
@@ -300,6 +304,7 @@ function pintarHerramientas() {
     barra.innerHTML = `
       <span class="barra-titulo">Recuadro</span>
       <button data-forma="rect" class="${r.forma === "rect" ? "activa" : ""}">Rectángulo</button>
+      <button data-forma="cuadrado" class="${r.forma === "cuadrado" ? "activa" : ""}">Cuadrado</button>
       <button data-forma="circulo" class="${r.forma === "circulo" ? "activa" : ""}">Círculo</button>
       <button data-forma="piedra" class="${r.forma === "piedra" ? "activa" : ""}">Piedra</button>
       <span class="barra-separador"></span>
@@ -359,7 +364,7 @@ function crearLienzoEnBlanco() {
 
 function añadirRecuadro(forma, x = 35, y = 35, contenido = null) {
   const z = Math.max(0, ...tablero.recuadros.map(r => r.z ?? 0)) + 1;
-  const r = { id: nuevoId("r"), x, y, w: 28, h: forma === "circulo" ? 0 : 20, forma, z, contenido };
+  const r = { id: nuevoId("r"), x, y, w: 28, h: proporcional(forma) ? 0 : 20, forma, z, contenido };
   tablero.recuadros.push(r);
   seleccion = r.id;
   pintarLienzo();
@@ -501,7 +506,7 @@ function alinear(item, tipo, caja, ejeBloqueado = null) {
     // Al estirar solo se mueven el borde derecho y el inferior
     const mx = cercana([item.x + item.w], lineasX, imanX);
     if (mx) { item.w = Math.round((item.w + mx.d) * 100) / 100; guiaX = mx.linea; }
-    if (item.forma !== "circulo" && alto) {
+    if (!proporcional(item.forma) && alto) {
       const my = cercana([item.y + alto], lineasY, imanY);
       if (my) { item.h = Math.round((item.h + my.d) * 100) / 100; guiaY = my.linea; }
     }
@@ -627,6 +632,7 @@ function activarEditor() {
     if (accion === "deseleccionar") { seleccion = null; return pintarLienzo(); }
     if (accion === "recuadro") return añadirRecuadro("rect");
     if (accion === "circulo") return añadirRecuadro("circulo");
+    if (accion === "cuadrado") return añadirRecuadro("cuadrado");
     if (accion === "texto") return añadirTexto();
     if (accion === "azar") return rellenarAlAzar();
     if (accion === "guardar") return guardarComoPlantilla();
@@ -635,7 +641,12 @@ function activarEditor() {
       if (confirm("¿Quitar todas las texturas, colores y muebles del moodboard?")) { tablero.recuadros.forEach(x => x.contenido = null); pintarLienzo(); }
       return;
     }
-    if (b.dataset.forma && r) { r.forma = b.dataset.forma; if (r.forma !== "circulo" && !r.h) r.h = r.w; }
+    if (b.dataset.forma && r) {
+      // al pasar de círculo o cuadrado a otra forma, conserva el alto que tenía
+      const alto = altoRecuadro(r, tablero.proporcion), antes = r.forma;
+      r.forma = b.dataset.forma;
+      if (proporcional(antes) && !proporcional(r.forma)) r.h = Math.round(alto * 10) / 10;
+    }
     if (b.dataset.estilo && t) t.estilo = b.dataset.estilo;
     if (b.dataset.color !== undefined && t) { if (b.dataset.color) t.color = b.dataset.color; else delete t.color; }
     const zs = tablero.recuadros.map(x => x.z ?? 0);
@@ -706,7 +717,7 @@ function activarEditor() {
       item.y = Math.round((original.y + dy) * 10) / 10;
     } else {
       item.w = Math.max(4, Math.round((original.w + dx) * 10) / 10);
-      if (item.forma !== "circulo" && item.h !== undefined) item.h = Math.max(3, Math.round((original.h + dy) * 10) / 10);
+      if (!proporcional(item.forma) && item.h !== undefined) item.h = Math.max(3, Math.round((original.h + dy) * 10) / 10);
     }
     alinear(item, gesto.tipo, gesto.caja, gesto.eje);
     const el = zona.querySelector(`[data-id="${item.id}"]`);
