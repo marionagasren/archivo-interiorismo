@@ -4,3 +4,8 @@ Imágenes de la BIBLIOTECA DE MOBILIARIO (compartida entre proyectos).
 - Nombre del archivo = id de la pieza: ch24-wishbone.jpg, lampara-aj.jpg...
 - Minúsculas, sin acentos, sin espacios (usa guiones).
 - Después se registra en data/biblioteca.js y se asigna a los proyectos en data/proyectos.js.
+
+Centrado: cada foto se centra automáticamente con
+  python3 herramientas/centrar_mueble.py ORIGINAL img/mobiliario/<id>.jpg [margen] [--colgante] [--degradado]
+  --colgante  para lámparas de suspensión (centra el cuerpo, no los cables)
+  --degradado para fotos de estudio con fondo gris en degradado o con viñeta
