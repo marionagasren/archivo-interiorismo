@@ -16,12 +16,23 @@ let columnaElegida = null;    // índice de la columna que se va a cambiar desde
 
 const guardarPaleta = () => escribir(CLAVE_PALETA, paleta);
 
+// Lee la paleta guardada y descarta lo que no tenga el formato esperado
+// (datos antiguos o estropeados en el navegador no deben bloquear la página)
+function leerPaleta() {
+  const guardada = leer(CLAVE_PALETA, null);
+  const colores = Array.isArray(guardada?.colores) ? guardada.colores : [];
+  return { colores: colores.filter(c => typeof c?.hex === "string" && /^#[0-9a-f]{6}$/i.test(c.hex)).map(c => ({ hex: c.hex, fijado: !!c.fijado })) };
+}
+
 // ---------------------------------------------------------------------
 //  PALETAS GUARDADAS: una lista de paletas con nombre, en este navegador
 // ---------------------------------------------------------------------
 
 const CLAVE_GUARDADAS = "341-paletas-guardadas";
-const paletasGuardadas = () => leer(CLAVE_GUARDADAS, []);
+const paletasGuardadas = () => {
+  const lista = leer(CLAVE_GUARDADAS, []);
+  return Array.isArray(lista) ? lista.filter(p => p && Array.isArray(p.colores)) : [];
+};
 
 function guardarComoPaleta() {
   if (!paleta.colores.length) return aviso("La paleta está vacía");
@@ -98,7 +109,7 @@ function pestañasGenerador(activo) {
 
 // Añadir un color desde fuera del generador (p. ej. desde la Biblioteca)
 function anadirAPaleta(hex) {
-  const actual = leer(CLAVE_PALETA, null) || { colores: [] };
+  const actual = leerPaleta();
   if (actual.colores.some(c => c.hex === hex)) return aviso("Ese color ya está en la paleta");
   if (actual.colores.length >= MAX_COLORES) return aviso(`La paleta admite hasta ${MAX_COLORES} colores`);
   actual.colores.push({ hex, fijado: false });
@@ -158,7 +169,7 @@ function generarPaleta(n = Math.max(paleta.colores.length, 5)) {
 // ---------------------------------------------------------------------
 
 function vistaPaleta() {
-  paleta = leer(CLAVE_PALETA, null);
+  paleta = leerPaleta();
   columnaElegida = null;
 
   app.innerHTML = `

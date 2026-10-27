@@ -48,6 +48,19 @@ function guardarTablero() {
   if (boton) boton.disabled = !historial.length;
 }
 
+// Un moodboard guardado con un formato antiguo o estropeado se completa
+// (o se descarta) para que nunca bloquee el generador
+function repararTablero(t) {
+  if (!t || typeof t !== "object" || !Array.isArray(t.recuadros)) return null;
+  const proporcion = Array.isArray(t.proporcion) && t.proporcion.length === 2 && t.proporcion.every(n => n > 0) ? t.proporcion : [4, 5];
+  return {
+    ...t,
+    proporcion,
+    recuadros: t.recuadros.filter(r => r && typeof r === "object").map(r => ({ forma: "rect", ...r, id: r.id || nuevoId("r") })),
+    textos: (Array.isArray(t.textos) ? t.textos : []).filter(x => x && typeof x === "object").map(x => ({ ...x, id: x.id || nuevoId("t"), texto: String(x.texto ?? "") })),
+  };
+}
+
 function deshacer() {
   if (!historial.length) return;
   estadoAnterior = historial.pop();
@@ -97,7 +110,7 @@ function buscarPieza(contenido) {
 
 // Colores para «Rellenar al azar»: los de la paleta, si hay; si no, los de los proyectos
 function coloresParaAzar() {
-  const deLaPaleta = (leer("341-paleta-actual", null)?.colores || []).map(c => c.hex);
+  const deLaPaleta = leerPaleta().colores.map(c => c.hex);
   const todos = piezasBiblioteca("color");
   const lista = deLaPaleta.length ? todos.filter(p => deLaPaleta.includes(p.hex)) : todos.filter(p => p.deProyectos);
   return lista.length ? lista : todos;
@@ -186,7 +199,7 @@ function pintarLienzo() {
 function vistaGenerador(modo) {
   if (modo === "paleta") return vistaPaleta();
   filtroInicial = true;
-  tablero = leer(CLAVE_ACTUAL, null) || tableroDesde(window.PLANTILLAS[0]);
+  tablero = repararTablero(leer(CLAVE_ACTUAL, null)) || tableroDesde(window.PLANTILLAS[0]);
   historial = [];
   estadoAnterior = null;
   seleccion = null;
@@ -297,7 +310,7 @@ function pintarBibliotecaEditor() {
   const orden = { material: CATEGORIAS.materiales, mueble: CATEGORIAS.mobiliario, color: FAMILIAS_COLOR }[pestañaBiblioteca];
   const presentes = orden.filter(cat => todas.some(p => p.categoria === cat));
   const extras = [];
-  const enPaleta = (leer("341-paleta-actual", null)?.colores || []).map(c => c.hex);
+  const enPaleta = leerPaleta().colores.map(c => c.hex);
   if (pestañaBiblioteca === "color") {
     if (enPaleta.length) extras.push("Mi paleta");
     if (todas.some(p => p.deProyectos)) extras.push("De los proyectos");
