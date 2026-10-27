@@ -18,6 +18,8 @@ let portapapeles = null; // copia del recuadro o texto (Ctrl/Cmd + C)
 let enMano = null;        // pieza de la biblioteca elegida con un toque (móvil)
 let pestañaBiblioteca = "material";
 let filtroBiblioteca = "";     // subcategoría elegida en la biblioteca del editor
+let busquedaEditor = "";      // texto del buscador de la biblioteca del editor
+let filtroInicial = true;     // al abrir la pestaña de colores, empezar por «Mi paleta»
 
 
 // ---------------------------------------------------------------------
@@ -57,13 +59,25 @@ function todasLasPlantillas() {
 // ---------------------------------------------------------------------
 
 function piezasBiblioteca(tipo) {
-  if (tipo === "color") return bibliotecaColores().map(c => ({ tipo, id: c.hex, nombre: c.nombre, hex: c.hex, categoria: c.categoria }));
+  if (tipo === "color") return cartaColores().map(c => ({ tipo, id: c.hex, nombre: c.nombre, codigo: c.codigo, hex: c.hex, categoria: c.familia, deProyectos: c.proyectos.length > 0 }));
   const lista = tipo === "material" ? BIBLIOTECA.materiales : BIBLIOTECA.mobiliario;
   return lista.filter(p => p.imagen).map(p => ({ tipo, id: p.id, nombre: p.nombre, imagen: p.imagen, categoria: p.categoria }));
 }
 
 function buscarPieza(contenido) {
-  return contenido && piezasBiblioteca(contenido.tipo).find(p => p.id === contenido.id);
+  if (!contenido) return null;
+  const pieza = piezasBiblioteca(contenido.tipo).find(p => p.id === contenido.id);
+  // un color que no está en la carta (p. ej. de un moodboard antiguo) se muestra igual
+  if (!pieza && contenido.tipo === "color") return { tipo: "color", id: contenido.id, nombre: contenido.id, hex: contenido.id };
+  return pieza;
+}
+
+// Colores para «Rellenar al azar»: los de la paleta, si hay; si no, los de los proyectos
+function coloresParaAzar() {
+  const deLaPaleta = (leer("341-paleta-actual", null)?.colores || []).map(c => c.hex);
+  const todos = piezasBiblioteca("color");
+  const lista = deLaPaleta.length ? todos.filter(p => deLaPaleta.includes(p.hex)) : todos.filter(p => p.deProyectos);
+  return lista.length ? lista : todos;
 }
 
 
@@ -136,7 +150,9 @@ function pintarLienzo() {
 //  VISTA
 // ---------------------------------------------------------------------
 
-function vistaGenerador() {
+function vistaGenerador(modo) {
+  if (modo === "paleta") return vistaPaleta();
+  filtroInicial = true;
   tablero = leer(CLAVE_ACTUAL, null) || tableroDesde(window.PLANTILLAS[0]);
   seleccion = null;
   enMano = null;
@@ -144,7 +160,8 @@ function vistaGenerador() {
   app.innerHTML = `
     <section class="intro">
       <h1>Generador</h1>
-      <p>Elige una plantilla y arrastra texturas, colores y mobiliario de la biblioteca a cada recuadro. Puedes mover, redimensionar y eliminar los recuadros, o crear tu propia plantilla.</p>
+      ${pestañasGenerador("moodboard")}
+      <p class="intro-texto">Elige una plantilla y arrastra texturas, colores y mobiliario de la biblioteca a cada recuadro. Puedes mover, redimensionar y eliminar los recuadros, o crear tu propia plantilla.</p>
     </section>
 
     <section class="plantillas">
@@ -177,6 +194,10 @@ function vistaGenerador() {
           <button data-tipo="color">Añadir color</button>
           <button data-tipo="mueble">Añadir mobiliario</button>
         </nav>
+        <label class="buscador buscador-editor">
+          <span class="buscador-icono" aria-hidden="true">⌕</span>
+          <input type="search" id="buscar-editor" placeholder="Buscar" aria-label="Buscar en la biblioteca">
+        </label>
         <nav class="filtros filtros-editor" id="filtros-editor"></nav>
         <div class="piezas" id="piezas"></div>
       </aside>
@@ -209,21 +230,36 @@ function pintarPlantillas() {
 function pintarBibliotecaEditor() {
   document.querySelectorAll(".pestañas-biblioteca button").forEach(b => b.classList.toggle("activa", b.dataset.tipo === pestañaBiblioteca));
   const todas = piezasBiblioteca(pestañaBiblioteca);
-  // Subcategorías, en el mismo orden que en la Biblioteca
+  // Subcategorías, en el mismo orden que en la Biblioteca. En colores hay
+  // además «Mi paleta» y «De los proyectos», para no empezar con 2.000 colores.
   const orden = { material: CATEGORIAS.materiales, mueble: CATEGORIAS.mobiliario, color: FAMILIAS_COLOR }[pestañaBiblioteca];
   const presentes = orden.filter(cat => todas.some(p => p.categoria === cat));
-  if (!presentes.includes(filtroBiblioteca)) filtroBiblioteca = "";
-  document.getElementById("filtros-editor").innerHTML = presentes.length > 1 ? `
+  const extras = [];
+  const enPaleta = (leer("341-paleta-actual", null)?.colores || []).map(c => c.hex);
+  if (pestañaBiblioteca === "color") {
+    if (enPaleta.length) extras.push("Mi paleta");
+    if (todas.some(p => p.deProyectos)) extras.push("De los proyectos");
+    if (filtroInicial) { filtroBiblioteca = extras[0] || ""; filtroInicial = false; }
+  }
+  if (![...extras, ...presentes].includes(filtroBiblioteca)) filtroBiblioteca = "";
+  document.getElementById("filtros-editor").innerHTML = presentes.length + extras.length > 1 ? `
     <button data-filtro="" class="${filtroBiblioteca ? "" : "activa"}">Todos</button>
-    ${presentes.map(cat => `<button data-filtro="${cat}" class="${cat === filtroBiblioteca ? "activa" : ""}">${cat}</button>`).join("")}` : "";
-  const piezas = filtroBiblioteca ? todas.filter(p => p.categoria === filtroBiblioteca) : todas;
+    ${[...extras, ...presentes].map(cat => `<button data-filtro="${cat}" class="${cat === filtroBiblioteca ? "activa" : ""}">${cat}</button>`).join("")}` : "";
+
+  let piezas = todas;
+  if (filtroBiblioteca === "Mi paleta") piezas = todas.filter(p => enPaleta.includes(p.hex));
+  else if (filtroBiblioteca === "De los proyectos") piezas = todas.filter(p => p.deProyectos);
+  else if (filtroBiblioteca) piezas = todas.filter(p => p.categoria === filtroBiblioteca);
+  const palabras = normalizar(busquedaEditor).split(" ").filter(Boolean);
+  if (palabras.length) piezas = piezas.filter(p => palabras.every(w => normalizar(`${p.nombre} ${p.codigo || ""} ${p.hex || ""} ${p.categoria || ""}`).includes(w)));
+
   document.getElementById("piezas").innerHTML = piezas.length ? piezas.map(p => `
     <button class="pieza-editor ${enMano?.tipo === p.tipo && enMano?.id === p.id ? "en-mano" : ""}"
             draggable="true" data-tipo="${p.tipo}" data-id="${texto(p.id)}" title="${texto(p.nombre)}">
       <span class="pieza-muestra ${p.tipo === "mueble" ? "pieza-mueble" : ""}"
             style="${p.hex ? `background-color:${p.hex}` : `background-image:url('${p.imagen}')`}"></span>
       <span class="pieza-nombre">${texto(p.nombre)}</span>
-    </button>`).join("") : `<p class="vacio">No hay piezas con imagen todavía.</p>`;
+    </button>`).join("") : `<p class="vacio">No hay nada que coincida.</p>`;
 }
 
 function pintarHerramientas() {
@@ -305,7 +341,7 @@ function añadirTexto() {
 
 function rellenarAlAzar() {
   const mezclarLista = lista => [...lista].sort(() => Math.random() - .5);
-  const fondos = { material: mezclarLista(piezasBiblioteca("material")), color: mezclarLista(piezasBiblioteca("color")), mueble: mezclarLista(piezasBiblioteca("mueble")) };
+  const fondos = { material: mezclarLista(piezasBiblioteca("material")), color: mezclarLista(coloresParaAzar()), mueble: mezclarLista(piezasBiblioteca("mueble")) };
   tablero.recuadros.filter(r => !r.contenido).forEach(r => {
     const tipo = r.pide && fondos[r.pide].length ? r.pide : (fondos.material.length ? "material" : "color");
     const pieza = fondos[tipo].shift();
@@ -472,6 +508,14 @@ function activarEditor() {
     if (!b) return;
     pestañaBiblioteca = b.dataset.tipo;
     filtroBiblioteca = "";
+    filtroInicial = true;
+    busquedaEditor = "";
+    document.getElementById("buscar-editor").value = "";
+    pintarBibliotecaEditor();
+  });
+  document.getElementById("buscar-editor").addEventListener("input", e => {
+    busquedaEditor = e.target.value;
+    if (busquedaEditor && ["Mi paleta", "De los proyectos"].includes(filtroBiblioteca)) filtroBiblioteca = "";
     pintarBibliotecaEditor();
   });
   document.getElementById("filtros-editor").addEventListener("click", e => {

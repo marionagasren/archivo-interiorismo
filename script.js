@@ -9,6 +9,7 @@
 //    #/proyecto/bori-fontesta  → ficha de un proyecto + moodboard
 //    #/biblioteca/colores      → biblioteca (colores, materiales, mobiliario)
 //    #/generador               → generador de moodboards (generador.js)
+//    #/generador/paleta        → generador de paletas de colores (paleta.js)
 // =====================================================================
 
 const AUTO = window.AUTO || {};
@@ -464,6 +465,23 @@ function catalogoMateriales(items) {
 function vistaBiblioteca(tipo, filtro, subfiltro) {
   const pestañas = [["colores", "Colores"], ["materiales", "Materiales"], ["mobiliario", "Mobiliario"]];
   if (!pestañas.some(([clave]) => clave === tipo)) tipo = "colores";
+  const navPestañas = `
+      <nav class="pestañas">
+        ${pestañas.map(([clave, nombre]) => `<a href="#/biblioteca/${clave}" class="${clave === tipo ? "activa" : ""}">${nombre}</a>`).join("")}
+      </nav>`;
+
+  // Colores: la carta completa (RAL Classic + RAL Design) con buscador
+  if (tipo === "colores") {
+    app.innerHTML = `
+      <section class="intro">
+        <h1>Biblioteca</h1>
+        ${navPestañas}
+        <p class="intro-texto">Carta completa de ${window.CARTA_COLORES.length.toLocaleString("es")} colores RAL, ordenada por familias de tono. Pulsa una muestra para copiar su código o «+» para añadirla a tu paleta.</p>
+      </section>
+      <section class="biblioteca-carta">${htmlCarta()}</section>`;
+    activarCarta(app.querySelector(".biblioteca-carta"), { alAnadir: c => anadirAPaleta(c.hex) });
+    return;
+  }
 
   const todos = tipo === "colores" ? bibliotecaColores() : bibliotecaPiezas(tipo);
   const orden = tipo === "colores" ? FAMILIAS_COLOR : CATEGORIAS[tipo];
@@ -565,7 +583,7 @@ function navegar() {
   else if (seccion === "proyectos") vistaProyectos(parametro);
   else if (seccion === "proyecto") vistaProyecto(parametro);
   else if (seccion === "biblioteca") vistaBiblioteca(parametro, filtro, subfiltro);
-  else if (seccion === "generador") vistaGenerador();
+  else if (seccion === "generador") vistaGenerador(parametro);
   else vistaNoEncontrada();
 
   // Marca en el menú la sección activa
