@@ -539,8 +539,34 @@ function vistaBiblioteca(tipo, filtro, subfiltro) {
         ${pestañas.map(([clave, nombre]) => `<a href="#/biblioteca/${clave}" class="${clave === tipo ? "activa" : ""}">${nombre}</a>`).join("")}
       </nav>
       ${filtros}
+      <div class="carta-herramientas biblioteca-buscador">
+        <label class="buscador">
+          <span class="buscador-icono" aria-hidden="true">⌕</span>
+          <input type="search" placeholder="${tipo === "materiales" ? "Buscar material — p. ej. roble, piedra, 341-004" : "Buscar pieza — p. ej. lámpara, Santa & Cole, Starck"}" aria-label="Buscar en la biblioteca">
+        </label>
+        <span class="carta-contador"></span>
+      </div>
     </section>
-    ${contenido}`;
+    ${contenido}
+    <p class="vacio biblioteca-sin-resultados" hidden>No hay nada que coincida con la búsqueda.</p>`;
+
+  // Buscador: filtra las fichas por todo lo que muestran (nombre, código,
+  // categoría, diseñador, marca, proyectos...) sin volver a dibujar la página
+  const fichas = [...app.querySelectorAll(".catalogo-item, .rejilla-piezas .item-biblioteca")];
+  const textos = fichas.map(f => normalizar(f.textContent));
+  const contador = app.querySelector(".biblioteca-buscador .carta-contador");
+  const filtrar = valor => {
+    const palabras = normalizar(valor).split(" ").filter(Boolean);
+    let visibles = 0;
+    fichas.forEach((f, i) => {
+      f.hidden = !palabras.every(p => textos[i].includes(p));
+      if (!f.hidden) visibles++;
+    });
+    contador.textContent = `${visibles} ${tipo === "materiales" ? (visibles === 1 ? "material" : "materiales") : (visibles === 1 ? "pieza" : "piezas")}`;
+    app.querySelector(".biblioteca-sin-resultados").hidden = visibles > 0 || !fichas.length;
+  };
+  app.querySelector(".biblioteca-buscador input").addEventListener("input", e => filtrar(e.target.value));
+  filtrar("");
 }
 
 

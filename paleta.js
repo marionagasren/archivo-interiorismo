@@ -16,6 +16,73 @@ let columnaElegida = null;    // índice de la columna que se va a cambiar desde
 
 const guardarPaleta = () => escribir(CLAVE_PALETA, paleta);
 
+// ---------------------------------------------------------------------
+//  PALETAS GUARDADAS: una lista de paletas con nombre, en este navegador
+// ---------------------------------------------------------------------
+
+const CLAVE_GUARDADAS = "341-paletas-guardadas";
+const paletasGuardadas = () => leer(CLAVE_GUARDADAS, []);
+
+function guardarComoPaleta() {
+  if (!paleta.colores.length) return aviso("La paleta está vacía");
+  const nombre = prompt("Nombre de la paleta:", `Paleta ${paletasGuardadas().length + 1}`);
+  if (!nombre) return;
+  const nueva = { id: nuevoId("pal"), nombre: nombre.trim(), colores: paleta.colores.map(c => c.hex), fecha: new Date().toISOString().slice(0, 10) };
+  escribir(CLAVE_GUARDADAS, [nueva, ...paletasGuardadas()]);
+  aviso(`«${nueva.nombre}» guardada`);
+  pintarGuardadas();
+}
+
+function pintarGuardadas() {
+  const zona = document.getElementById("paletas-guardadas");
+  if (!zona) return;
+  const lista = paletasGuardadas();
+  zona.innerHTML = lista.length ? `
+    <h2 class="etiqueta">Paletas guardadas · ${lista.length}</h2>
+    <div class="guardadas-rejilla">
+      ${lista.map(p => `
+        <article class="guardada" data-guardada="${p.id}">
+          <button class="guardada-franja" data-accion-guardada="abrir" title="Abrir esta paleta">
+            ${p.colores.map(hex => `<span style="background:${hex}"></span>`).join("")}
+          </button>
+          <div class="guardada-pie">
+            <span class="guardada-nombre">${texto(p.nombre)}</span>
+            <span class="guardada-datos">${p.colores.length} colores · ${p.fecha || ""}</span>
+            <span class="guardada-acciones">
+              <button data-accion-guardada="abrir">Abrir</button>
+              <button data-accion-guardada="renombrar">Renombrar</button>
+              <button data-accion-guardada="borrar">Borrar</button>
+            </span>
+          </div>
+        </article>`).join("")}
+    </div>` : "";
+}
+
+function accionGuardada(id, accion) {
+  const lista = paletasGuardadas();
+  const p = lista.find(x => x.id === id);
+  if (!p) return;
+  if (accion === "abrir") {
+    paleta = { colores: p.colores.map(hex => ({ hex, fijado: false })) };
+    columnaElegida = null;
+    guardarPaleta();
+    pintarPaleta();
+    document.getElementById("paleta-banda").scrollIntoView({ behavior: "smooth", block: "center" });
+    aviso(`«${p.nombre}» abierta`);
+  }
+  if (accion === "renombrar") {
+    const nombre = prompt("Nuevo nombre:", p.nombre);
+    if (!nombre) return;
+    p.nombre = nombre.trim();
+    escribir(CLAVE_GUARDADAS, lista);
+  }
+  if (accion === "borrar") {
+    if (!confirm(`¿Borrar la paleta «${p.nombre}»?`)) return;
+    escribir(CLAVE_GUARDADAS, lista.filter(x => x.id !== id));
+  }
+  pintarGuardadas();
+}
+
 function datosColor(hex) {
   return cartaColores().find(c => c.hex === hex) || { hex, nombre: "Color", codigo: "", lab: hexALab(hex) };
 }
@@ -107,12 +174,15 @@ function vistaPaleta() {
         <button data-paleta="anadir">+ Color</button>
         <button data-paleta="vaciar">Vaciar</button>
         <span class="barra-separador"></span>
+        <button data-paleta="guardar">Guardar paleta</button>
         <button data-paleta="copiar">Copiar códigos</button>
         <button data-paleta="descargar">Descargar PNG</button>
       </div>
       <div class="paleta-banda" id="paleta-banda"></div>
       <p class="aviso" id="aviso-paleta"></p>
     </section>
+
+    <section class="paletas-guardadas" id="paletas-guardadas"></section>
 
     <section class="bloque paleta-carta">
       <h2 class="titulo-bloque">Carta de colores</h2>
@@ -121,6 +191,7 @@ function vistaPaleta() {
 
   if (!paleta || !paleta.colores.length) { paleta = { colores: [] }; generarPaleta(); }
   else pintarPaleta();
+  pintarGuardadas();
   activarPaleta();
   activarCarta(app.querySelector(".paleta-carta"), {
     alAnadir: c => ponerColor(c.hex),
@@ -174,6 +245,11 @@ function ponerColor(hex) {
 function activarPaleta() {
   const banda = document.getElementById("paleta-banda");
 
+  document.getElementById("paletas-guardadas").addEventListener("click", e => {
+    const b = e.target.closest("[data-accion-guardada]");
+    if (b) accionGuardada(b.closest("[data-guardada]").dataset.guardada, b.dataset.accionGuardada);
+  });
+
   app.querySelector(".paleta-editor .barra").addEventListener("click", e => {
     const b = e.target.closest("[data-paleta]");
     if (!b) return;
@@ -192,6 +268,7 @@ function activarPaleta() {
     if (accion === "vaciar" && confirm("¿Quitar todos los colores de la paleta?")) { paleta.colores = []; columnaElegida = null; }
     if (accion === "copiar") return copiarTexto(paleta.colores.map(c => `${c.hex} ${datosColor(c.hex).codigo}`).join("\n"));
     if (accion === "descargar") return descargarPaleta();
+    if (accion === "guardar") return guardarComoPaleta();
     guardarPaleta();
     pintarPaleta();
   });

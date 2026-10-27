@@ -495,6 +495,7 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 .buscador input { flex: 1; min-width: 0; border: 0; background: none; font: inherit; font-size: 14px; color: var(--texto); outline: none; }
 .buscador input::placeholder { color: var(--texto-suave); font-family: var(--serif); font-style: italic; font-size: 16px; }
 .buscador-editor { margin-bottom: 12px; max-width: none; }
+.buscador input::-webkit-search-cancel-button { filter: grayscale(1); opacity: .5; cursor: pointer; }
 
 .carta { padding-bottom: 96px; }
 .carta-herramientas { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
@@ -576,6 +577,22 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 .columna-nombre { font-family: var(--serif); font-size: clamp(15px, 1.4vw, 19px); line-height: 1.15; }
 .columna-codigo { font-family: var(--mono); font-size: 10px; letter-spacing: .06em; opacity: .75; }
 .paleta-vacia { margin: auto; padding: 0 24px; }
+
+/* Paletas guardadas: franjas pequeñas con nombre, como muestrarios */
+.paletas-guardadas:not(:empty) { padding: 40px 0 8px; }
+.guardadas-rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 28px 20px; }
+.guardada-franja { display: flex; width: 100%; height: 78px; padding: 0; border: 0; cursor: pointer; box-shadow: 0 1px 2px rgba(40, 30, 20, .08), 0 8px 18px rgba(40, 30, 20, .08); transition: transform .25s ease; }
+.guardada-franja:hover { transform: translateY(-3px); }
+.guardada-franja span { flex: 1; }
+.guardada-pie { display: flex; flex-direction: column; gap: 3px; padding-top: 10px; }
+.guardada-nombre { font-family: var(--serif); font-size: 18px; line-height: 1.15; }
+.guardada-datos { font-family: var(--mono); font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--texto-suave); }
+.guardada-acciones { display: flex; gap: 12px; margin-top: 4px; }
+.guardada-acciones button { font-family: var(--mono); font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; background: none; border: 0; border-bottom: 1px solid transparent; padding: 0 0 1px; color: var(--texto-suave); cursor: pointer; }
+.guardada-acciones button:hover { color: var(--texto); border-color: var(--texto); }
+
+/* Buscador de materiales y mobiliario */
+.biblioteca-buscador { margin-top: 28px; }
 .paleta-carta { padding-top: 56px; }
 
 
