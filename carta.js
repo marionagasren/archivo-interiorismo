@@ -6,6 +6,7 @@
 // =====================================================================
 
 let cacheCarta = null;
+const MUESTRA_FAMILIA = 18;   // colores que se ven de cada familia antes de desplegarla
 
 // Todos los colores de la carta, con su familia y su posición en el espacio
 // de color (Lab), ordenados de claro a oscuro dentro de cada familia
@@ -64,18 +65,36 @@ function htmlCarta({ accion = "Añadir a la paleta" } = {}) {
         ${hayProyectos ? `<button data-familia="proyectos">De los proyectos</button>` : ""}
         ${FAMILIAS_COLOR.map(f => `<button data-familia="${f}">${f}</button>`).join("")}
       </nav>
-      <div class="carta-rejilla">
-        ${colores.map(c => `
-          <figure class="carta-color" data-hex="${c.hex}" data-familia="${c.familia}" data-proyectos="${c.proyectos.length ? 1 : 0}" data-busqueda="${c.busqueda}">
-            <button class="carta-muestra ${esOscuro(c.hex) ? "oscuro" : ""}" style="background:${c.hex}" title="Copiar ${c.hex}">
-              <span class="carta-mas" data-anadir title="${accion}">+</span>
-            </button>
-            <figcaption>
-              <span class="carta-nombre">${texto(c.nombre)}</span>
-              <span class="carta-codigo">${texto(c.codigo)} · ${c.hex}</span>
-              ${c.proyectos.length ? `<span class="carta-proyectos">${c.proyectos.map(p => texto(p.nombre)).join(", ")}</span>` : ""}
-            </figcaption>
-          </figure>`).join("")}
+      <div class="carta-grupos">
+        ${FAMILIAS_COLOR.map(familia => {
+          const grupo = colores.filter(c => c.familia === familia);
+          if (!grupo.length) return "";
+          // Muestra resumida: colores repartidos de claro a oscuro por toda la familia
+          const paso = grupo.length / Math.min(MUESTRA_FAMILIA, grupo.length);
+          const muestra = new Set(Array.from({ length: Math.min(MUESTRA_FAMILIA, grupo.length) }, (_, i) => Math.floor(i * paso)));
+          return `
+            <section class="carta-grupo" data-grupo="${familia}">
+              <header class="carta-grupo-cabecera">
+                <h3>${familia}</h3>
+                <span class="carta-grupo-franja">${muestra.size ? [...muestra].filter((_, i) => i % 2 === 0).map(i => `<span style="background:${grupo[i].hex}"></span>`).join("") : ""}</span>
+                <span class="carta-grupo-total">${grupo.length} colores</span>
+              </header>
+              <div class="carta-rejilla">
+                ${grupo.map((c, i) => `
+                  <figure class="carta-color ${muestra.has(i) ? "" : "extra"}" data-hex="${c.hex}" data-familia="${c.familia}" data-proyectos="${c.proyectos.length ? 1 : 0}" data-busqueda="${c.busqueda}">
+                    <button class="carta-muestra ${esOscuro(c.hex) ? "oscuro" : ""}" style="background:${c.hex}" title="Copiar ${c.hex}">
+                      <span class="carta-mas" data-anadir title="${accion}">+</span>
+                    </button>
+                    <figcaption>
+                      <span class="carta-nombre">${texto(c.nombre)}</span>
+                      <span class="carta-codigo">${texto(c.codigo)} · ${c.hex}</span>
+                      ${c.proyectos.length ? `<span class="carta-proyectos">${c.proyectos.map(p => texto(p.nombre)).join(", ")}</span>` : ""}
+                    </figcaption>
+                  </figure>`).join("")}
+              </div>
+              <button class="carta-desplegar" data-desplegar>Ver los ${grupo.length} ${familia.toLowerCase()}</button>
+            </section>`;
+        }).join("")}
       </div>
       <p class="vacio carta-sin-resultados" hidden>No hay colores que coincidan con la búsqueda.</p>
     </div>`;
@@ -86,22 +105,47 @@ function htmlCarta({ accion = "Añadir a la paleta" } = {}) {
 function activarCarta(contenedor, { alAnadir, alElegir } = {}) {
   const input = contenedor.querySelector(".carta input");
   const fichas = [...contenedor.querySelectorAll(".carta-color")];
+  const grupos = [...contenedor.querySelectorAll(".carta-grupo")];
   const contador = contenedor.querySelector(".carta-contador");
   const sinResultados = contenedor.querySelector(".carta-sin-resultados");
+  const desplegados = new Set();   // familias abiertas con «Ver todos»
   let familia = "";
 
+  // Vista «Todos» sin búsqueda: cada familia muestra un resumen y se despliega.
+  // Con una familia elegida, «De los proyectos» o una búsqueda: se ve todo lo que coincide.
   const filtrar = () => {
     const palabras = normalizar(input.value).split(" ").filter(Boolean);
+    const resumen = !familia && !palabras.length;
     let visibles = 0;
     for (const f of fichas) {
       const okFamilia = !familia || (familia === "proyectos" ? f.dataset.proyectos === "1" : f.dataset.familia === familia);
       const okTexto = palabras.every(p => f.dataset.busqueda.includes(p));
-      f.hidden = !(okFamilia && okTexto);
-      if (!f.hidden) visibles++;
+      const plegada = resumen && f.classList.contains("extra") && !desplegados.has(f.dataset.familia);
+      f.hidden = !(okFamilia && okTexto) || plegada;
+      if (okFamilia && okTexto) visibles++;
+    }
+    for (const g of grupos) {
+      const abierto = desplegados.has(g.dataset.grupo);
+      g.hidden = !g.querySelector(".carta-color:not([hidden])");
+      g.classList.toggle("abierto", abierto);
+      const boton = g.querySelector("[data-desplegar]");
+      boton.hidden = !resumen;
+      const total = g.querySelectorAll(".carta-color").length;
+      boton.textContent = abierto ? "Ver menos" : `Ver los ${total} colores`;
     }
     contador.textContent = `${visibles} ${visibles === 1 ? "color" : "colores"}`;
     sinResultados.hidden = visibles > 0;
   };
+
+  contenedor.querySelector(".carta-grupos").addEventListener("click", e => {
+    const boton = e.target.closest("[data-desplegar]");
+    if (!boton) return;
+    const g = boton.closest(".carta-grupo");
+    const nombre = g.dataset.grupo;
+    desplegados.has(nombre) ? desplegados.delete(nombre) : desplegados.add(nombre);
+    filtrar();
+    if (!desplegados.has(nombre)) g.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
 
   input.addEventListener("input", filtrar);
   contenedor.querySelector(".carta-familias").addEventListener("click", e => {
@@ -111,7 +155,7 @@ function activarCarta(contenedor, { alAnadir, alElegir } = {}) {
     contenedor.querySelectorAll(".carta-familias button").forEach(x => x.classList.toggle("activa", x === b));
     filtrar();
   });
-  contenedor.querySelector(".carta-rejilla").addEventListener("click", e => {
+  contenedor.querySelector(".carta-grupos").addEventListener("click", e => {
     const ficha = e.target.closest(".carta-color");
     if (!ficha) return;
     const color = cartaColores().find(c => c.hex === ficha.dataset.hex);

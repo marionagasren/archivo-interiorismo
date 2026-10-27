@@ -511,6 +511,24 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 }
 .carta-familias button:hover, .carta-familias button.activa { color: var(--texto); border-color: var(--texto); }
 
+.carta-grupo { margin-bottom: 64px; scroll-margin-top: 90px; }
+.carta-grupo[hidden] { display: none; }
+.carta-grupo-cabecera {
+  display: flex; align-items: baseline; gap: 18px;
+  border-bottom: 1px solid var(--texto); padding-bottom: 10px; margin-bottom: 22px;
+}
+.carta-grupo-cabecera h3 { font-family: var(--serif); font-weight: 400; font-size: 26px; margin: 0; }
+.carta-grupo-franja { display: flex; flex: 1; justify-content: flex-end; align-self: center; }
+.carta-grupo-franja span { width: 14px; height: 14px; box-shadow: inset 0 0 0 1px rgba(42, 38, 34, .06); }
+.carta-grupo-total { font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--texto-suave); white-space: nowrap; }
+.carta-desplegar {
+  display: block; margin: 26px auto 0; padding: 0 0 3px;
+  font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+  background: none; border: 0; border-bottom: 1px solid var(--texto); color: var(--texto); cursor: pointer;
+}
+.carta-desplegar:hover { color: var(--texto-suave); border-color: var(--texto-suave); }
+.carta-desplegar[hidden] { display: none; }
+
 .carta-rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 26px 14px; }
 .carta-color { margin: 0; }
 .carta-color[hidden] { display: none; }
