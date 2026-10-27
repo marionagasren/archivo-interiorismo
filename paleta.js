@@ -176,7 +176,7 @@ function vistaPaleta() {
         <span class="barra-separador"></span>
         <button data-paleta="guardar">Guardar paleta</button>
         <button data-paleta="copiar">Copiar códigos</button>
-        <button data-paleta="descargar">Descargar PNG</button>
+        <button data-paleta="descargar" class="boton-oscuro boton-derecha">Descargar PNG</button>
       </div>
       <div class="paleta-banda" id="paleta-banda"></div>
       <p class="aviso" id="aviso-paleta"></p>
