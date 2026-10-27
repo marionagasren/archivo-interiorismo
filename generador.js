@@ -321,9 +321,11 @@ function pintarBibliotecaEditor() {
   const favoritos = leerFavoritos()[tipoFavoritos];
   const claveFavorito = p => pestañaBiblioteca === "color" ? p.codigo : p.id;
   if (!["Favoritos", ...extras, ...presentes].includes(filtroBiblioteca)) filtroBiblioteca = "";
+  // «Todos» y «Favoritos» arriba, destacados; el resto de tipologías en lista, una por fila
+  const botonFiltro = (valor, nombre) => `<button data-filtro="${valor}" class="${valor === filtroBiblioteca ? "activa" : ""}">${nombre}</button>`;
   document.getElementById("filtros-editor").innerHTML = `
-    <button data-filtro="" class="${filtroBiblioteca ? "" : "activa"}">Todos</button>
-    ${["Favoritos", ...extras, ...presentes].map(cat => `<button data-filtro="${cat}" class="${cat === filtroBiblioteca ? "activa" : ""}">${cat}</button>`).join("")}`;
+    <div class="filtros-principales">${botonFiltro("", "Todos")}${botonFiltro("Favoritos", "Favoritos")}</div>
+    <div class="filtros-lista">${[...extras, ...presentes].map(cat => botonFiltro(cat, cat)).join("")}</div>`;
 
   let piezas = todas;
   if (filtroBiblioteca === "Favoritos") piezas = favoritos.map(id => todas.find(p => claveFavorito(p) === id)).filter(Boolean);

@@ -501,9 +501,17 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 .pestañas-biblioteca { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-bottom: 16px; }
 .pestañas-biblioteca button { font: inherit; font-family: var(--serif); font-size: 19px; background: none; border: 0; padding: 0 0 2px; color: var(--texto-suave); cursor: pointer; border-bottom: 1px solid transparent; }
 .pestañas-biblioteca button.activa { color: var(--texto); border-color: var(--texto); }
-.filtros-editor { margin: 0 0 14px; gap: 6px 14px; }
-.filtros-editor button { font: inherit; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; background: none; border: 0; border-bottom: 1px solid transparent; padding: 0 0 2px; color: var(--texto-suave); cursor: pointer; }
-.filtros-editor button:hover, .filtros-editor button.activa { color: var(--texto); border-color: var(--texto); }
+.filtros-editor { display: block; margin: 0 0 16px; }
+.filtros-editor button { font: inherit; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+/* Todos y Favoritos: botones en negro (el elegido, relleno) */
+.filtros-principales { display: flex; gap: 6px; margin-bottom: 10px; }
+.filtros-principales button { flex: 1; padding: 8px 10px; background: transparent; color: var(--texto); border: 1px solid var(--texto); }
+.filtros-principales button.activa, .filtros-principales button:hover { background: var(--texto); color: var(--fondo); }
+/* El resto de tipologías, en lista: una por fila */
+.filtros-lista { display: flex; flex-direction: column; }
+.filtros-lista button { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 7px 0; background: none; border: 0; border-bottom: 1px solid var(--linea); color: var(--texto-suave); text-align: left; }
+.filtros-lista button:hover, .filtros-lista button.activa { color: var(--texto); }
+.filtros-lista button.activa::after { content: "●"; font-size: 6px; }
 .barra button.boton-oscuro { background: var(--texto); color: var(--fondo); border-color: var(--texto); }
 .barra button.boton-oscuro:hover { background: transparent; color: var(--texto); }
 .barra .boton-derecha { margin-left: auto; }
