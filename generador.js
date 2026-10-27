@@ -212,9 +212,8 @@ function vistaGenerador(modo) {
 function pintarPlantillas() {
   document.getElementById("plantillas-fila").innerHTML = `
     ${todasLasPlantillas().map(p => `
-      <div class="plantilla ${tablero.plantilla === p.id ? "activa" : ""}" data-plantilla="${p.id}" role="button" tabindex="0">
+      <div class="plantilla ${tablero.plantilla === p.id ? "activa" : ""}" data-plantilla="${p.id}" role="button" tabindex="0" aria-label="${texto(p.nombre)}">
         ${htmlLienzo(p, true)}
-        <span>${texto(p.nombre)}</span>
         ${p.propia ? `<span class="borrar-plantilla" data-borrar="${p.id}" title="Borrar plantilla">×</span>` : ""}
       </div>`).join("")}
     <div class="plantilla plantilla-nueva">
