@@ -115,7 +115,7 @@ function htmlTexto(t, miniatura = false) {
 function htmlLienzo(datos, miniatura = false) {
   const [ancho, alto] = datos.proporcion;
   return `
-    <div class="lienzo ${miniatura ? "lienzo-mini" : ""}" style="aspect-ratio:${ancho} / ${alto}; --prop:${ancho / alto}">
+    <div class="lienzo ${miniatura ? "lienzo-mini" : ""}" style="aspect-ratio:${ancho} / ${alto}; --prop:${ancho / alto}${datos.fondo && !miniatura ? `; background:${FONDOS_LIENZO[datos.fondo]}` : ""}">
       ${datos.recuadros.map(r => htmlRecuadro(r, datos.proporcion, miniatura)).join("")}
       ${(datos.textos || []).map(t => htmlTexto(t, miniatura)).join("")}
       ${miniatura ? "" : `<div class="marco-seleccion" hidden><span class="tirador" title="Cambiar tamaño"></span></div>`}
@@ -134,6 +134,9 @@ function actualizarMarco() {
   marco.classList.toggle("marco-circulo", r.forma === "circulo");
 }
 
+// Color del fondo del lienzo (se elige en la barra y sale igual en el PNG)
+const FONDOS_LIENZO = { crema: "#ECE9E3", blanco: "#FFFFFF" };
+
 function pintarLienzo() {
   document.getElementById("zona-lienzo").innerHTML = htmlLienzo(tablero);
   actualizarMarco();
@@ -141,6 +144,8 @@ function pintarLienzo() {
   document.getElementById("orientacion").innerHTML = `
     <button data-orientacion="vertical" class="${a <= b ? "activa" : ""}" title="Lienzo vertical">▯ Vertical</button>
     <button data-orientacion="horizontal" class="${a > b ? "activa" : ""}" title="Lienzo horizontal">▭ Horizontal</button>`;
+  document.getElementById("fondo-lienzo").innerHTML = Object.entries(FONDOS_LIENZO).map(([clave, color]) => `
+    <button data-fondo="${clave}" class="${(tablero.fondo || "crema") === clave ? "activa" : ""}" title="Fondo ${clave}"><span class="punto-color" style="background:${color}"></span>${clave === "crema" ? "Crema" : "Blanco"}</button>`).join("");
   pintarHerramientas();
   guardarTablero();
 }
@@ -173,6 +178,8 @@ function vistaGenerador(modo) {
       <div class="editor-lienzo">
         <div class="barra">
           <span class="orientacion" id="orientacion"></span>
+          <span class="barra-separador"></span>
+          <span class="orientacion" id="fondo-lienzo"></span>
           <span class="barra-separador"></span>
           <button data-accion="recuadro">+ Recuadro</button>
           <button data-accion="circulo">+ Círculo</button>
@@ -309,7 +316,7 @@ function elegirPlantilla(id) {
   if (!plantilla) return;
   const hayContenido = tablero.recuadros.some(r => r.contenido);
   if (hayContenido && !confirm("Se empezará un moodboard nuevo con esta plantilla. ¿Continuar?")) return;
-  tablero = tableroDesde(plantilla);
+  tablero = { ...tableroDesde(plantilla), fondo: tablero.fondo };
   seleccion = null;
   pintarPlantillas();
   pintarLienzo();
@@ -319,7 +326,7 @@ function crearLienzoEnBlanco() {
   const proporcion = PROPORCIONES[document.getElementById("proporcion-nueva").value] || [2, 3];
   const hayContenido = tablero.recuadros.some(r => r.contenido);
   if (hayContenido && !confirm("Se empezará un lienzo en blanco. ¿Continuar?")) return;
-  tablero = { plantilla: null, nombre: "Mi plantilla", proporcion, recuadros: [], textos: [] };
+  tablero = { plantilla: null, nombre: "Mi plantilla", proporcion, recuadros: [], textos: [], fondo: tablero.fondo };
   seleccion = null;
   pintarPlantillas();
   pintarLienzo();
@@ -572,6 +579,13 @@ function activarEditor() {
     pintarLienzo();
   });
 
+  document.getElementById("fondo-lienzo").addEventListener("click", e => {
+    const b = e.target.closest("[data-fondo]");
+    if (!b) return;
+    tablero.fondo = b.dataset.fondo;
+    pintarLienzo();
+  });
+
   // Barra de herramientas
   editor.addEventListener("click", e => {
     const b = e.target.closest("button[data-accion], button[data-forma], button[data-estilo], button[data-color]");
@@ -765,7 +779,7 @@ async function descargarPNG() {
     const canvas = document.createElement("canvas");
     canvas.width = W; canvas.height = H;
     const ctx = canvas.getContext("2d");
-    ctx.fillStyle = "#ECE9E3";
+    ctx.fillStyle = FONDOS_LIENZO[tablero.fondo] || FONDOS_LIENZO.crema;
     ctx.fillRect(0, 0, W, H);
 
     const recuadros = tablero.recuadros.filter(r => r.contenido).sort((a, b) => (a.z ?? 0) - (b.z ?? 0));
