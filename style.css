@@ -808,6 +808,10 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 .conexion-cuerpo a { color: var(--texto); }
 .conexion-fila { display: flex; gap: 10px; align-items: center; }
 .conexion-fila input { flex: 1; font: inherit; font-family: var(--mono); font-size: 13px; padding: 10px 12px; border: 1px solid var(--linea); background: transparent; color: var(--texto); }
+.conexion-estado { margin: 10px 0 0; font-size: 13px; min-height: 18px; }
+.conexion-estado.error { color: #9B3B2A; }
+.conexion-estado.bien { color: #3F5B3A; }
+.conexion-fila .boton-linea { white-space: nowrap; }
 .publicar-final { display: flex; justify-content: flex-end; align-items: center; gap: 22px; }
 .publicar-estado { margin: 0; font-size: 13px; color: var(--texto-suave); }
 .publicar-estado.error { color: #9B3B2A; }

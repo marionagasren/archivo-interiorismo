@@ -127,8 +127,10 @@ function vistaPublicar() {
             </ol>
             <div class="conexion-fila">
               <input type="password" id="token" placeholder="github_pat_…" value="${texto(token)}" autocomplete="off">
+              <button type="button" class="boton-linea" data-comprobar>Guardar y comprobar</button>
               ${token ? `<button type="button" class="boton-linea" data-olvidar>Olvidar clave</button>` : ""}
             </div>
+            <p class="conexion-estado" id="estado-conexion" aria-live="polite"></p>
           </div>
         </details>
         <div class="publicar-final">
@@ -213,6 +215,29 @@ function activarPublicar() {
     guardarToken("");
     document.getElementById("token").value = "";
     aviso("Clave olvidada en este navegador");
+  });
+
+  // Comprueba la clave sin publicar nada: lee data/proyectos.js del repositorio
+  form.querySelector("[data-comprobar]").addEventListener("click", async () => {
+    const estado = document.getElementById("estado-conexion");
+    const token = document.getElementById("token").value.trim();
+    estado.classList.remove("error", "bien");
+    if (!token) { estado.textContent = "Pega primero la clave."; estado.classList.add("error"); return; }
+    estado.textContent = "Comprobando…";
+    try {
+      const r = await fetch(`https://api.github.com/repos/${REPOSITORIO}/contents/data/proyectos.js?ref=${RAMA}`, {
+        headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json" },
+      });
+      if (r.status === 401) throw new Error("La clave no es válida o ha caducado.");
+      if (!r.ok) throw new Error("La clave no tiene acceso al repositorio. Revisa que esté elegido «archivo-interiorismo» y el permiso Contents.");
+      guardarToken(token);
+      estado.textContent = "✓ Clave correcta y guardada en este navegador. Ya puedes publicar proyectos.";
+      estado.classList.add("bien");
+      form.querySelector(".conexion summary").textContent = "✓ Conectado con GitHub";
+    } catch (error) {
+      estado.textContent = error.message.startsWith("La clave") ? error.message : "No se ha podido conectar con GitHub. Revisa la conexión a internet.";
+      estado.classList.add("error");
+    }
   });
 
   form.addEventListener("submit", e => { e.preventDefault(); publicarProyecto(form); });
