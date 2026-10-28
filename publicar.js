@@ -122,7 +122,7 @@ function vistaPublicar() {
             <ol>
               <li>Entra en <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub → Settings → Fine-grained tokens → Generate new token</a>.</li>
               <li>En <em>Repository access</em> elige <em>Only select repositories</em> → <strong>${REPOSITORIO.split("/")[1]}</strong>.</li>
-              <li>En <em>Permissions → Contents</em> elige <strong>Read and write</strong> y genera la clave.</li>
+              <li>En <em>Permissions</em> pulsa <strong>+ Add permissions</strong>, marca <strong>Contents</strong> y cambia su acceso a <strong>Read and write</strong>. Pulsa <em>Generate token</em>.</li>
               <li>Cópiala y pégala aquí:</li>
             </ol>
             <div class="conexion-fila">
