@@ -11,6 +11,7 @@ index.html            contenido y estructura
 style.css             diseño
 script.js             comportamiento (vistas, moodboard, biblioteca)
 generador.js          generador de moodboards (editor con plantillas)
+publicar.js           formulario «Nuevo proyecto» para publicar desde la web
 data/
   proyectos.js        información de cada proyecto (se edita a mano)
   biblioteca.js       materiales y mobiliario (se edita a mano)
@@ -26,6 +27,10 @@ herramientas/
 ```
 
 ## Añadir un proyecto
+
+**Desde la web:** en Proyectos, pulsa **Publicar proyecto**, rellena la información, añade las fotos, elige la portada y pulsa Publicar. La primera vez pide una clave de GitHub (*fine-grained token* con acceso solo a este repositorio y permiso *Contents: Read and write*), que se guarda únicamente en ese navegador. El formulario (`publicar.js`) sube las fotos a `img/proyectos/<id>/`, añade el proyecto a `data/proyectos.js` y, en unos minutos, GitHub extrae los colores y actualiza la web.
+
+**A mano:**
 
 1. Crea la carpeta `img/proyectos/<id>/` y sube las fotos como `foto-01.jpg`, `foto-02.jpg`... (la 01 es la portada) y, si los hay, los planos como `plano-01.png`.
 2. Añade el proyecto en `data/proyectos.js` con el mismo `id` que la carpeta y `tipo: "referencia"` o `tipo: "propio"`.

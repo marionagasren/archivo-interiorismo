@@ -11,6 +11,7 @@
 //    #/generador               → generador de moodboards (generador.js)
 //    #/generador/paleta        → generador de paletas de colores (paleta.js)
 //    #/favoritos               → colores, materiales y mobiliario guardados (favoritos.js)
+//    #/publicar                → formulario para publicar un proyecto nuevo (publicar.js)
 // =====================================================================
 
 const AUTO = window.AUTO || {};
@@ -209,6 +210,7 @@ function htmlProyectos(filtro) {
     </nav>` : "";
 
   return `
+    <a class="boton-publicar boton-esquina" href="#/publicar">Publicar proyecto</a>
     <section class="intro">
       <h1>Proyectos</h1>
       <p>Interiores de referencia y proyectos del estudio. Cada uno se descompone en su paleta de colores, materiales y mobiliario.</p>
@@ -615,10 +617,11 @@ function navegar() {
   else if (seccion === "biblioteca") vistaBiblioteca(parametro, filtro, subfiltro);
   else if (seccion === "generador") vistaGenerador(parametro);
   else if (seccion === "favoritos") vistaFavoritos();
+  else if (seccion === "publicar") vistaPublicar();
   else vistaNoEncontrada();
 
   // Marca en el menú la sección activa
-  const activa = seccion === "proyecto" ? "proyectos" : seccion;
+  const activa = seccion === "proyecto" || seccion === "publicar" ? "proyectos" : seccion;
   document.querySelectorAll(".menu a").forEach(a => a.classList.toggle("activa", a.dataset.seccion === activa));
   document.body.classList.toggle("en-portada", !seccion);
   window.scrollTo(0, 0);
