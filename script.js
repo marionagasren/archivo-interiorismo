@@ -12,6 +12,7 @@
 //    #/generador/paleta        → generador de paletas de colores (paleta.js)
 //    #/favoritos               → colores, materiales y mobiliario guardados (favoritos.js)
 //    #/publicar                → formulario para publicar un proyecto nuevo (publicar.js)
+//    #/editar/<id>             → el mismo formulario para editar un proyecto publicado
 // =====================================================================
 
 const AUTO = window.AUTO || {};
@@ -166,6 +167,16 @@ function fichaPieza(item, tipo) {
     </figure>`;
 }
 
+// Imagen provisional para los proyectos que aún no tienen fotos:
+// fondo liso con el logo del estudio
+function sinFoto(clase = "") {
+  return `
+    <div class="sin-foto ${clase}" role="img" aria-label="Fotos pendientes">
+      <span class="sin-foto-logo">341 Studio</span>
+      <span class="sin-foto-nota">Fotos pendientes</span>
+    </div>`;
+}
+
 function enlacesProyectos(lista) {
   return lista.map(p => `<a href="#/proyecto/${p.id}">${texto(p.nombre)}</a>`).join(", ");
 }
@@ -221,7 +232,7 @@ function htmlProyectos(filtro) {
       ${lista.map(p => `
         <a class="tarjeta" href="#/proyecto/${p.id}">
           <div class="tarjeta-imagen">
-            ${p.fotos[0] ? `<img src="${p.fotos[0]}" alt="${texto(p.nombre)}" loading="lazy">` : ""}
+            ${p.fotos[0] ? `<img src="${p.fotos[0]}" alt="${texto(p.nombre)}" loading="lazy">` : sinFoto()}
             <h2 class="tarjeta-nombre">${texto(p.nombre)}</h2>
           </div>
         </a>`).join("")}
@@ -247,7 +258,9 @@ function vistaProyecto(id) {
 
   app.innerHTML = `
     <article class="proyecto">
-      ${portada ? `<img class="portada" src="${portada}" alt="${texto(p.nombre)}">` : ""}
+      ${portada ? `<img class="portada" src="${portada}" alt="${texto(p.nombre)}">` : sinFoto("sin-foto-portada")}
+
+      <p class="proyecto-acciones"><a class="boton-linea" href="#/editar/${p.id}">Editar proyecto</a></p>
 
       <header class="proyecto-cabecera">
         <h1>${texto(p.nombre)}</h1>
@@ -618,10 +631,11 @@ function navegar() {
   else if (seccion === "generador") vistaGenerador(parametro);
   else if (seccion === "favoritos") vistaFavoritos();
   else if (seccion === "publicar") vistaPublicar();
+  else if (seccion === "editar") vistaPublicar(parametro);
   else vistaNoEncontrada();
 
   // Marca en el menú la sección activa
-  const activa = seccion === "proyecto" || seccion === "publicar" ? "proyectos" : seccion;
+  const activa = ["proyecto", "publicar", "editar"].includes(seccion) ? "proyectos" : seccion;
   document.querySelectorAll(".menu a").forEach(a => a.classList.toggle("activa", a.dataset.seccion === activa));
   document.body.classList.toggle("en-portada", !seccion);
   window.scrollTo(0, 0);

@@ -825,3 +825,14 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
   .publicar-campos, .publicar-elegir { grid-template-columns: 1fr; }
   .publicar-final { flex-direction: column; align-items: stretch; }
 }
+
+/* Proyecto sin fotos: imagen provisional con el logo del estudio */
+.sin-foto {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  width: 100%; height: 100%; background: var(--fondo-suave); color: var(--texto); text-align: center;
+}
+.sin-foto-logo { font-family: var(--titulo); font-weight: 500; font-size: 22px; letter-spacing: .04em; text-transform: uppercase; }
+.sin-foto-nota { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--texto-suave); }
+.sin-foto-portada { height: min(62vh, 560px); }
+.sin-foto-portada .sin-foto-logo { font-size: clamp(28px, 4vw, 44px); }
+.proyecto-acciones { display: flex; justify-content: flex-end; margin: 18px 0 0; }

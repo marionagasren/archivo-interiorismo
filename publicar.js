@@ -1,6 +1,7 @@
 // =====================================================================
 //  341 STUDIO · publicar.js
-//  #/publicar → formulario «Nuevo proyecto». Prepara las fotos y los
+//  #/publicar → formulario «Nuevo proyecto»; #/editar/<id> → el mismo
+//  formulario con los datos de un proyecto ya publicado. Prepara las fotos y los
 //  planos en el navegador y lo publica todo en el repositorio de GitHub
 //  en un solo cambio (commit): las imágenes en img/proyectos/<id>/ y la
 //  ficha en data/proyectos.js. Después GitHub extrae los colores solo
@@ -36,14 +37,30 @@ function guardarToken(valor) {
 //  VISTA
 // ---------------------------------------------------------------------
 
-function vistaPublicar() {
+function vistaPublicar(idEditar) {
+  const original = idEditar ? PROYECTOS.find(p => p.id === idEditar) : null;
+  if (idEditar && !original) return vistaNoEncontrada();
   borrador = nuevoBorrador();
+  if (original) {
+    // Al editar se parte de lo que ya está publicado
+    const auto = AUTO[original.id] || { fotos: [], planos: [] };
+    const existente = ruta => ({ existente: ruta.split("/").pop(), url: ruta });
+    borrador.editando = original.id;
+    borrador.fotos = auto.fotos.map(existente);
+    borrador.planos = auto.planos.map(existente);
+    borrador.materiales = [...(original.materiales || [])];
+    borrador.mobiliario = [...(original.mobiliario || [])];
+  }
+  const valor = campo => texto(original?.[campo] ?? "");
+  const tipo = original?.tipo || "propio";
   const token = leerToken();
   app.innerHTML = `
     <section class="intro">
-      <p class="volver"><a href="#/proyectos">← Proyectos</a></p>
-      <h1>Nuevo proyecto</h1>
-      <p class="intro-texto">Rellena la información, añade las fotos y elige la portada. Al publicar, el proyecto se guarda en la web y en unos minutos aparece en Proyectos con sus colores extraídos automáticamente.</p>
+      <p class="volver"><a href="${original ? `#/proyecto/${original.id}` : "#/proyectos"}">← ${original ? texto(original.nombre) : "Proyectos"}</a></p>
+      <h1>${original ? "Editar proyecto" : "Nuevo proyecto"}</h1>
+      <p class="intro-texto">${original
+        ? "Cambia la información, añade o quita fotos y elige la portada. Al guardar, los cambios aparecen en la web en unos minutos."
+        : "Solo el nombre es obligatorio: las fotos y el resto de datos se pueden añadir más adelante editando el proyecto. Al publicar, aparece en Proyectos en unos minutos con sus colores extraídos automáticamente."}</p>
     </section>
 
     <form class="publicar" id="publicar" novalidate>
@@ -52,32 +69,32 @@ function vistaPublicar() {
         <div class="publicar-campos">
           <label class="campo campo-ancho">
             <span>Nombre del proyecto *</span>
-            <input name="nombre" required placeholder="p. ej. Casa Tamariu">
-            <small class="campo-ayuda" id="ayuda-id"></small>
+            <input name="nombre" required placeholder="p. ej. Casa Tamariu" value="${valor("nombre")}">
+            <small class="campo-ayuda" id="ayuda-id">${original ? `Dirección: #/proyecto/${original.id} (no cambia)` : ""}</small>
           </label>
           <fieldset class="campo campo-ancho">
             <span>Tipo</span>
             <div class="opciones">
-              <label><input type="radio" name="tipo" value="propio" checked> Proyecto de 341 Studio</label>
-              <label><input type="radio" name="tipo" value="referencia"> Referencia</label>
+              <label><input type="radio" name="tipo" value="propio" ${tipo === "propio" ? "checked" : ""}> Proyecto de 341 Studio</label>
+              <label><input type="radio" name="tipo" value="referencia" ${tipo === "referencia" ? "checked" : ""}> Referencia</label>
             </div>
           </fieldset>
-          <label class="campo"><span>Autores / estudio</span><input name="autores" placeholder="341 Studio"></label>
-          <label class="campo"><span>Ubicación</span><input name="ubicacion" placeholder="Barcelona"></label>
-          <label class="campo"><span>Año</span><input name="año" inputmode="numeric" placeholder="2026"></label>
+          <label class="campo"><span>Autores / estudio</span><input name="autores" placeholder="341 Studio" value="${valor("autores")}"></label>
+          <label class="campo"><span>Ubicación</span><input name="ubicacion" placeholder="Barcelona" value="${valor("ubicacion")}"></label>
+          <label class="campo"><span>Año</span><input name="año" inputmode="numeric" placeholder="2026" value="${valor("año")}"></label>
           <label class="campo"><span>Tipología</span>
-            <input name="tipologia" list="tipologias" placeholder="Vivienda">
+            <input name="tipologia" list="tipologias" placeholder="Vivienda" value="${valor("tipologia")}">
             <datalist id="tipologias">${TIPOLOGIAS.map(t => `<option value="${t}">`).join("")}</datalist>
           </label>
-          <label class="campo"><span>Fotografía</span><input name="fotografo" placeholder="Nombre del fotógrafo"></label>
-          <label class="campo"><span>Web / fuente</span><input name="fuente" type="url" placeholder="https://"></label>
-          <label class="campo campo-ancho"><span>Descripción</span><textarea name="descripcion" rows="5" placeholder="Cómo es el espacio, qué se buscaba, materiales protagonistas…"></textarea></label>
+          <label class="campo"><span>Fotografía</span><input name="fotografo" placeholder="Nombre del fotógrafo" value="${valor("fotografo")}"></label>
+          <label class="campo"><span>Web / fuente</span><input name="fuente" type="url" placeholder="https://" value="${valor("fuente")}"></label>
+          <label class="campo campo-ancho"><span>Descripción</span><textarea name="descripcion" rows="5" placeholder="Cómo es el espacio, qué se buscaba, materiales protagonistas…">${valor("descripcion")}</textarea></label>
         </div>
       </section>
 
       <section class="publicar-bloque">
-        <h2 class="publicar-titulo"><span>02</span> Fotos</h2>
-        <p class="publicar-nota">Arrastra las fotos o elígelas desde tu ordenador. Pulsa <strong>Portada</strong> en la que quieras de imagen principal y usa las flechas para ordenarlas.</p>
+        <h2 class="publicar-titulo"><span>02</span> Fotos <em>opcional</em></h2>
+        <p class="publicar-nota">Arrastra las fotos o elígelas desde tu ordenador. Pulsa <strong>Portada</strong> en la que quieras de imagen principal y usa las flechas para ordenarlas. Si aún no las tienes, el proyecto se muestra con una imagen provisional hasta que las añadas.</p>
         <label class="soltar" data-zona="fotos">
           <input type="file" accept="image/jpeg,image/png,image/webp" multiple hidden>
           <span>Soltar fotos aquí o <u>elegir archivos</u></span>
@@ -101,13 +118,13 @@ function vistaPublicar() {
           <div>
             <h3 class="publicar-subtitulo">Texturas y materiales</h3>
             <div class="chips" data-lista="materiales">
-              ${BIBLIOTECA.materiales.map(m => chipBiblioteca("materiales", m)).join("")}
+              ${BIBLIOTECA.materiales.map(m => chipBiblioteca("materiales", m, borrador.materiales.includes(m.id))).join("")}
             </div>
           </div>
           <div>
             <h3 class="publicar-subtitulo">Mobiliario</h3>
             <div class="chips" data-lista="mobiliario">
-              ${BIBLIOTECA.mobiliario.map(m => chipBiblioteca("mobiliario", m)).join("")}
+              ${BIBLIOTECA.mobiliario.map(m => chipBiblioteca("mobiliario", m, borrador.mobiliario.includes(m.id))).join("")}
             </div>
           </div>
         </div>
@@ -135,16 +152,18 @@ function vistaPublicar() {
         </details>
         <div class="publicar-final">
           <p class="publicar-estado" id="estado-publicar" aria-live="polite"></p>
-          <button type="submit" class="boton-publicar">Publicar proyecto</button>
+          <button type="submit" class="boton-publicar">${original ? "Guardar cambios" : "Publicar proyecto"}</button>
         </div>
       </section>
     </form>`;
 
   activarPublicar();
+  pintarMiniaturas("fotos");
+  pintarMiniaturas("planos");
 }
 
-function chipBiblioteca(tipo, item) {
-  return `<button type="button" class="chip" data-tipo="${tipo}" data-id="${texto(item.id)}" aria-pressed="false">
+function chipBiblioteca(tipo, item, elegido = false) {
+  return `<button type="button" class="chip ${elegido ? "elegido" : ""}" data-tipo="${tipo}" data-id="${texto(item.id)}" aria-pressed="${elegido}">
     ${item.imagen ? `<img src="${texto(item.imagen)}" alt="" loading="lazy">` : ""}<span>${texto(item.nombre)}</span>
   </button>`;
 }
@@ -161,6 +180,7 @@ function activarPublicar() {
   const nombre = form.elements.nombre;
   const ayudaId = document.getElementById("ayuda-id");
   nombre.addEventListener("input", () => {
+    if (borrador.editando) return;   // al editar, la dirección no cambia
     const id = slug(nombre.value);
     ayudaId.textContent = id ? `Dirección: #/proyecto/${idLibre(id)}` : "";
   });
@@ -185,7 +205,7 @@ function activarPublicar() {
     const accion = b.dataset.accion;
     if (accion === "portada") borrador.portada = i;
     if (accion === "quitar") {
-      URL.revokeObjectURL(imagenes[i].url);
+      if (imagenes[i].archivo) URL.revokeObjectURL(imagenes[i].url);
       imagenes.splice(i, 1);
       if (lista === "fotos") borrador.portada = i === borrador.portada ? 0 : borrador.portada - (i < borrador.portada ? 1 : 0);
     }
@@ -312,7 +332,7 @@ function bloqueProyecto(datos) {
     fotografo: ${valor(datos.fotografo)},
     fuente: ${valor(datos.fuente)},
     descripcion: ${valor(datos.descripcion)},
-    colores: [],
+    colores: [${(datos.colores || []).map(c => `{ nombre: ${valor(c.nombre ?? "")}, hex: ${valor(c.hex ?? "")}${c.ral ? `, ral: ${valor(c.ral)}` : ""} }`).join(", ")}],
     materiales: ${lista(datos.materiales)},
     mobiliario: ${lista(datos.mobiliario)},
   },
@@ -326,6 +346,28 @@ function añadirAlArchivo(contenido, bloque) {
   let antes = contenido.slice(0, fin).replace(/\s*$/, "");
   if (!antes.endsWith(",") && !antes.endsWith("[")) antes += ",";
   return `${antes}\n${bloque}${contenido.slice(fin)}`;
+}
+
+// Sustituye el bloque { ... } del proyecto con ese id por el nuevo.
+// Recorre las llaves teniendo en cuenta los textos entre comillas.
+function reemplazarBloque(contenido, id, bloque) {
+  const marca = contenido.indexOf(`id: ${JSON.stringify(id)}`);
+  if (marca < 0) throw new Error("No se ha encontrado el proyecto en data/proyectos.js");
+  const inicio = contenido.lastIndexOf("{", marca);
+  const inicioLinea = contenido.lastIndexOf("\n", inicio) + 1;
+  let nivel = 0, comilla = null, fin = -1;
+  for (let i = inicio; i < contenido.length && fin < 0; i++) {
+    const c = contenido[i];
+    if (comilla) { if (c === "\\") i++; else if (c === comilla) comilla = null; continue; }
+    if (c === '"' || c === "'" || c === "`") comilla = c;
+    else if (c === "{") nivel++;
+    else if (c === "}" && --nivel === 0) fin = i;
+  }
+  if (fin < 0) throw new Error("data/proyectos.js no tiene el formato esperado");
+  let resto = fin + 1;
+  if (contenido[resto] === ",") resto++;
+  const finLinea = contenido.indexOf("\n", resto);
+  return contenido.slice(0, inicioLinea) + bloque + contenido.slice(finLinea < 0 ? contenido.length : finLinea + 1);
 }
 
 function textoABase64(textoPlano) {
@@ -357,16 +399,16 @@ async function publicarProyecto(form) {
   const token = document.getElementById("token").value.trim();
 
   if (!datos.nombre) { decir("Falta el nombre del proyecto.", true); form.elements.nombre.focus(); return; }
-  if (!borrador.fotos.length) { decir("Añade al menos una foto.", true); return; }
   if (!token) { decir("Falta la clave de GitHub (apartado «Conectar con GitHub»).", true); form.querySelector(".conexion").open = true; return; }
 
   boton.disabled = true;
   try {
-    const api = async (ruta, opciones = {}) => {
+    const api = async (ruta, opciones = {}, { permitirNoExiste = false } = {}) => {
       const r = await fetch(`https://api.github.com/repos/${REPOSITORIO}${ruta}`, {
         ...opciones,
         headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "Content-Type": "application/json" },
       });
+      if (r.status === 404 && permitirNoExiste) return null;
       if (r.status === 401) throw new Error("La clave de GitHub no es válida o ha caducado.");
       if (r.status === 403 || r.status === 404) throw new Error("La clave de GitHub no tiene permiso de escritura en el repositorio (Contents: Read and write).");
       if (!r.ok) throw new Error(`GitHub ha respondido con un error (${r.status}).`);
@@ -380,44 +422,81 @@ async function publicarProyecto(form) {
     const contenido = base64ATexto(archivo.content);
     guardarToken(token);
 
-    // id libre también frente a lo que ya esté publicado en GitHub
+    const editando = borrador.editando;
     const publicados = [...contenido.matchAll(/^\s*id:\s*"([^"]+)"/gm)].map(m => m[1]);
-    datos.id = idLibre(slug(datos.nombre) || "proyecto", [...publicados, ...PROYECTOS.map(p => p.id)]);
+    if (editando) {
+      if (!publicados.includes(editando)) throw new Error("Este proyecto no está en GitHub; recarga la página.");
+      datos.id = editando;
+      datos.colores = PROYECTOS.find(p => p.id === editando)?.colores || [];   // colores añadidos a mano: se conservan
+    } else {
+      // id libre también frente a lo que ya esté publicado en GitHub
+      datos.id = idLibre(slug(datos.nombre) || "proyecto", [...publicados, ...PROYECTOS.map(p => p.id)]);
+    }
     const carpeta = `img/proyectos/${datos.id}`;
 
-    // Portada primero: será foto-01
-    const fotos = [borrador.fotos[borrador.portada], ...borrador.fotos.filter((_, i) => i !== borrador.portada)];
-    const archivos = [];
-    for (const [i, img] of fotos.entries()) {
-      decir(`Preparando foto ${i + 1} de ${fotos.length}…`);
-      archivos.push({ ruta: `${carpeta}/foto-${String(i + 1).padStart(2, "0")}.jpg`, base64: await prepararImagen(img.archivo, "image/jpeg") });
+    // Lo que ya hay en la carpeta del proyecto (al editar): nombre → sha
+    const enCarpeta = {};
+    if (editando) {
+      const lista = await api(`/contents/${carpeta}?ref=${ref.object.sha}`, {}, { permitirNoExiste: true });
+      for (const f of Array.isArray(lista) ? lista : []) enCarpeta[f.name] = f.sha;
     }
-    for (const [i, img] of borrador.planos.entries()) {
-      decir(`Preparando plano ${i + 1} de ${borrador.planos.length}…`);
-      const png = img.archivo.type === "image/png";
-      archivos.push({ ruta: `${carpeta}/plano-${String(i + 1).padStart(2, "0")}.${png ? "png" : "jpg"}`, base64: await prepararImagen(img.archivo, png ? "image/png" : "image/jpeg") });
-    }
-    archivos.push({ ruta: "data/proyectos.js", base64: textoABase64(añadirAlArchivo(contenido, bloqueProyecto(datos))) });
 
     const arbol = [];
-    for (const [i, a] of archivos.entries()) {
-      decir(`Subiendo archivos (${i + 1} de ${archivos.length})…`);
-      const blob = await api("/git/blobs", { method: "POST", body: JSON.stringify({ content: a.base64, encoding: "base64" }) });
-      arbol.push({ path: a.ruta, mode: "100644", type: "blob", sha: blob.sha });
+    const subir = async (ruta, base64) => {
+      const blob = await api("/git/blobs", { method: "POST", body: JSON.stringify({ content: base64, encoding: "base64" }) });
+      arbol.push({ path: ruta, mode: "100644", type: "blob", sha: blob.sha });
+    };
+    // Cada imagen acaba como foto-01, foto-02… (o plano-01…). Las que ya
+    // estaban se reaprovechan sin volver a subirlas; las nuevas se preparan.
+    const colocar = async (imagenes, prefijo, etiqueta) => {
+      for (const [i, img] of imagenes.entries()) {
+        const numero = String(i + 1).padStart(2, "0");
+        if (img.existente) {
+          const sha = enCarpeta[img.existente];
+          if (!sha) throw new Error(`«${img.existente}» ya no está en GitHub; recarga la página.`);
+          arbol.push({ path: `${carpeta}/${prefijo}-${numero}.${img.existente.split(".").pop().toLowerCase()}`, mode: "100644", type: "blob", sha });
+        } else {
+          decir(`Preparando y subiendo ${etiqueta} ${i + 1} de ${imagenes.length}…`);
+          const png = prefijo === "plano" && img.archivo.type === "image/png";
+          await subir(`${carpeta}/${prefijo}-${numero}.${png ? "png" : "jpg"}`, await prepararImagen(img.archivo, png ? "image/png" : "image/jpeg"));
+        }
+      }
+    };
+    // Portada primero: será foto-01
+    const fotos = borrador.fotos.length ? [borrador.fotos[borrador.portada], ...borrador.fotos.filter((_, i) => i !== borrador.portada)] : [];
+    await colocar(fotos, "foto", "foto");
+    await colocar(borrador.planos, "plano", "plano");
+    // Las fotos y planos antiguos que ya no se usan se borran
+    const finales = new Set(arbol.map(a => a.path));
+    for (const nombre of Object.keys(enCarpeta)) {
+      const ruta = `${carpeta}/${nombre}`;
+      if (/^(foto|plano)/i.test(nombre) && !finales.has(ruta)) arbol.push({ path: ruta, mode: "100644", type: "blob", sha: null });
     }
+
+    decir("Guardando la ficha…");
+    const bloque = bloqueProyecto(datos);
+    await subir("data/proyectos.js", textoABase64(editando ? reemplazarBloque(contenido, editando, bloque) : añadirAlArchivo(contenido, bloque)));
 
     decir("Publicando…");
     const nuevoArbol = await api("/git/trees", { method: "POST", body: JSON.stringify({ base_tree: commitActual.tree.sha, tree: arbol }) });
     const nuevoCommit = await api("/git/commits", { method: "POST", body: JSON.stringify({
-      message: `Nuevo proyecto: ${datos.nombre} (publicado desde la web)`,
+      message: editando ? `Edita el proyecto: ${datos.nombre} (desde la web)` : `Nuevo proyecto: ${datos.nombre} (publicado desde la web)`,
       tree: nuevoArbol.sha, parents: [ref.object.sha],
     }) });
     await api(`/git/refs/heads/${RAMA}`, { method: "PATCH", body: JSON.stringify({ sha: nuevoCommit.sha }) });
 
-    form.outerHTML = `
+    form.outerHTML = editando ? `
+      <section class="publicado">
+        <h2>Cambios guardados en «${texto(datos.nombre)}»</h2>
+        <p>La web se está actualizando${fotos.some(f => !f.existente) ? " y GitHub está extrayendo los colores de las fotos nuevas" : ""}. En unos <strong>2–3 minutos</strong> verás los cambios; si no, recarga la página.</p>
+        <p class="publicado-acciones">
+          <a class="boton-publicar" href="#/proyecto/${datos.id}">Ver el proyecto</a>
+          <a class="boton-linea" href="#/proyectos">Ir a Proyectos</a>
+        </p>
+      </section>` : `
       <section class="publicado">
         <h2>«${texto(datos.nombre)}» se ha publicado</h2>
-        <p>GitHub está extrayendo los colores de las fotos y actualizando la web. En unos <strong>2–3 minutos</strong> aparecerá en Proyectos; si no lo ves, recarga la página.</p>
+        <p>${fotos.length ? "GitHub está extrayendo los colores de las fotos y actualizando la web." : "Se mostrará con una imagen provisional hasta que añadas las fotos con «Editar proyecto»."} En unos <strong>2–3 minutos</strong> aparecerá en Proyectos; si no lo ves, recarga la página.</p>
         <p class="publicado-acciones">
           <a class="boton-publicar" href="#/proyectos">Ir a Proyectos</a>
           <a class="boton-linea" href="#/publicar" onclick="setTimeout(vistaPublicar)">Publicar otro proyecto</a>

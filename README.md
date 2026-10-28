@@ -28,7 +28,7 @@ herramientas/
 
 ## Añadir un proyecto
 
-**Desde la web:** en Proyectos, pulsa **Publicar proyecto**, rellena la información, añade las fotos, elige la portada y pulsa Publicar. La primera vez pide una clave de GitHub (*fine-grained token* con acceso solo a este repositorio y permiso *Contents: Read and write*), que se guarda únicamente en ese navegador. El formulario (`publicar.js`) sube las fotos a `img/proyectos/<id>/`, añade el proyecto a `data/proyectos.js` y, en unos minutos, GitHub extrae los colores y actualiza la web.
+**Desde la web:** en Proyectos, pulsa **Publicar proyecto**, rellena la información, añade las fotos, elige la portada y pulsa Publicar. La primera vez pide una clave de GitHub (*fine-grained token* con acceso solo a este repositorio y permiso *Contents: Read and write*), que se guarda únicamente en ese navegador. Solo el nombre es obligatorio: sin fotos, el proyecto se muestra con una imagen provisional (fondo liso con el logo). Para añadir las fotos o cambiar datos más tarde, abre el proyecto y pulsa **Editar proyecto**. El formulario (`publicar.js`) sube las fotos a `img/proyectos/<id>/`, añade el proyecto a `data/proyectos.js` y, en unos minutos, GitHub extrae los colores y actualiza la web.
 
 **A mano:**
 
