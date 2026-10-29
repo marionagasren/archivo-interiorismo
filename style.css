@@ -543,7 +543,7 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 
 /* ---------- Carta de colores (Biblioteca y Paleta) ---------- */
 .intro .intro-texto { margin-top: 20px; }
-.pestañas-generador { margin-top: 8px; }
+.pestañas-generador { margin-top: 24px; }
 
 .buscador { display: flex; align-items: center; gap: 10px; flex: 1; max-width: 520px; border-bottom: 1px solid var(--texto); padding: 6px 0; }
 .buscador-icono { font-size: 18px; color: var(--texto-suave); line-height: 1; }
@@ -714,6 +714,7 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
   .editor-panel .barra { flex-direction: row; flex-wrap: wrap; }
   .vacio-seleccion { display: none; }
   .editor-izquierda { position: static; flex-direction: column; align-items: stretch; }
+  .fila-proyectos { margin-top: -36px; }
   .editor-izquierda .editor-panel { flex: none; }
   .panel-seleccion { border-left: 0; border-top: 1px solid var(--linea); padding: 14px 0 0; }
   .editor-panel .barra-separador { display: none; }
@@ -762,7 +763,7 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
   font: inherit; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; cursor: pointer;
 }
 .boton-linea:hover { border-color: var(--texto); }
-.fila-proyectos { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px 28px; margin: -16px 0 40px; }
+.fila-proyectos { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px 28px; margin: -44px 0 40px; }
 .fila-proyectos .pestañas { margin-top: 0; }
 
 .volver { margin: 0 0 18px !important; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; }
