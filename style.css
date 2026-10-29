@@ -902,3 +902,9 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 .historial button span { font-size: 16px; letter-spacing: 0; }
 .historial button:hover:not(:disabled) { opacity: .6; }
 .historial button:disabled { color: var(--texto-suave); opacity: .45; cursor: default; }
+
+/* Jerarquía: pestañas principales algo más grandes; filtros de debajo más pequeños y claros */
+.pestañas { gap: 10px 34px; }
+.pestañas a { font-size: 14px; letter-spacing: .14em; padding-bottom: 4px; }
+.filtros a, .carta-familias button { font-size: 10px; color: #A9A096; }
+.filtros a:hover, .filtros a.activa, .carta-familias button:hover, .carta-familias button.activa { color: var(--texto); }
