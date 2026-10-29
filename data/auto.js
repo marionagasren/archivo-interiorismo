@@ -137,71 +137,71 @@ window.AUTO = {
     "planos": [],
     "colores": [
       {
-        "hex": "#DDCAB8",
+        "hex": "#E3E0E4",
         "tipo": "principal",
-        "presencia": 58.7,
+        "presencia": 19.6,
         "ral": {
           "sistema": "RAL Design",
-          "codigo": "RAL 080 80 10",
-          "nombre": "Pastel Sand",
-          "hex": "#D5C6B4",
-          "diferencia": 2.0
+          "codigo": "RAL 310 90 05",
+          "nombre": "Wallflower White",
+          "hex": "#E7E3E7",
+          "diferencia": 1.3
         },
         "ralClassic": {
           "sistema": "RAL Classic",
-          "codigo": "RAL 1015",
-          "nombre": "Light ivory",
-          "hex": "#E6D2B5",
-          "diferencia": 4.5
+          "codigo": "RAL 9003",
+          "nombre": "Signal white",
+          "hex": "#ECECE7",
+          "diferencia": 6.1
         }
       },
       {
-        "hex": "#B4A08A",
+        "hex": "#B6A493",
         "tipo": "principal",
-        "presencia": 57.9,
+        "presencia": 61.5,
         "ral": {
           "sistema": "RAL Design",
           "codigo": "RAL 070 70 10",
           "nombre": "Ginger Grey Yellow",
           "hex": "#B8A899",
-          "diferencia": 3.8
+          "diferencia": 1.7
         },
         "ralClassic": {
           "sistema": "RAL Classic",
-          "codigo": "RAL 1019",
-          "nombre": "Grey beige",
-          "hex": "#A48F7A",
-          "diferencia": 6.3
+          "codigo": "RAL 7032",
+          "nombre": "Pebble grey",
+          "hex": "#B4B0A1",
+          "diferencia": 5.7
         }
       },
       {
-        "hex": "#8E7E5D",
+        "hex": "#908465",
         "tipo": "principal",
-        "presencia": 21.4,
+        "presencia": 34.2,
         "ral": {
           "sistema": "RAL Design",
-          "codigo": "RAL 085 50 20",
-          "nombre": "Pyrite Slate Green",
-          "hex": "#867452",
-          "diferencia": 4.0
+          "codigo": "RAL 095 60 20",
+          "nombre": "Pale Green",
+          "hex": "#9A8F6C",
+          "diferencia": 4.5
         },
         "ralClassic": {
           "sistema": "RAL Classic",
           "codigo": "RAL 7034",
           "nombre": "Yellow grey",
           "hex": "#90886F",
-          "diferencia": 4.7
+          "diferencia": 2.5
         }
       },
       {
-        "hex": "#645539",
+        "hex": "#695C47",
         "tipo": "principal",
-        "presencia": 9.4,
+        "presencia": 15.8,
         "ral": {
           "sistema": "RAL Design",
-          "codigo": "RAL 080 40 20",
-          "nombre": "Pimento Grain Brown",
-          "hex": "#6C5738",
+          "codigo": "RAL 085 40 10",
+          "nombre": "Mineral Green",
+          "hex": "#665D4E",
           "diferencia": 2.6
         },
         "ralClassic": {
@@ -209,7 +209,26 @@ window.AUTO = {
           "codigo": "RAL 7008",
           "nombre": "Khaki grey",
           "hex": "#725F3C",
-          "diferencia": 5.2
+          "diferencia": 5.6
+        }
+      },
+      {
+        "hex": "#CFC4BB",
+        "tipo": "acento",
+        "presencia": 39.3,
+        "ral": {
+          "sistema": "RAL Design",
+          "codigo": "RAL 060 80 05",
+          "nombre": "Light Chamois Beige",
+          "hex": "#D1C6BE",
+          "diferencia": 0.9
+        },
+        "ralClassic": {
+          "sistema": "RAL Classic",
+          "codigo": "RAL 7047",
+          "nombre": "Telegrey 4",
+          "hex": "#C8C8C7",
+          "diferencia": 4.7
         }
       }
     ]
