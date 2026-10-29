@@ -137,79 +137,79 @@ window.AUTO = {
     "planos": [],
     "colores": [
       {
-        "hex": "#DFCDBA",
+        "hex": "#DDCAB8",
         "tipo": "principal",
-        "presencia": 48.6,
+        "presencia": 58.7,
         "ral": {
           "sistema": "RAL Design",
           "codigo": "RAL 080 80 10",
           "nombre": "Pastel Sand",
           "hex": "#D5C6B4",
-          "diferencia": 2.8
+          "diferencia": 2.0
         },
         "ralClassic": {
           "sistema": "RAL Classic",
           "codigo": "RAL 1015",
           "nombre": "Light ivory",
           "hex": "#E6D2B5",
-          "diferencia": 3.9
+          "diferencia": 4.5
         }
       },
       {
-        "hex": "#BDA68C",
+        "hex": "#B4A08A",
         "tipo": "principal",
-        "presencia": 58.9,
+        "presencia": 57.9,
         "ral": {
           "sistema": "RAL Design",
-          "codigo": "RAL 070 70 20",
-          "nombre": "Light Ash Brown",
-          "hex": "#C2A487",
-          "diferencia": 2.0
+          "codigo": "RAL 070 70 10",
+          "nombre": "Ginger Grey Yellow",
+          "hex": "#B8A899",
+          "diferencia": 3.8
         },
         "ralClassic": {
           "sistema": "RAL Classic",
-          "codigo": "RAL 7032",
-          "nombre": "Pebble grey",
-          "hex": "#B4B0A1",
-          "diferencia": 6.8
+          "codigo": "RAL 1019",
+          "nombre": "Grey beige",
+          "hex": "#A48F7A",
+          "diferencia": 6.3
         }
       },
       {
-        "hex": "#937D66",
+        "hex": "#8E7E5D",
         "tipo": "principal",
-        "presencia": 28.0,
+        "presencia": 21.4,
         "ral": {
           "sistema": "RAL Design",
-          "codigo": "RAL 075 50 20",
-          "nombre": "China Cinnamon",
-          "hex": "#8A7054",
-          "diferencia": 5.3
+          "codigo": "RAL 085 50 20",
+          "nombre": "Pyrite Slate Green",
+          "hex": "#867452",
+          "diferencia": 4.0
         },
         "ralClassic": {
           "sistema": "RAL Classic",
-          "codigo": "RAL 1035",
-          "nombre": "Pearl beige",
-          "hex": "#908370",
-          "diferencia": 3.5
+          "codigo": "RAL 7034",
+          "nombre": "Yellow grey",
+          "hex": "#90886F",
+          "diferencia": 4.7
         }
       },
       {
-        "hex": "#6B5B41",
+        "hex": "#645539",
         "tipo": "principal",
-        "presencia": 12.2,
+        "presencia": 9.4,
         "ral": {
           "sistema": "RAL Design",
-          "codigo": "RAL 085 40 20",
-          "nombre": "Khaki Green",
-          "hex": "#6A5A39",
-          "diferencia": 2.4
+          "codigo": "RAL 080 40 20",
+          "nombre": "Pimento Grain Brown",
+          "hex": "#6C5738",
+          "diferencia": 2.6
         },
         "ralClassic": {
           "sistema": "RAL Classic",
           "codigo": "RAL 7008",
           "nombre": "Khaki grey",
           "hex": "#725F3C",
-          "diferencia": 3.4
+          "diferencia": 5.2
         }
       }
     ]
