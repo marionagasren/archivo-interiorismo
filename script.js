@@ -256,7 +256,7 @@ function vistaProyecto(id) {
   if (!p) return vistaNoEncontrada();
 
   const datos = [
-    ["Proyecto", p.tipo === "propio" ? "341 Studio" : p.tipo === "referencia" ? "Referencia" : ""],
+    ["Proyecto", p.nombre],
     ["Autores", p.autores], ["Ubicación", p.ubicacion], ["Año", p.año],
     ["Tipología", p.tipologia], ["Fotografía", p.fotografo],
   ].filter(([, valor]) => valor);
