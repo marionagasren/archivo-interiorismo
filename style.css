@@ -140,7 +140,7 @@ body.portada-visible .cabecera { transform: translateY(-100%); opacity: 0; point
 /* ---------- Introducción de cada página ---------- */
 .intro { padding: 72px 0 40px; max-width: 1000px; }
 .intro .intro-texto { max-width: 720px; }
-.intro h1 { font-size: clamp(44px, 7vw, 84px); line-height: 1; margin-bottom: 20px; text-transform: uppercase; letter-spacing: .02em; }
+.intro h1 { font-size: clamp(32px, 4.2vw, 54px); line-height: 1; margin-bottom: 20px; text-transform: uppercase; letter-spacing: .02em; }
 .intro p { color: var(--texto-suave); margin: 0; }
 
 
