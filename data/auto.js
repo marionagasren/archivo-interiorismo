@@ -137,83 +137,83 @@ window.AUTO = {
     "planos": [],
     "colores": [
       {
-        "hex": "#D3CCCB",
+        "hex": "#DAD1C6",
         "tipo": "principal",
-        "presencia": 48.2,
+        "presencia": 43.1,
         "ral": {
           "sistema": "RAL Design",
-          "codigo": "RAL 000 80 00",
-          "nombre": "Foggy Grey",
-          "hex": "#C9C8C7",
-          "diferencia": 2.8
+          "codigo": "RAL 070 85 05",
+          "nombre": "Almond Beige",
+          "hex": "#DFD5CA",
+          "diferencia": 1.6
         },
         "ralClassic": {
           "sistema": "RAL Classic",
-          "codigo": "RAL 7047",
-          "nombre": "Telegrey 4",
-          "hex": "#C8C8C7",
-          "diferencia": 3.2
+          "codigo": "RAL 9002",
+          "nombre": "Grey white",
+          "hex": "#D7D5CB",
+          "diferencia": 2.7
         }
       },
       {
-        "hex": "#B8A899",
+        "hex": "#B9AD88",
         "tipo": "principal",
-        "presencia": 62.1,
+        "presencia": 51.5,
         "ral": {
           "sistema": "RAL Design",
-          "codigo": "RAL 070 70 10",
-          "nombre": "Ginger Grey Yellow",
-          "hex": "#B8A899",
-          "diferencia": 0.3
+          "codigo": "RAL 095 70 20",
+          "nombre": "Crocodile Green",
+          "hex": "#B7AC87",
+          "diferencia": 0.5
         },
         "ralClassic": {
           "sistema": "RAL Classic",
           "codigo": "RAL 7032",
           "nombre": "Pebble grey",
           "hex": "#B4B0A1",
-          "diferencia": 4.5
+          "diferencia": 6.5
         }
       },
       {
-        "hex": "#817458",
+        "hex": "#877A51",
         "tipo": "principal",
-        "presencia": 21.4,
+        "presencia": 23.8,
         "ral": {
           "sistema": "RAL Design",
           "codigo": "RAL 090 50 20",
           "nombre": "Pesto Green",
           "hex": "#817553",
-          "diferencia": 1.9
+          "diferencia": 2.7
         },
         "ralClassic": {
           "sistema": "RAL Classic",
           "codigo": "RAL 6013",
           "nombre": "Reed green",
           "hex": "#7A765A",
-          "diferencia": 3.0
+          "diferencia": 4.9
         }
       },
       {
-        "hex": "#ECEFFC",
+        "hex": "#EDF0FC",
         "tipo": "principal",
-        "presencia": 12.2,
+        "presencia": 17.9,
         "ral": {
           "sistema": "RAL Design",
           "codigo": "RAL 280 93 05",
           "nombre": "Porcelain White",
           "hex": "#EAEDF2",
-          "diferencia": 3.3
+          "diferencia": 3.0
         },
         "ralClassic": {
           "sistema": "RAL Classic",
           "codigo": "RAL 9003",
           "nombre": "Signal white",
           "hex": "#ECECE7",
-          "diferencia": 8.2
+          "diferencia": 8.0
         }
       },
       {
-        "hex": "#302A24",
+        "hex": "#302C28",
         "tipo": "acento",
         "presencia": 0.6,
         "ral": {
@@ -221,14 +221,33 @@ window.AUTO = {
           "codigo": "RAL 060 20 05",
           "nombre": "Industrial Black",
           "hex": "#322B26",
-          "diferencia": 1.1
+          "diferencia": 1.6
         },
         "ralClassic": {
           "sistema": "RAL Classic",
-          "codigo": "RAL 9017",
-          "nombre": "Traffic black",
-          "hex": "#2A292A",
-          "diferencia": 4.6
+          "codigo": "RAL 9004",
+          "nombre": "Signal black",
+          "hex": "#2B2B2C",
+          "diferencia": 3.9
+        }
+      },
+      {
+        "hex": "#584C2D",
+        "tipo": "acento",
+        "presencia": 6.2,
+        "ral": {
+          "sistema": "RAL Design",
+          "codigo": "RAL 090 30 20",
+          "nombre": "Bark Green",
+          "hex": "#514421",
+          "diferencia": 3.6
+        },
+        "ralClassic": {
+          "sistema": "RAL Classic",
+          "codigo": "RAL 7013",
+          "nombre": "Brown grey",
+          "hex": "#565044",
+          "diferencia": 6.6
         }
       }
     ]
