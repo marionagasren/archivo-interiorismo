@@ -47,7 +47,7 @@ window.PROYECTOS = [
   },
   {
     id: "montpellier-ii",
-    encuadre: "51% 53%",
+    encuadre: "59% 53%",
     tipo: "referencia",
     nombre: "Montpellier II",
     autores: "Vives St-Laurent · ATA Architecture",
