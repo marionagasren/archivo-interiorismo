@@ -332,8 +332,12 @@ body.portada-visible .cabecera { transform: translateY(-100%); opacity: 0; point
 
 /* ---------- Biblioteca ---------- */
 .pestañas { display: flex; flex-wrap: wrap; gap: 8px 28px; margin-top: 24px; }
-.pestañas a { font-family: var(--serif); font-size: 26px; text-decoration: none; color: var(--texto-suave); }
-.pestañas a.activa { color: var(--texto); text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1px; }
+/* Pestañas (Proyectos, Biblioteca, Generador): mismo estilo que el menú de arriba */
+.pestañas a {
+  font-family: var(--sans); font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--texto-suave); text-decoration: none; padding-bottom: 2px; border-bottom: 1px solid transparent;
+}
+.pestañas a:hover, .pestañas a.activa { color: var(--texto); border-color: var(--texto); }
 
 /* Catálogo de materiales: rejilla de muestras con fichas en monoespaciada */
 .catalogo { padding-bottom: 96px; }
@@ -498,10 +502,10 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 
 /* Biblioteca del editor */
 .editor-biblioteca { position: sticky; top: 90px; }
-.pestañas-biblioteca { display: flex; flex-wrap: nowrap; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+.pestañas-biblioteca { display: flex; flex-wrap: nowrap; justify-content: flex-start; gap: 22px; margin-bottom: 20px; }
 .pestañas-biblioteca button { white-space: nowrap; }
-.pestañas-biblioteca button { font: inherit; font-family: var(--serif); font-size: 19px; background: none; border: 0; padding: 0 0 2px; color: var(--texto-suave); cursor: pointer; border-bottom: 1px solid transparent; }
-.pestañas-biblioteca button.activa { color: var(--texto); border-color: var(--texto); }
+.pestañas-biblioteca button { font: inherit; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; background: none; border: 0; padding: 0 0 2px; color: var(--texto-suave); cursor: pointer; border-bottom: 1px solid transparent; }
+.pestañas-biblioteca button:hover, .pestañas-biblioteca button.activa { color: var(--texto); border-color: var(--texto); }
 .filtros-editor { display: block; margin: 0 0 16px; }
 .filtros-editor button { font: inherit; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
 /* Todos y Favoritos: botones en negro (el elegido, relleno) */
@@ -897,11 +901,3 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 .historial button span { font-size: 16px; letter-spacing: 0; }
 .historial button:hover:not(:disabled) { opacity: .6; }
 .historial button:disabled { color: var(--texto-suave); opacity: .45; cursor: default; }
-
-/* Filtros de Proyectos (Todos · Mis proyectos · Referencias): mismo estilo que el menú */
-.fila-proyectos .pestañas { gap: 8px 28px; }
-.fila-proyectos .pestañas a {
-  font-family: var(--sans); font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
-  color: var(--texto-suave); text-decoration: none; padding-bottom: 2px; border-bottom: 1px solid transparent;
-}
-.fila-proyectos .pestañas a:hover, .fila-proyectos .pestañas a.activa { color: var(--texto); border-color: var(--texto); text-decoration: none; }
