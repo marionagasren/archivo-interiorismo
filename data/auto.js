@@ -214,6 +214,90 @@ window.AUTO = {
       }
     ]
   },
+  "mimoses-2": {
+    "fotos": [
+      "img/proyectos/mimoses-2/foto-01.jpg"
+    ],
+    "planos": [],
+    "colores": [
+      {
+        "hex": "#DFCDBA",
+        "tipo": "principal",
+        "presencia": 48.6,
+        "ral": {
+          "sistema": "RAL Design",
+          "codigo": "RAL 080 80 10",
+          "nombre": "Pastel Sand",
+          "hex": "#D5C6B4",
+          "diferencia": 2.8
+        },
+        "ralClassic": {
+          "sistema": "RAL Classic",
+          "codigo": "RAL 1015",
+          "nombre": "Light ivory",
+          "hex": "#E6D2B5",
+          "diferencia": 3.9
+        }
+      },
+      {
+        "hex": "#BDA68C",
+        "tipo": "principal",
+        "presencia": 58.9,
+        "ral": {
+          "sistema": "RAL Design",
+          "codigo": "RAL 070 70 20",
+          "nombre": "Light Ash Brown",
+          "hex": "#C2A487",
+          "diferencia": 2.0
+        },
+        "ralClassic": {
+          "sistema": "RAL Classic",
+          "codigo": "RAL 7032",
+          "nombre": "Pebble grey",
+          "hex": "#B4B0A1",
+          "diferencia": 6.8
+        }
+      },
+      {
+        "hex": "#937D66",
+        "tipo": "principal",
+        "presencia": 28.0,
+        "ral": {
+          "sistema": "RAL Design",
+          "codigo": "RAL 075 50 20",
+          "nombre": "China Cinnamon",
+          "hex": "#8A7054",
+          "diferencia": 5.3
+        },
+        "ralClassic": {
+          "sistema": "RAL Classic",
+          "codigo": "RAL 1035",
+          "nombre": "Pearl beige",
+          "hex": "#908370",
+          "diferencia": 3.5
+        }
+      },
+      {
+        "hex": "#6B5B41",
+        "tipo": "principal",
+        "presencia": 12.2,
+        "ral": {
+          "sistema": "RAL Design",
+          "codigo": "RAL 085 40 20",
+          "nombre": "Khaki Green",
+          "hex": "#6A5A39",
+          "diferencia": 2.4
+        },
+        "ralClassic": {
+          "sistema": "RAL Classic",
+          "codigo": "RAL 7008",
+          "nombre": "Khaki grey",
+          "hex": "#725F3C",
+          "diferencia": 3.4
+        }
+      }
+    ]
+  },
   "montpellier-ii": {
     "fotos": [
       "img/proyectos/montpellier-ii/foto-01.jpg",
