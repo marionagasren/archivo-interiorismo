@@ -151,6 +151,7 @@ function vistaPublicar(idEditar) {
           </div>
         </details>
         <div class="publicar-final">
+          ${original ? `<button type="button" class="boton-eliminar" data-eliminar>Eliminar proyecto</button>` : ""}
           <p class="publicar-estado" id="estado-publicar" aria-live="polite"></p>
           <button type="submit" class="boton-publicar">${original ? "Guardar cambios" : "Publicar proyecto"}</button>
         </div>
@@ -260,6 +261,7 @@ function activarPublicar() {
     }
   });
 
+  form.querySelector("[data-eliminar]")?.addEventListener("click", () => eliminarProyecto(form));
   form.addEventListener("submit", e => { e.preventDefault(); publicarProyecto(form); });
 }
 
@@ -386,6 +388,70 @@ function base64ATexto(b64) {
 //  PUBLICAR EN GITHUB (un solo commit con todo)
 // ---------------------------------------------------------------------
 
+// Llamadas a la API de GitHub con la clave guardada
+function clienteGitHub(token) {
+  return async (ruta, opciones = {}, { permitirNoExiste = false } = {}) => {
+    const r = await fetch(`https://api.github.com/repos/${REPOSITORIO}${ruta}`, {
+      ...opciones,
+      headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "Content-Type": "application/json" },
+    });
+    if (r.status === 404 && permitirNoExiste) return null;
+    if (r.status === 401) throw new Error("La clave de GitHub no es válida o ha caducado.");
+    if (r.status === 403 || r.status === 404) throw new Error("La clave de GitHub no tiene permiso de escritura en el repositorio (Contents: Read and write).");
+    if (!r.ok) throw new Error(`GitHub ha respondido con un error (${r.status}).`);
+    return r.json();
+  };
+}
+
+// Elimina el proyecto que se está editando: su ficha en data/proyectos.js
+// y todos los archivos de su carpeta, en un solo commit
+async function eliminarProyecto(form) {
+  const id = borrador.editando;
+  const nombre = PROYECTOS.find(p => p.id === id)?.nombre || id;
+  const estado = document.getElementById("estado-publicar");
+  const decir = (mensaje, error = false) => { estado.textContent = mensaje; estado.classList.toggle("error", error); };
+  const token = document.getElementById("token").value.trim();
+  if (!token) { decir("Falta la clave de GitHub (apartado «Conectar con GitHub»).", true); form.querySelector(".conexion").open = true; return; }
+  if (!confirm(`¿Eliminar el proyecto «${nombre}»?\n\nSe borrarán su ficha, sus fotos y sus planos de la web. No se puede deshacer desde aquí.`)) return;
+
+  const botones = form.querySelectorAll(".boton-publicar, .boton-eliminar");
+  botones.forEach(b => b.disabled = true);
+  try {
+    const api = clienteGitHub(token);
+    decir("Conectando con GitHub…");
+    const ref = await api(`/git/ref/heads/${RAMA}`);
+    const commitActual = await api(`/git/commits/${ref.object.sha}`);
+    const archivo = await api(`/contents/data/proyectos.js?ref=${ref.object.sha}`);
+    guardarToken(token);
+
+    decir("Eliminando…");
+    const carpeta = `img/proyectos/${id}`;
+    const lista = await api(`/contents/${carpeta}?ref=${ref.object.sha}`, {}, { permitirNoExiste: true });
+    const arbol = (Array.isArray(lista) ? lista : []).filter(f => f.type === "file")
+      .map(f => ({ path: `${carpeta}/${f.name}`, mode: "100644", type: "blob", sha: null }));
+    const blob = await api("/git/blobs", { method: "POST", body: JSON.stringify({
+      content: textoABase64(reemplazarBloque(base64ATexto(archivo.content), id, "")), encoding: "base64" }) });
+    arbol.push({ path: "data/proyectos.js", mode: "100644", type: "blob", sha: blob.sha });
+
+    const nuevoArbol = await api("/git/trees", { method: "POST", body: JSON.stringify({ base_tree: commitActual.tree.sha, tree: arbol }) });
+    const nuevoCommit = await api("/git/commits", { method: "POST", body: JSON.stringify({
+      message: `Elimina el proyecto: ${nombre} (desde la web)`, tree: nuevoArbol.sha, parents: [ref.object.sha],
+    }) });
+    await api(`/git/refs/heads/${RAMA}`, { method: "PATCH", body: JSON.stringify({ sha: nuevoCommit.sha }) });
+
+    form.outerHTML = `
+      <section class="publicado">
+        <h2>«${texto(nombre)}» se ha eliminado</h2>
+        <p>En unos <strong>2–3 minutos</strong> dejará de aparecer en Proyectos; si aún lo ves, recarga la página.</p>
+        <p class="publicado-acciones"><a class="boton-publicar" href="#/proyectos">Ir a Proyectos</a></p>
+      </section>`;
+  } catch (error) {
+    console.error(error);
+    decir(`No se ha podido eliminar: ${error.message}`, true);
+    botones.forEach(b => b.disabled = false);
+  }
+}
+
 async function publicarProyecto(form) {
   const estado = document.getElementById("estado-publicar");
   const boton = form.querySelector(".boton-publicar");
@@ -403,17 +469,7 @@ async function publicarProyecto(form) {
 
   boton.disabled = true;
   try {
-    const api = async (ruta, opciones = {}, { permitirNoExiste = false } = {}) => {
-      const r = await fetch(`https://api.github.com/repos/${REPOSITORIO}${ruta}`, {
-        ...opciones,
-        headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "Content-Type": "application/json" },
-      });
-      if (r.status === 404 && permitirNoExiste) return null;
-      if (r.status === 401) throw new Error("La clave de GitHub no es válida o ha caducado.");
-      if (r.status === 403 || r.status === 404) throw new Error("La clave de GitHub no tiene permiso de escritura en el repositorio (Contents: Read and write).");
-      if (!r.ok) throw new Error(`GitHub ha respondido con un error (${r.status}).`);
-      return r.json();
-    };
+    const api = clienteGitHub(token);
 
     decir("Conectando con GitHub…");
     const ref = await api(`/git/ref/heads/${RAMA}`);

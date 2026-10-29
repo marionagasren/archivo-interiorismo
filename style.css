@@ -813,6 +813,12 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 .conexion-estado.bien { color: #3F5B3A; }
 .conexion-fila .boton-linea { white-space: nowrap; }
 .publicar-final { display: flex; justify-content: flex-end; align-items: center; gap: 22px; }
+.boton-eliminar {
+  margin-right: auto; padding: 11px 20px; border: 1px solid #B9776B; background: transparent; color: #9B3B2A;
+  font: inherit; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; cursor: pointer;
+}
+.boton-eliminar:hover { background: #9B3B2A; border-color: #9B3B2A; color: var(--fondo); }
+.boton-eliminar:disabled { opacity: .5; cursor: wait; }
 .publicar-estado { margin: 0; font-size: 13px; color: var(--texto-suave); }
 .publicar-estado.error { color: #9B3B2A; }
 .publicado { border-top: 1px solid var(--texto); padding: 32px 0 96px; max-width: 640px; }
