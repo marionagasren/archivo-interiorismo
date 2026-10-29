@@ -285,10 +285,11 @@ function vistaGenerador(modo) {
       </div>
 
       <aside class="editor-biblioteca">
+        <h3 class="panel-titulo">Añadir</h3>
         <nav class="pestañas-biblioteca">
-          <button data-tipo="material">Añadir textura</button>
-          <button data-tipo="color">Añadir color</button>
-          <button data-tipo="mueble">Añadir mobiliario</button>
+          <button data-tipo="material">Texturas</button>
+          <button data-tipo="color">Colores</button>
+          <button data-tipo="mueble">Mobiliario</button>
         </nav>
         <label class="buscador buscador-editor">
           <span class="buscador-icono" aria-hidden="true">⌕</span>

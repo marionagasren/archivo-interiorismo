@@ -498,7 +498,8 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 
 /* Biblioteca del editor */
 .editor-biblioteca { position: sticky; top: 90px; }
-.pestañas-biblioteca { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-bottom: 16px; }
+.pestañas-biblioteca { display: flex; flex-wrap: nowrap; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+.pestañas-biblioteca button { white-space: nowrap; }
 .pestañas-biblioteca button { font: inherit; font-family: var(--serif); font-size: 19px; background: none; border: 0; padding: 0 0 2px; color: var(--texto-suave); cursor: pointer; border-bottom: 1px solid transparent; }
 .pestañas-biblioteca button.activa { color: var(--texto); border-color: var(--texto); }
 .filtros-editor { display: block; margin: 0 0 16px; }
