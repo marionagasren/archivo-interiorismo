@@ -21,7 +21,7 @@ const BIBLIOTECA = window.BIBLIOTECA || { materiales: [], mobiliario: [] };
 
 const app = document.getElementById("app");
 
-const TIPOS_PROYECTO = { propio: "Proyectos propios", referencia: "Referencias" };
+const TIPOS_PROYECTO = { propio: "Mis proyectos", referencia: "Referencias" };
 
 
 // ---------------------------------------------------------------------
@@ -220,13 +220,16 @@ function htmlProyectos(filtro) {
       ${tiposPresentes.map(t => `<a href="#/proyectos/${t}" class="${filtro === t ? "activa" : ""}">${TIPOS_PROYECTO[t]}</a>`).join("")}
     </nav>` : "";
 
+  // Los filtros y el botón «Publicar proyecto» comparten fila
   return `
-    <a class="boton-publicar boton-esquina" href="#/publicar">Publicar proyecto</a>
     <section class="intro">
       <h1>Proyectos</h1>
       <p>Interiores de referencia y proyectos del estudio. Cada uno se descompone en su paleta de colores, materiales y mobiliario.</p>
-      ${filtros}
     </section>
+    <div class="fila-proyectos">
+      ${filtros || "<span></span>"}
+      <a class="boton-publicar" href="#/publicar">Publicar proyecto</a>
+    </div>
 
     <section class="rejilla-proyectos">
       ${lista.map(p => `

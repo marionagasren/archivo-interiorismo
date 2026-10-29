@@ -743,7 +743,8 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
   font: inherit; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; cursor: pointer;
 }
 .boton-linea:hover { border-color: var(--texto); }
-.boton-esquina { float: right; margin-top: 84px; }
+.fila-proyectos { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px 28px; margin: -16px 0 40px; }
+.fila-proyectos .pestañas { margin-top: 0; }
 
 .volver { margin: 0 0 18px !important; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; }
 .volver a { color: var(--texto-suave); text-decoration: none; }
@@ -828,7 +829,6 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 .publicado-acciones { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
 
 @media (max-width: 800px) {
-  .boton-esquina { float: none; margin-top: 28px; }
   .publicar-campos, .publicar-elegir { grid-template-columns: 1fr; }
   .publicar-final { flex-direction: column; align-items: stretch; }
 }
