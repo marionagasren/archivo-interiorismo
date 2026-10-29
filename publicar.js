@@ -58,9 +58,6 @@ function vistaPublicar(idEditar) {
     <section class="intro">
       <p class="volver"><a href="${original ? `#/proyecto/${original.id}` : "#/proyectos"}">← ${original ? texto(original.nombre) : "Proyectos"}</a></p>
       <h1>${original ? "Editar proyecto" : "Nuevo proyecto"}</h1>
-      <p class="intro-texto">${original
-        ? "Cambia la información, añade o quita fotos y elige la portada. Al guardar, los cambios aparecen en la web en unos minutos."
-        : "Solo el nombre es obligatorio: las fotos y el resto de datos se pueden añadir más adelante editando el proyecto. Al publicar, aparece en Proyectos en unos minutos con sus colores extraídos automáticamente."}</p>
     </section>
 
     <form class="publicar" id="publicar" novalidate>

@@ -176,7 +176,6 @@ function vistaPaleta() {
     <section class="intro">
       <h1>Generador</h1>
       ${pestañasGenerador("paleta")}
-      <p class="intro-texto">Combina colores en una paleta. Pulsa la barra espaciadora para generar combinaciones, fija los colores que quieras conservar y arrastra las columnas para ordenarlas.</p>
     </section>
 
     <section class="paleta-editor">

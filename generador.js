@@ -230,7 +230,6 @@ function vistaGenerador(modo) {
     <section class="intro">
       <h1>Generador</h1>
       ${pestañasGenerador("moodboard")}
-      <p class="intro-texto">Elige una plantilla y arrastra texturas, colores y mobiliario de la biblioteca a cada recuadro. Puedes mover, redimensionar y eliminar los recuadros, o crear tu propia plantilla.</p>
     </section>
 
     <section class="plantillas">

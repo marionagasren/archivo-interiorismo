@@ -224,7 +224,6 @@ function htmlProyectos(filtro) {
   return `
     <section class="intro">
       <h1>Proyectos</h1>
-      <p>Interiores de referencia y proyectos del estudio. Cada uno se descompone en su paleta de colores, materiales y mobiliario.</p>
     </section>
     <div class="fila-proyectos">
       ${filtros || "<span></span>"}
@@ -498,7 +497,6 @@ function vistaBiblioteca(tipo, filtro, subfiltro) {
       <section class="intro">
         <h1>Biblioteca</h1>
         ${navPestañas}
-        <p class="intro-texto">Carta completa de ${window.CARTA_COLORES.length.toLocaleString("es")} colores RAL, ordenada por familias de tono. Pulsa una muestra para copiar su código o «+» para añadirla a tu paleta.</p>
       </section>
       <section class="biblioteca-carta">${htmlCarta()}</section>`;
     activarCarta(app.querySelector(".biblioteca-carta"), { alAnadir: c => anadirAPaleta(c.hex) });

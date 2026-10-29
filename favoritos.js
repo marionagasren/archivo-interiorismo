@@ -92,9 +92,7 @@ function vistaFavoritos() {
   app.innerHTML = `
     <section class="intro">
       <h1>Favoritos</h1>
-      <p class="intro-texto">${total
-        ? `${total} ${total === 1 ? "elemento guardado" : "elementos guardados"}. Pulsa el marcador de cualquier color, material o pieza de la biblioteca para añadirlo aquí.`
-        : `Todavía no has guardado nada. Pulsa el marcador <svg class="icono-en-texto" viewBox="0 0 16 20" aria-hidden="true"><use href="#icono-guardar"/></svg> de cualquier color, material o pieza de la <a href="#/biblioteca/colores">biblioteca</a> y aparecerá aquí.`}</p>
+      ${total ? "" : `<p class="intro-texto">Todavía no has guardado nada. Pulsa el marcador <svg class="icono-en-texto" viewBox="0 0 16 20" aria-hidden="true"><use href="#icono-guardar"/></svg> de cualquier color, material o pieza de la <a href="#/biblioteca/colores">biblioteca</a> y aparecerá aquí.</p>`}
     </section>
     <div class="favoritos">
       ${TIPOS_FAVORITOS.filter(([tipo]) => grupos[tipo].length).map(([tipo, nombre]) => `
