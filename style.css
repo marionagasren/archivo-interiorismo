@@ -897,3 +897,11 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 .historial button span { font-size: 16px; letter-spacing: 0; }
 .historial button:hover:not(:disabled) { opacity: .6; }
 .historial button:disabled { color: var(--texto-suave); opacity: .45; cursor: default; }
+
+/* Filtros de Proyectos (Todos · Mis proyectos · Referencias): mismo estilo que el menú */
+.fila-proyectos .pestañas { gap: 8px 28px; }
+.fila-proyectos .pestañas a {
+  font-family: var(--sans); font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--texto-suave); text-decoration: none; padding-bottom: 2px; border-bottom: 1px solid transparent;
+}
+.fila-proyectos .pestañas a:hover, .fila-proyectos .pestañas a.activa { color: var(--texto); border-color: var(--texto); text-decoration: none; }
