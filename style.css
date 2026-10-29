@@ -886,3 +886,13 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 .filtros-principales.segmentado { margin-bottom: 12px; }
 .filtros-principales.segmentado button { font-weight: 500; }
 .editor-panel .segmentado button { padding: 8px 4px; font-size: 11px; }
+
+/* Deshacer / Rehacer, debajo del moodboard: solo texto, sin recuadro */
+.historial { display: flex; justify-content: center; gap: 36px; margin-top: 16px; }
+.historial button {
+  display: inline-flex; align-items: center; gap: 8px; background: none; border: 0; padding: 4px 0;
+  font: inherit; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--texto); cursor: pointer;
+}
+.historial button span { font-size: 16px; letter-spacing: 0; }
+.historial button:hover:not(:disabled) { opacity: .6; }
+.historial button:disabled { color: var(--texto-suave); opacity: .45; cursor: default; }

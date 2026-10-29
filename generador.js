@@ -32,20 +32,29 @@ function leer(clave, porDefecto) {
 function escribir(clave, valor) {
   try { localStorage.setItem(clave, JSON.stringify(valor)); } catch { /* sin almacenamiento: no pasa nada */ }
 }
-// Historial para «Atrás» (deshacer): cada vez que el tablero cambia se guarda
-// cómo estaba antes. Se recuerdan los últimos 60 pasos.
+// Historial para «Deshacer» y «Rehacer»: cada vez que el tablero cambia se
+// guarda cómo estaba antes. Se recuerdan los últimos 60 pasos. Un cambio
+// nuevo borra lo que se podía rehacer.
 let historial = [];
+let futuro = [];
 let estadoAnterior = null;
 function guardarTablero() {
   const ahora = JSON.stringify(tablero);
   if (estadoAnterior !== null && ahora !== estadoAnterior) {
     historial.push(estadoAnterior);
     if (historial.length > 60) historial.shift();
+    futuro = [];
   }
   estadoAnterior = ahora;
   escribir(CLAVE_ACTUAL, tablero);
-  const boton = document.querySelector('[data-accion="deshacer"]');
-  if (boton) boton.disabled = !historial.length;
+  actualizarHistorial();
+}
+
+function actualizarHistorial() {
+  const atras = document.querySelector('[data-accion="deshacer"]');
+  const adelante = document.querySelector('[data-accion="rehacer"]');
+  if (atras) atras.disabled = !historial.length;
+  if (adelante) adelante.disabled = !futuro.length;
 }
 
 // Un moodboard guardado con un formato antiguo o estropeado se completa
@@ -63,8 +72,19 @@ function repararTablero(t) {
 
 function deshacer() {
   if (!historial.length) return;
-  estadoAnterior = historial.pop();
-  tablero = JSON.parse(estadoAnterior);
+  futuro.push(estadoAnterior);
+  irAEstado(historial.pop());
+}
+
+function rehacer() {
+  if (!futuro.length) return;
+  historial.push(estadoAnterior);
+  irAEstado(futuro.pop());
+}
+
+function irAEstado(estado) {
+  estadoAnterior = estado;   // así guardarTablero no lo cuenta como un cambio nuevo
+  tablero = JSON.parse(estado);
   seleccion = null;
   pintarPlantillas();
   pintarLienzo();
@@ -201,6 +221,7 @@ function vistaGenerador(modo) {
   filtroInicial = true;
   tablero = repararTablero(leer(CLAVE_ACTUAL, null)) || tableroDesde(window.PLANTILLAS[0]);
   historial = [];
+  futuro = [];
   estadoAnterior = null;
   seleccion = null;
   enMano = null;
@@ -219,11 +240,6 @@ function vistaGenerador(modo) {
 
     <section class="editor">
       <aside class="editor-panel">
-        <div class="panel-grupo">
-          <div class="barra">
-            <button data-accion="deshacer" class="boton-ancho" title="Deshacer el último cambio (Ctrl/Cmd + Z)" disabled>↶ Atrás</button>
-          </div>
-        </div>
         <div class="panel-grupo">
           <h3 class="panel-titulo">Formato</h3>
           <div class="barra segmentado" id="orientacion"></div>
@@ -261,6 +277,10 @@ function vistaGenerador(modo) {
 
       <div class="editor-lienzo">
         <div id="zona-lienzo"></div>
+        <div class="historial">
+          <button data-accion="deshacer" title="Deshacer el último cambio (Ctrl/Cmd + Z)" disabled><span aria-hidden="true">↶</span> Deshacer</button>
+          <button data-accion="rehacer" title="Rehacer (Ctrl/Cmd + Mayús + Z)" disabled>Rehacer <span aria-hidden="true">↷</span></button>
+        </div>
         <p class="aviso" id="aviso"></p>
       </div>
 
@@ -681,6 +701,7 @@ function activarEditor() {
     const accion = b.dataset.accion;
     if (accion === "deseleccionar") { seleccion = null; return pintarLienzo(); }
     if (accion === "deshacer") return deshacer();
+    if (accion === "rehacer") return rehacer();
     if (accion === "recuadro") return añadirRecuadro("rect");
     if (accion === "texto") return añadirTexto();
     if (accion === "azar") return rellenarAlAzar();
@@ -820,6 +841,7 @@ function teclaEditor(e) {
   if (mando && tecla === "v" && portapapeles) { e.preventDefault(); pegar(); }
   if (mando && tecla === "d" && seleccion) { e.preventDefault(); copiar(); pegar(); }
   if (mando && tecla === "z" && !e.shiftKey) { e.preventDefault(); deshacer(); }
+  if (mando && ((tecla === "z" && e.shiftKey) || tecla === "y")) { e.preventDefault(); rehacer(); }
 
   const item = tablero.recuadros.find(x => x.id === seleccion) || tablero.textos.find(x => x.id === seleccion);
   const flechas = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
