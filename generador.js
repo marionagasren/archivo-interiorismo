@@ -201,8 +201,8 @@ function pintarLienzo() {
   actualizarMarco();
   const [a, b] = tablero.proporcion;
   document.getElementById("orientacion").innerHTML = `
-    <button data-orientacion="vertical" class="${a <= b ? "activa" : ""}" title="Lienzo vertical">▯ Vertical</button>
-    <button data-orientacion="horizontal" class="${a > b ? "activa" : ""}" title="Lienzo horizontal">▭ Horizontal</button>`;
+    <button data-orientacion="vertical" class="${a <= b ? "activa" : ""}" title="Lienzo vertical">Vertical</button>
+    <button data-orientacion="horizontal" class="${a > b ? "activa" : ""}" title="Lienzo horizontal">Horizontal</button>`;
   document.getElementById("fondo-lienzo").innerHTML = Object.entries(FONDOS_LIENZO).map(([clave, color]) => `
     <button data-fondo="${clave}" class="${(tablero.fondo || "crema") === clave ? "activa" : ""}" title="Fondo ${clave}"><span class="punto-color" style="background:${color}"></span>${clave === "crema" ? "Crema" : "Blanco"}</button>`).join("");
   document.getElementById("sombras-lienzo").innerHTML = `
@@ -238,6 +238,7 @@ function vistaGenerador(modo) {
     </section>
 
     <section class="editor">
+      <div class="editor-izquierda">
       <aside class="editor-panel">
         <div class="panel-grupo">
           <h3 class="panel-titulo">Formato</h3>
@@ -254,8 +255,8 @@ function vistaGenerador(modo) {
         <div class="panel-grupo">
           <h3 class="panel-titulo">Añadir</h3>
           <div class="barra">
-            <button data-accion="recuadro">+ Recuadro</button>
-            <button data-accion="texto">+ Texto</button>
+            <button data-accion="recuadro" class="boton-ancho">+ Recuadro</button>
+            <button data-accion="texto" class="boton-ancho">+ Texto</button>
           </div>
         </div>
         <div class="panel-grupo">
@@ -273,6 +274,7 @@ function vistaGenerador(modo) {
         <button class="cerrar-panel" data-accion="deseleccionar" title="Cerrar (Esc)" aria-label="Cerrar">×</button>
         <div class="barra barra-seleccion" id="barra-seleccion"></div>
       </aside>
+      </div>
 
       <div class="editor-lienzo">
         <div id="zona-lienzo"></div>
@@ -397,7 +399,7 @@ function pintarHerramientas() {
       <button data-accion="duplicar" title="Ctrl/Cmd + D">Duplicar</button>
       <button data-accion="eliminar">Eliminar</button>`;
   } else {
-    barra.innerHTML = `<p class="panel-vacio">Selecciona un texto o un recuadro del lienzo para editarlo aquí.</p>`;
+    barra.innerHTML = "";
   }
   // Lo seleccionado se edita en la segunda columna, junto a las herramientas
   document.getElementById("panel-seleccion").classList.toggle("vacio-seleccion", !(r || t));
