@@ -842,3 +842,47 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 .sin-foto-portada { height: min(62vh, 560px); }
 .sin-foto-portada .sin-foto-logo { font-size: clamp(28px, 4vw, 44px); }
 .proyecto-acciones { display: flex; justify-content: flex-end; margin: 18px 0 0; }
+
+
+/* ---------- Botones en forma de cápsula ----------
+   Todos los botones con recuadro son cápsulas con sombra suave. Cuando hay
+   dos opciones juntas (vertical/horizontal, crema/blanco…) van en un
+   selector doble («segmentado»): la opción elegida, en negro. */
+:root {
+  --superficie-boton: #FBFAF7;
+  --borde-boton: rgba(42, 38, 34, .1);
+  --sombra-boton: 0 1px 2px rgba(40, 30, 20, .06), 0 4px 14px rgba(40, 30, 20, .08);
+}
+.barra button, .boton-publicar, .boton-linea, .boton-eliminar, .plantilla-nueva select, .plantilla-nueva button,
+.miniatura-subida figcaption button, .chip {
+  border-radius: 999px; box-shadow: var(--sombra-boton); text-align: center; justify-content: center;
+}
+.barra button, .boton-linea, .plantilla-nueva select, .plantilla-nueva button, .miniatura-subida figcaption button, .chip {
+  background: var(--superficie-boton); border-color: var(--borde-boton);
+}
+.barra button:hover, .boton-linea:hover, .plantilla-nueva button:hover, .miniatura-subida figcaption button:hover:not(:disabled), .chip:hover { border-color: rgba(42, 38, 34, .35); }
+.barra button.activa, .chip.elegido { background: var(--texto); color: var(--fondo); border-color: var(--texto); }
+.barra button:disabled { box-shadow: none; }
+.editor-panel .barra button { text-align: center; padding: 7px 10px; }
+.panel-seleccion .barra button { padding: 7px 6px; }
+.plantilla-nueva select, .plantilla-nueva button { padding: 5px 10px; }
+.boton-publicar, .boton-linea, .boton-eliminar { padding: 12px 24px; }
+.chip { padding: 4px 12px 4px 4px; }
+.chip img { border-radius: 50%; }
+.miniatura-subida figcaption button { min-width: 30px; }
+.activa .punto-color { box-shadow: 0 0 0 1px rgba(245, 242, 236, .7); }
+
+.segmentado {
+  display: flex !important; flex-wrap: nowrap !important; gap: 0 !important; padding: 4px; margin: 0;
+  border: 1px solid var(--borde-boton); border-radius: 999px; background: var(--superficie-boton); box-shadow: var(--sombra-boton);
+}
+.segmentado button {
+  flex: 1 1 0 !important; min-width: 0; border: 0 !important; border-radius: 999px; background: transparent !important;
+  box-shadow: none !important; color: var(--texto-suave); padding: 8px 10px; transition: background .2s ease, color .2s ease;
+}
+.segmentado button:hover:not(.activa) { color: var(--texto); }
+.segmentado button.activa { background: var(--texto) !important; color: var(--fondo) !important; }
+.editor-panel .barra .segmentado { flex-basis: 100%; }
+.filtros-principales.segmentado { margin-bottom: 12px; }
+.filtros-principales.segmentado button { font-weight: 500; }
+.editor-panel .segmentado button { padding: 8px 4px; font-size: 11px; }

@@ -226,11 +226,11 @@ function vistaGenerador(modo) {
         </div>
         <div class="panel-grupo">
           <h3 class="panel-titulo">Formato</h3>
-          <div class="barra" id="orientacion"></div>
+          <div class="barra segmentado" id="orientacion"></div>
         </div>
         <div class="panel-grupo">
           <h3 class="panel-titulo">Fondo</h3>
-          <div class="barra" id="fondo-lienzo"></div>
+          <div class="barra segmentado" id="fondo-lienzo"></div>
         </div>
         <div class="panel-grupo">
           <h3 class="panel-titulo">Sombras</h3>
@@ -324,7 +324,7 @@ function pintarBibliotecaEditor() {
   // «Todos» y «Favoritos» arriba, destacados; el resto de tipologías en lista, una por fila
   const botonFiltro = (valor, nombre) => `<button data-filtro="${valor}" class="${valor === filtroBiblioteca ? "activa" : ""}">${nombre}</button>`;
   document.getElementById("filtros-editor").innerHTML = `
-    <div class="filtros-principales">${botonFiltro("", "Todos")}${botonFiltro("Favoritos", "Favoritos")}</div>
+    <div class="filtros-principales segmentado">${botonFiltro("", "Todos")}${botonFiltro("Favoritos", "Favoritos")}</div>
     <div class="filtros-lista">${[...extras, ...presentes].map(cat => botonFiltro(cat, cat)).join("")}</div>`;
 
   let piezas = todas;
@@ -370,7 +370,7 @@ function pintarHerramientas() {
       <span class="barra-titulo">Texto · doble clic para escribir</span>
       ${["titulo", "encabezado", "subtitulo", "nota", "etiqueta"].map(e => `<button data-estilo="${e}" class="${t.estilo === e ? "activa" : ""}">${{ titulo: "Título", encabezado: "Encabezado", subtitulo: "Subtítulo", nota: "Nota", etiqueta: "Etiqueta" }[e]}</button>`).join("")}
       <span class="barra-separador"></span>
-      ${[["", "Negro"], ["#FFFFFF", "Blanco"]].map(([color, nombre]) => `<button data-color="${color}" class="${(t.color || "") === color ? "activa" : ""}"><span class="punto-color" style="background:${color || "var(--texto)"}"></span>${nombre}</button>`).join("")}
+      <span class="segmentado">${[["", "Negro"], ["#FFFFFF", "Blanco"]].map(([color, nombre]) => `<button data-color="${color}" class="${(t.color || "") === color ? "activa" : ""}"><span class="punto-color" style="background:${color || "var(--texto)"}"></span>${nombre}</button>`).join("")}</span>
       <span class="barra-separador"></span>
       <button data-accion="copiar" title="Ctrl/Cmd + C">Copiar</button>
       <button data-accion="pegar" title="Ctrl/Cmd + V">Pegar</button>
