@@ -30,6 +30,8 @@ herramientas/
 
 **Desde la web:** en Proyectos, pulsa **Publicar proyecto**, rellena la información, añade las fotos, elige la portada y pulsa Publicar. La primera vez pide una clave de GitHub (*fine-grained token* con acceso solo a este repositorio y permiso *Contents: Read and write*), que se guarda únicamente en ese navegador. Solo el nombre es obligatorio: sin fotos, el proyecto se muestra con una imagen provisional (fondo liso con el logo). Para añadir las fotos o cambiar datos más tarde, abre el proyecto y pulsa **Editar proyecto**. El formulario (`publicar.js`) sube las fotos a `img/proyectos/<id>/`, añade el proyecto a `data/proyectos.js` y, en unos minutos, GitHub extrae los colores y actualiza la web.
 
+**Orden y encuadre:** en Proyectos, **Editar cuadrícula** permite arrastrar las tarjetas para cambiar el orden y hacer clic en cada foto para elegir qué parte se ve. Al guardar se reordena `data/proyectos.js` y se añade `encuadre: "x% y%"` a los proyectos cuyo encuadre no es el centro.
+
 **A mano:**
 
 1. Crea la carpeta `img/proyectos/<id>/` y sube las fotos como `foto-01.jpg`, `foto-02.jpg`... (la 01 es la portada) y, si los hay, los planos como `plano-01.png`.

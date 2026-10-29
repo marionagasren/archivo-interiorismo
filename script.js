@@ -202,9 +202,11 @@ function vistaInicio() {
 //  #/proyectos            → todos
 //  #/proyectos/propio     → solo los de 341 Studio
 //  #/proyectos/referencia → solo las referencias
+//  #/proyectos/ordenar    → editar la cuadrícula: orden y encuadre de las fotos
 // ---------------------------------------------------------------------
 
 function vistaProyectos(filtro) {
+  if (filtro === "ordenar") return vistaCuadricula();   // «Editar cuadrícula» (publicar.js)
   app.innerHTML = htmlProyectos(filtro);
 }
 
@@ -227,14 +229,17 @@ function htmlProyectos(filtro) {
     </section>
     <div class="fila-proyectos">
       ${filtros || "<span></span>"}
-      <a class="boton-publicar" href="#/publicar">Publicar proyecto</a>
+      <div class="acciones-proyectos">
+        <a class="boton-linea" href="#/proyectos/ordenar">Editar cuadrícula</a>
+        <a class="boton-publicar" href="#/publicar">Publicar proyecto</a>
+      </div>
     </div>
 
     <section class="rejilla-proyectos">
       ${lista.map(p => `
         <a class="tarjeta" href="#/proyecto/${p.id}">
           <div class="tarjeta-imagen">
-            ${p.fotos[0] ? `<img src="${p.fotos[0]}" alt="${texto(p.nombre)}" loading="lazy">` : sinFoto()}
+            ${p.fotos[0] ? `<img src="${p.fotos[0]}" alt="${texto(p.nombre)}" loading="lazy"${p.encuadre ? ` style="object-position:${texto(p.encuadre)}"` : ""}>` : sinFoto()}
             <h2 class="tarjeta-nombre">${texto(p.nombre)}</h2>
           </div>
         </a>`).join("")}

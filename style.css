@@ -927,3 +927,23 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 @media (max-width: 800px) {
   .fila-proyectos { margin-top: -36px; }
 }
+
+/* ---------- Editar cuadrícula de proyectos ---------- */
+.acciones-proyectos { display: flex; flex-wrap: wrap; gap: 10px; }
+.cuadricula-ayuda { margin: 0; font-size: 12px; letter-spacing: .04em; color: var(--texto-suave); }
+.cuadricula-token { max-width: 420px; margin: -24px 0 16px auto; }
+.cuadricula-estado { text-align: right; margin: -26px 0 18px; min-height: 18px; }
+.tarjeta-editable { cursor: grab; transition: opacity .2s ease, transform .2s ease; }
+.tarjeta-editable.arrastrando { opacity: .35; }
+.tarjeta-editable.destino .tarjeta-imagen { outline: 2px solid var(--texto); outline-offset: 4px; }
+.tarjeta-editable img { cursor: crosshair; }
+.punto-encuadre {
+  position: absolute; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%;
+  border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .35), 0 2px 6px rgba(0, 0, 0, .3); pointer-events: none;
+}
+.tarjeta-pie { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 12px; font-size: 13px; }
+.tarjeta-pie button {
+  width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--borde-boton); background: var(--superficie-boton);
+  box-shadow: var(--sombra-boton); color: var(--texto); font: inherit; cursor: pointer;
+}
+.tarjeta-pie button:disabled { opacity: .3; cursor: default; box-shadow: none; }

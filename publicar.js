@@ -322,7 +322,7 @@ function bloqueProyecto(datos) {
   const lista = l => `[${l.map(valor).join(", ")}]`;
   return `  {
     id: ${valor(datos.id)},
-    tipo: ${valor(datos.tipo)},
+${datos.encuadre ? `    encuadre: ${valor(datos.encuadre)},\n` : ""}    tipo: ${valor(datos.tipo)},
     nombre: ${valor(datos.nombre)},
     autores: ${valor(datos.autores)},
     ubicacion: ${valor(datos.ubicacion)},
@@ -350,6 +350,13 @@ function añadirAlArchivo(contenido, bloque) {
 // Sustituye el bloque { ... } del proyecto con ese id por el nuevo.
 // Recorre las llaves teniendo en cuenta los textos entre comillas.
 function reemplazarBloque(contenido, id, bloque) {
+  const [inicioLinea, finBloque] = localizarBloque(contenido, id);
+  return contenido.slice(0, inicioLinea) + bloque + contenido.slice(finBloque);
+}
+
+// Dónde empieza (principio de su línea) y dónde acaba (después de «},» y el salto
+// de línea) el bloque { ... } del proyecto con ese id en data/proyectos.js
+function localizarBloque(contenido, id) {
   const marca = contenido.indexOf(`id: ${JSON.stringify(id)}`);
   if (marca < 0) throw new Error("No se ha encontrado el proyecto en data/proyectos.js");
   const inicio = contenido.lastIndexOf("{", marca);
@@ -366,7 +373,7 @@ function reemplazarBloque(contenido, id, bloque) {
   let resto = fin + 1;
   if (contenido[resto] === ",") resto++;
   const finLinea = contenido.indexOf("\n", resto);
-  return contenido.slice(0, inicioLinea) + bloque + contenido.slice(finLinea < 0 ? contenido.length : finLinea + 1);
+  return [inicioLinea, finLinea < 0 ? contenido.length : finLinea + 1];
 }
 
 function textoABase64(textoPlano) {
@@ -480,7 +487,9 @@ async function publicarProyecto(form) {
     if (editando) {
       if (!publicados.includes(editando)) throw new Error("Este proyecto no está en GitHub; recarga la página.");
       datos.id = editando;
-      datos.colores = PROYECTOS.find(p => p.id === editando)?.colores || [];   // colores añadidos a mano: se conservan
+      const anterior = PROYECTOS.find(p => p.id === editando);
+      datos.colores = anterior?.colores || [];     // colores añadidos a mano: se conservan
+      datos.encuadre = anterior?.encuadre || "";   // y el encuadre elegido en «Editar cuadrícula»
     } else {
       // id libre también frente a lo que ya esté publicado en GitHub
       datos.id = idLibre(slug(datos.nombre) || "proyecto", [...publicados, ...PROYECTOS.map(p => p.id)]);
@@ -561,3 +570,181 @@ async function publicarProyecto(form) {
     boton.disabled = false;
   }
 }
+
+
+// ---------------------------------------------------------------------
+//  EDITAR CUADRÍCULA (#/proyectos/ordenar)
+//  Ordenar los proyectos arrastrando las tarjetas y elegir el encuadre de
+//  cada foto con un clic. Se publica igual que un proyecto: un commit que
+//  reordena los bloques de data/proyectos.js y guarda «encuadre» en cada uno.
+// ---------------------------------------------------------------------
+
+const ENCUADRE_CENTRO = "50% 50%";
+let cuadricula = null;   // { orden: [ids], encuadres: { id: "x% y%" } }
+
+function vistaCuadricula() {
+  cuadricula = {
+    orden: proyectos.map(p => p.id),
+    encuadres: Object.fromEntries(proyectos.map(p => [p.id, p.encuadre || ENCUADRE_CENTRO])),
+  };
+  const token = leerToken();
+  app.innerHTML = `
+    <section class="intro"><h1>Proyectos</h1></section>
+    <div class="fila-proyectos fila-cuadricula">
+      <p class="cuadricula-ayuda">Arrastra las tarjetas para ordenarlas · Haz clic en una foto para elegir qué parte se ve</p>
+      <div class="acciones-proyectos">
+        <a class="boton-linea" href="#/proyectos">Cancelar</a>
+        <button class="boton-publicar" data-guardar-cuadricula>Guardar cuadrícula</button>
+      </div>
+    </div>
+    ${token ? "" : `
+      <div class="conexion-fila cuadricula-token">
+        <input type="password" id="token" placeholder="Clave de GitHub (github_pat_…)" autocomplete="off">
+      </div>`}
+    <p class="publicar-estado cuadricula-estado" id="estado-cuadricula" aria-live="polite"></p>
+    <section class="rejilla-proyectos cuadricula-edicion" id="cuadricula"></section>`;
+  pintarCuadricula();
+  activarCuadricula();
+}
+
+function pintarCuadricula() {
+  document.getElementById("cuadricula").innerHTML = cuadricula.orden.map((id, i) => {
+    const p = proyectos.find(x => x.id === id);
+    const encuadre = cuadricula.encuadres[id];
+    const [x, y] = encuadre.split(" ");
+    return `
+      <div class="tarjeta tarjeta-editable" draggable="true" data-id="${texto(id)}">
+        <div class="tarjeta-imagen">
+          ${p.fotos[0]
+            ? `<img src="${p.fotos[0]}" alt="${texto(p.nombre)}" draggable="false" style="object-position:${encuadre}">
+               <span class="punto-encuadre" style="left:${x}; top:${y}" aria-hidden="true"></span>`
+            : sinFoto()}
+        </div>
+        <div class="tarjeta-pie">
+          <button type="button" data-mover="-1" title="Mover antes" ${i === 0 ? "disabled" : ""}>←</button>
+          <span>${texto(p.nombre)}</span>
+          <button type="button" data-mover="1" title="Mover después" ${i === cuadricula.orden.length - 1 ? "disabled" : ""}>→</button>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+function activarCuadricula() {
+  const rejilla = document.getElementById("cuadricula");
+  const mover = (id, destino) => {
+    const orden = cuadricula.orden.filter(x => x !== id);
+    orden.splice(Math.max(0, Math.min(destino, orden.length)), 0, id);
+    cuadricula.orden = orden;
+    pintarCuadricula();
+  };
+
+  // Clic en la foto: ese punto pasa a ser el centro del encuadre
+  rejilla.addEventListener("click", e => {
+    const flecha = e.target.closest("[data-mover]");
+    const tarjeta = e.target.closest(".tarjeta-editable");
+    if (!tarjeta) return;
+    const id = tarjeta.dataset.id;
+    if (flecha) return mover(id, cuadricula.orden.indexOf(id) + Number(flecha.dataset.mover));
+    // (sobre la foto hay una capa decorativa: se mide sobre todo el recuadro de la imagen)
+    const marco = e.target.closest(".tarjeta-imagen");
+    const img = marco?.querySelector("img");
+    if (!img) return;
+    const caja = marco.getBoundingClientRect();
+    const x = Math.round(Math.min(100, Math.max(0, (e.clientX - caja.left) / caja.width * 100)));
+    const y = Math.round(Math.min(100, Math.max(0, (e.clientY - caja.top) / caja.height * 100)));
+    cuadricula.encuadres[id] = `${x}% ${y}%`;
+    img.style.objectPosition = cuadricula.encuadres[id];
+    Object.assign(tarjeta.querySelector(".punto-encuadre").style, { left: `${x}%`, top: `${y}%` });
+  });
+
+  // Arrastrar y soltar para ordenar
+  let arrastrando = null;
+  rejilla.addEventListener("dragstart", e => {
+    const tarjeta = e.target.closest(".tarjeta-editable");
+    if (!tarjeta) return;
+    arrastrando = tarjeta.dataset.id;
+    tarjeta.classList.add("arrastrando");
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", arrastrando);
+  });
+  rejilla.addEventListener("dragover", e => {
+    if (!arrastrando) return;
+    e.preventDefault();
+    rejilla.querySelectorAll(".destino").forEach(t => t.classList.remove("destino"));
+    e.target.closest(".tarjeta-editable")?.classList.add("destino");
+  });
+  rejilla.addEventListener("drop", e => {
+    e.preventDefault();
+    const sobre = e.target.closest(".tarjeta-editable");
+    if (arrastrando && sobre && sobre.dataset.id !== arrastrando) mover(arrastrando, cuadricula.orden.indexOf(sobre.dataset.id));
+  });
+  rejilla.addEventListener("dragend", () => {
+    arrastrando = null;
+    rejilla.querySelectorAll(".arrastrando, .destino").forEach(t => t.classList.remove("arrastrando", "destino"));
+  });
+
+  app.querySelector("[data-guardar-cuadricula]").addEventListener("click", guardarCuadricula);
+}
+
+// Pone (o quita, si es el centro) la línea «encuadre» de un bloque de proyecto
+function ponerEncuadre(bloque, encuadre) {
+  const sin = bloque.replace(/^[ \t]*encuadre:.*\n/m, "");
+  if (!encuadre || encuadre === ENCUADRE_CENTRO) return sin;
+  return sin.replace(/(\n[ \t]*id:[^\n]*\n)/, `$1    encuadre: ${JSON.stringify(encuadre)},\n`);
+}
+
+async function guardarCuadricula() {
+  const estado = document.getElementById("estado-cuadricula");
+  const boton = app.querySelector("[data-guardar-cuadricula]");
+  const decir = (mensaje, error = false) => { estado.textContent = mensaje; estado.classList.toggle("error", error); };
+  const token = leerToken() || document.getElementById("token")?.value.trim();
+  if (!token) { decir("Falta la clave de GitHub.", true); document.getElementById("token")?.focus(); return; }
+
+  boton.disabled = true;
+  try {
+    const api = clienteGitHub(token);
+    decir("Conectando con GitHub…");
+    const ref = await api(`/git/ref/heads/${RAMA}`);
+    const commitActual = await api(`/git/commits/${ref.object.sha}`);
+    const archivo = await api(`/contents/data/proyectos.js?ref=${ref.object.sha}`);
+    const contenido = base64ATexto(archivo.content);
+    guardarToken(token);
+
+    // Los bloques tal como están en GitHub, en su orden actual
+    const enArchivo = [...contenido.matchAll(/^\s*id:\s*"([^"]+)"/gm)].map(m => m[1]);
+    const posiciones = enArchivo.map(id => localizarBloque(contenido, id));
+    const inicio = Math.min(...posiciones.map(([a]) => a));
+    const fin = Math.max(...posiciones.map(([, b]) => b));
+    const bloques = Object.fromEntries(enArchivo.map((id, i) => [id, contenido.slice(...posiciones[i])]));
+
+    // Nuevo orden (los que se hayan publicado mientras tanto, al final) y encuadres
+    const orden = [...cuadricula.orden.filter(id => bloques[id]), ...enArchivo.filter(id => !cuadricula.orden.includes(id))];
+    const nuevo = contenido.slice(0, inicio)
+      + orden.map(id => id in cuadricula.encuadres ? ponerEncuadre(bloques[id], cuadricula.encuadres[id]) : bloques[id]).join("")
+      + contenido.slice(fin);
+    if (nuevo === contenido) { decir("No hay cambios que guardar."); boton.disabled = false; return; }
+
+    decir("Guardando…");
+    const blob = await api("/git/blobs", { method: "POST", body: JSON.stringify({ content: textoABase64(nuevo), encoding: "base64" }) });
+    const nuevoArbol = await api("/git/trees", { method: "POST", body: JSON.stringify({
+      base_tree: commitActual.tree.sha, tree: [{ path: "data/proyectos.js", mode: "100644", type: "blob", sha: blob.sha }] }) });
+    const nuevoCommit = await api("/git/commits", { method: "POST", body: JSON.stringify({
+      message: "Ordena los proyectos y ajusta el encuadre de las fotos (desde la web)", tree: nuevoArbol.sha, parents: [ref.object.sha] }) });
+    await api(`/git/refs/heads/${RAMA}`, { method: "PATCH", body: JSON.stringify({ sha: nuevoCommit.sha }) });
+
+    // Se aplica ya en esta página, sin esperar a que la web se actualice
+    PROYECTOS.sort((a, b) => orden.indexOf(a.id) - orden.indexOf(b.id));
+    proyectos.sort((a, b) => orden.indexOf(a.id) - orden.indexOf(b.id));
+    for (const p of [...PROYECTOS, ...proyectos]) {
+      const e = cuadricula.encuadres[p.id];
+      if (e && e !== ENCUADRE_CENTRO) p.encuadre = e; else delete p.encuadre;
+    }
+    location.hash = "#/proyectos";
+    aviso("Cuadrícula guardada · los visitantes la verán en unos minutos");
+  } catch (error) {
+    console.error(error);
+    decir(`No se ha podido guardar: ${error.message}`, true);
+    boton.disabled = false;
+  }
+}
+
