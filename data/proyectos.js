@@ -47,6 +47,7 @@ window.PROYECTOS = [
   },
   {
     id: "montpellier-ii",
+    encuadre: "51% 53%",
     tipo: "referencia",
     nombre: "Montpellier II",
     autores: "Vives St-Laurent · ATA Architecture",
@@ -62,6 +63,7 @@ window.PROYECTOS = [
   },
   {
     id: "bori-fontesta",
+    encuadre: "39% 54%",
     tipo: "referencia",
     nombre: "Bori i Fontestà",
     autores: "Meritxell Ribé i Josep Puigdomènech",
