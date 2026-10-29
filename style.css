@@ -714,7 +714,6 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
   .editor-panel .barra { flex-direction: row; flex-wrap: wrap; }
   .vacio-seleccion { display: none; }
   .editor-izquierda { position: static; flex-direction: column; align-items: stretch; }
-  .fila-proyectos { margin-top: -36px; }
   .editor-izquierda .editor-panel { flex: none; }
   .panel-seleccion { border-left: 0; border-top: 1px solid var(--linea); padding: 14px 0 0; }
   .editor-panel .barra-separador { display: none; }
@@ -924,3 +923,7 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .85em; background
 .filtros a, .carta-familias button { font-size: 10px; color: #A9A096; }
 .filtros a:hover, .filtros a.activa, .carta-familias button:hover, .carta-familias button.activa { color: var(--texto); }
 .editor-izquierda .panel-seleccion .barra button { padding: 7px 4px; font-size: 10.5px; }
+
+@media (max-width: 800px) {
+  .fila-proyectos { margin-top: -36px; }
+}
